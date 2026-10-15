@@ -224,6 +224,8 @@ src/
 
 应用代码以 **MIT** 授权，见 [LICENSE](LICENSE)。
 
-词库数据来自公开数据集，授权与代码不同，详见 [ATTRIBUTION.md](ATTRIBUTION.md)。
+**词库数据不适用 MIT** —— 它来自公开数据集，各有自己的授权条款，
+分发构建产物前请先阅读 [ATTRIBUTION.md](ATTRIBUTION.md)。
+简单说：代码是 MIT，词表不是。
 界面中的若干动效组件改编自 [react-bits](https://github.com/DavidHDev/react-bits)（MIT + Commons Clause），
 已在源码注释与致谢文件中标注原作者。

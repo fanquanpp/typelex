@@ -6,6 +6,9 @@ from third-party datasets with their own terms. This file records exactly what
 came from where so you can make an informed decision before redistributing a
 build.
 
+**In short:** the code is MIT; the word lists are not. Sections 1–2 below are
+the ones that matter before you publish a build.
+
 ---
 
 ## 1. English vocabulary (高中 / CET-4 / CET-6) — 9,482 entries
