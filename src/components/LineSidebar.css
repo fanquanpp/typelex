@@ -35,7 +35,23 @@
    property below reads the same continuously-animating value. */
 .line-sidebar__item {
   position: relative;
+}
+
+.line-sidebar__button {
+  display: block;
+  width: 100%;
+  padding: 0;
+  background: none;
+  border: 0;
+  text-align: left;
+  color: inherit;
   cursor: pointer;
+}
+
+.line-sidebar__button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+  border-radius: var(--r-xs);
 }
 
 /* Widen the pointer target so items react just before the cursor arrives */

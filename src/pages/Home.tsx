@@ -106,9 +106,6 @@ const Home = () => {
           <div className="hero__actions">
             <Link to="/practice" className="btn btn-primary btn-lg">
               开始练习
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M5 12h13M13 6l6 6-6 6" />
-              </svg>
             </Link>
             <Link to="/wordbook" className="btn btn-lg">
               先看看词库

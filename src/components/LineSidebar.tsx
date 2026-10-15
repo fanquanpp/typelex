@@ -175,6 +175,10 @@ export const LineSidebar = ({
             }}
             className="line-sidebar__item"
             aria-current={active === index ? 'true' : undefined}
+          >
+          <button
+            type="button"
+            className="line-sidebar__button"
             onClick={() => onClick(index, label)}
           >
             {showMarker && <span className="line-sidebar__marker" aria-hidden="true" />}
@@ -182,6 +186,7 @@ export const LineSidebar = ({
               {showIndex && <span className="line-sidebar__index">{String(index + 1).padStart(2, '0')}</span>}
               <span className="line-sidebar__text">{label}</span>
             </span>
+          </button>
           </li>
         ))}
       </ul>

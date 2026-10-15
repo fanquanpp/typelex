@@ -623,7 +623,10 @@
   color: var(--ink-muted);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
-  transition: all var(--t-fast) var(--ease-out);
+  transition:
+    border-color var(--t-fast) var(--ease-out),
+    background var(--t-fast) var(--ease-out),
+    color var(--t-fast) var(--ease-out);
 }
 
 .pill:hover {
