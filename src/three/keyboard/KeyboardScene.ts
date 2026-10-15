@@ -9,7 +9,7 @@
  */
 import * as THREE from 'three';
 
-import { FINGER_COLOR, fingerForCode } from '../../lib/typing/fingers';
+import { fingerForCode } from '../../lib/typing/fingers';
 import type { Theme } from '../../lib/types';
 import {
   buildCaseGeometry,
@@ -35,7 +35,6 @@ const HOVER_LIFT = 0.03;
 const STATE_COLS = 32;
 /** Field of view. Wide enough to give the board real perspective convergence. */
 const FOV = 40;
-const WASD = new Set(['KeyW', 'KeyA', 'KeyS', 'KeyD']);
 /** Fraction of an atlas cell kept clear on each side to avoid filter bleed. */
 const INSET = 0.02;
 
@@ -505,13 +504,10 @@ export class KeyboardScene {
     const vertexToKey: number[] = [];
 
     this.stateRows = Math.max(1, Math.ceil(layout.keys.length / STATE_COLS));
-    const accentSet = new Set(layout.accent);
     const geometryCache = new Map<string, THREE.BufferGeometry>();
 
     const capBase = hexToColor(model.caps.color);
-    const capAccent = hexToColor(model.caps.accent);
     const legendBase = hexToColor(model.caps.legend);
-    const legendAccent = hexToColor(model.caps.accentLegend ?? model.caps.legend);
 
     layout.keys.forEach((def, index) => {
       const rowIndex = Math.min(def.row, sculpt.height.length - 1);
@@ -553,9 +549,10 @@ export class KeyboardScene {
       const cellX = (cell % atlas.cols) * cellW;
       const cellY = Math.floor(cell / atlas.cols) * cellH;
 
-      const accent = accentSet.has(def.code) || (model.features.wasd === true && WASD.has(def.code));
-      const cap = accent ? capAccent : capBase;
-      const legendColor = accent ? legendAccent : legendBase;
+      /* Two-tone rule: every cap shares one colour; depth comes from shading.
+         The accent set is kept only so homing bumps could later be drawn. */
+      const cap = capBase;
+      const legendColor = legendBase;
 
       const keyX = def.x + def.w / 2 - layout.width / 2;
       const keyZ = def.y + def.h / 2 - layout.depth / 2;
@@ -588,7 +585,7 @@ export class KeyboardScene {
         vertexStart: start,
         vertexCount: count,
         stateUv: [keyU, keyV],
-        accent,
+        accent: false,
         baseCap: cap.clone(),
         legend: legendColor.clone(),
         press: 0,
@@ -758,31 +755,6 @@ export class KeyboardScene {
       this.extraMaterials.push(material);
     }
 
-    /* WASD cluster gets a subtle deck outline on gaming boards */
-    if (model.features.wasd) {
-      const outlineMaterial = new THREE.MeshBasicMaterial({
-        color: hexToColor(model.caps.accent),
-        transparent: true,
-        opacity: 0.16,
-        toneMapped: false
-      });
-      const geometry = new THREE.PlaneGeometry(3.2, 1.2);
-      const mesh = new THREE.Mesh(geometry, outlineMaterial);
-      mesh.rotation.x = -Math.PI / 2;
-      const wasdX = (() => {
-        const w = this.byCode.get('KeyW');
-        return w ? w.def.x + 0.5 - layout.width / 2 : -3;
-      })();
-      const wasdZ = (() => {
-        const w = this.byCode.get('KeyW');
-        return w ? w.def.y + 1 - layout.depth / 2 : -1;
-      })();
-      mesh.position.set(wasdX, 0.006, wasdZ);
-      this.detailGroup.add(mesh);
-      this.extraGeometries.push(geometry);
-      this.extraMaterials.push(outlineMaterial);
-    }
-
     this.root.add(this.detailGroup);
   }
 
@@ -794,17 +766,19 @@ export class KeyboardScene {
     if (!this.keycapGeometry) return;
     const attribute = this.keycapGeometry.getAttribute('aCapColor') as THREE.BufferAttribute;
     const hints = this.options.fingerHints;
-    const dim = this.options.theme === 'light' ? 0.86 : 0.7;
+    const dim = this.options.theme === 'light' ? 0.9 : 0.76;
     const scratch = new THREE.Color();
 
     for (const record of this.records) {
+      /* Monochrome finger hints: hinted keys darken slightly; homing keys stay
+         lightest. No per-finger rainbow — colour coding is banned decoration. */
       let color = record.baseCap;
       if (hints) {
         const finger = fingerForCode(record.def.code);
         if (finger) {
-          scratch.set(FINGER_COLOR[finger]);
-          /* keep the homing keys readable while still tinting by finger */
-          color = scratch.clone().lerp(record.baseCap, record.def.homing ? 0.72 : 0.62).multiplyScalar(dim);
+          const weight = record.def.homing ? 0 : 0.14;
+          color = scratch.copy(record.baseCap).multiplyScalar(1 - weight).clone();
+          color = color.multiplyScalar(dim);
         }
       }
       for (let i = 0; i < record.vertexCount; i++) {
@@ -831,9 +805,7 @@ export class KeyboardScene {
       return;
     }
 
-    const layout = this.layout;
     const isWhite = model.backlight === 'white';
-    const accent = new THREE.Color(this.options.theme === 'light' ? 0x2a6f68 : 0x64e6d0);
     const base = new THREE.Color(0xffffff);
 
     for (const record of this.records) {
@@ -843,42 +815,26 @@ export class KeyboardScene {
 
       switch (style) {
         case 'solid':
-          color = isWhite ? base : accent;
-          glow = 0.4;
+          color = base;
+          glow = isWhite ? 0.4 : 0.18;
           break;
-        case 'wave': {
-          const hue = ((def.x / layout.width) * 0.85 + this.rgbPhase * 0.16) % 1;
-          color = new THREE.Color().setHSL(hue, 0.85, 0.58);
-          glow = 0.42;
-          break;
-        }
-        case 'rainbow': {
-          const hue = ((def.x / layout.width) * 0.55 + (def.y / layout.depth) * 0.4 + this.rgbPhase * 0.1) % 1;
-          color = new THREE.Color().setHSL(hue, 0.9, 0.56);
-          glow = 0.44;
+        case 'heatmap': {
+          /* The one non-decorative style: encodes your own error rate in
+             neutral intensity (bright = weak key), not colour. */
+          const value = this.heat[def.code] ?? 0;
+          color = base;
+          glow = 0.14 + value * 0.5;
           break;
         }
         case 'reactive': {
           const pulse = Math.max(record.press, record.glow * 0.6);
-          const hue = 0.5 - Math.min(0.45, pulse * 0.45);
-          color = new THREE.Color().setHSL(hue, 0.8, 0.5 + pulse * 0.28);
-          glow = 0.24 + pulse * 0.7;
-          break;
-        }
-        case 'starlight': {
-          const seed = (def.x * 12.9898 + def.y * 78.233) % 1;
-          const twinkle = Math.max(0, Math.sin(this.rgbPhase * (0.6 + seed) + seed * 40));
-          color = isWhite ? base : accent;
-          glow = 0.18 + twinkle * 0.62;
-          break;
-        }
-        case 'heatmap': {
-          const value = this.heat[def.code] ?? 0;
-          color = new THREE.Color().setHSL(0.58 - Math.min(0.58, value * 0.58), 0.85, 0.52);
-          glow = 0.18 + value * 0.75;
+          color = base;
+          glow = 0.12 + pulse * 0.6;
           break;
         }
         default:
+          color = base;
+          glow = isWhite ? 0.3 : 0.16;
           break;
       }
 
@@ -895,7 +851,7 @@ export class KeyboardScene {
       if (record) {
         this.nextPulse = (this.nextPulse + dt * 2.2) % (Math.PI * 2);
         const pulse = 0.55 + 0.45 * Math.sin(this.nextPulse);
-        record.rgb.setRGB(0.35, 0.98, 0.82);
+        record.rgb.setRGB(1, 1, 1);
         record.glow = Math.max(record.glow, 0.5 + pulse * 0.5);
       }
     }

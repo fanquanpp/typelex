@@ -11,7 +11,7 @@ import { Link } from 'react-router-dom';
 
 import KeyboardStage from '../components/KeyboardStage';
 import { CountUp, Reveal, SpotlightCard } from '../components/effects';
-import { TypingLine } from '../components/TypingLine';
+import { TypingSlots } from '../components/TypingSlots';
 import { WordCard } from '../components/WordCard';
 import { useApp } from '../lib/store';
 import { gradeFromAttempt } from '../lib/srs';
@@ -393,10 +393,8 @@ const Session = () => {
           <Link to="/practice" className="btn btn-sm btn-ghost">
             ← 退出
           </Link>
-          <span className="chip" style={{ borderColor: accent, color: accent }}>
-            {MODE_LABEL[config.mode]}
-          </span>
-          {restored && <span className="chip chip-amber">已恢复上次进度</span>}
+          <span className="chip">{MODE_LABEL[config.mode]}</span>
+          {restored && <span className="chip">已恢复上次进度</span>}
         </div>
 
         <div className="session-progress" aria-hidden="true">
@@ -429,11 +427,11 @@ const Session = () => {
           <div className="typing-stage">
             {item ? (
               <>
-                <TypingLine
+                <TypingSlots
                   text={item.text}
                   typed={view.typed}
                   sentence={item.kind === 'sentence'}
-                  complete={view.typed === item.text}
+                  errorAt={view.missedAt}
                 />
                 <div className="typing-hint">
                   {item.kind === 'japanese' && item.jp ? (
@@ -546,7 +544,7 @@ const Session = () => {
                     {lastCompleted.word.us || lastCompleted.word.uk}
                   </div>
                 </div>
-                <span className="chip chip-ok">已掌握一次</span>
+                <span className="chip">已练</span>
               </div>
               <div className="mini-card__meaning">{lastCompleted.word.cn}</div>
               {detail?.r && detail.r.length > 0 && (
@@ -555,7 +553,7 @@ const Session = () => {
                     .flatMap(group => group[1])
                     .slice(0, 4)
                     .map(([word, cn]) => (
-                      <span className="chip chip-violet" key={word} title={cn}>
+                      <span className="chip" key={word} title={cn}>
                         {word}
                       </span>
                     ))}
@@ -571,6 +569,7 @@ const Session = () => {
               theme={settings.theme}
               accent={accent}
               height={430}
+              flat
               starred={activeWordKey ? stars.includes(activeWordKey) : false}
               onStar={activeWordKey ? () => toggleStar(activeWordKey) : undefined}
               placeholder="当前不是单词模式"

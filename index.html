@@ -3,17 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#08090c" />
+    <meta name="theme-color" content="#0a0b14" />
     <title>TypeLex · 拟真键盘打字与词汇记忆</title>
     <meta
       name="description"
       content="TypeLex 是一个 3D 拟真键盘的打字练习平台：用高中、四级、六级全量词表与日语 N1–N5 词汇做打字训练，边打字边背单词。"
-    />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700&display=swap"
-      rel="stylesheet"
     />
     <script>
       // Apply the persisted theme before first paint so there is no flash.
@@ -28,6 +22,13 @@
         document.documentElement.dataset.theme = 'dark';
       }
     </script>
+    <!--
+      Fonts are self-hosted (bundled from npm via @fontsource-variable) rather than
+      loaded from a CDN: no third-party request on first paint, no render-blocking
+      stylesheet, and the type never silently degrades to a fallback face.
+      CJK deliberately stays on the system stack — PingFang SC / Microsoft YaHei /
+      Noto Sans CJK are excellent and a bundled Chinese webfont would cost megabytes.
+    -->
   </head>
   <body>
     <div id="root"></div>

@@ -1,0 +1,147 @@
+/* TypingSlots — the CodeSlots-style drill input. */
+
+.typing-slots {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: stretch;
+  z-index: 1;
+}
+
+.typing-slots--sentence {
+  gap: 4px;
+}
+
+.typing-slots__slot {
+  --land: 0;
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.32em;
+  height: 1.72em;
+  padding: 0 0.14em;
+  border-radius: var(--r-sm);
+  font-family: var(--font-mono);
+  font-size: inherit;
+  line-height: 1;
+  background: var(--surface);
+  border: 1px solid var(--border-faint);
+  box-shadow: inset 0 1px 0 var(--glass-edge-soft);
+  transition:
+    background var(--t-fast) var(--ease-out),
+    border-color var(--t-fast) var(--ease-out);
+  overflow: hidden;
+}
+
+.typing-slots--sentence .typing-slots__slot {
+  min-width: 1.2em;
+  height: 1.55em;
+}
+
+/* the glyph: rises into place as the slot lands, drains downward on delete */
+.typing-slots__glyph {
+  display: inline-block;
+  transform: translateY(calc((1 - var(--land)) * 0.55em)) scale(calc(0.82 + 0.18 * var(--land)));
+  opacity: var(--land);
+  will-change: transform, opacity;
+  color: var(--ink-ghost);
+  transition: color var(--t-fast) var(--ease-out);
+}
+
+.typing-slots__slot[data-state='correct'] {
+  background: var(--surface-strong);
+  border-color: var(--glass-edge-soft);
+}
+.typing-slots__slot[data-state='correct'] .typing-slots__glyph {
+  color: var(--ink);
+}
+
+.typing-slots__slot[data-state='incorrect'] {
+  background: var(--danger-soft);
+  border-color: color-mix(in srgb, var(--danger) 42%, transparent);
+}
+.typing-slots__slot[data-state='incorrect'] .typing-slots__glyph {
+  color: var(--danger);
+}
+
+.typing-slots__slot--extra {
+  background: var(--danger-soft);
+  border-style: dashed;
+}
+.typing-slots__slot--extra .typing-slots__glyph {
+  color: var(--danger);
+  opacity: 0.7;
+  text-decoration: line-through;
+}
+
+/* pending slots keep a faint placeholder tone so the word shape is readable */
+.typing-slots__slot[data-state='pending'] {
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
+}
+
+/* the caret glides between slots */
+.typing-slots__caret {
+  position: absolute;
+  top: 6%;
+  bottom: 6%;
+  left: 0;
+  width: 2px;
+  border-radius: 1px;
+  background: var(--primary);
+  box-shadow: 0 0 10px hsl(var(--hue-primary) 80% 60% / 0.8);
+  opacity: 0;
+  transition: opacity var(--t-base) var(--ease-out);
+  pointer-events: none;
+}
+
+.typing-slots__caret[data-show='true'] {
+  opacity: 1;
+  animation: typing-caret 1.05s steps(1, end) infinite;
+}
+
+@keyframes typing-caret {
+  0%,
+  55% {
+    opacity: 1;
+  }
+  56%,
+  100% {
+    opacity: 0.25;
+  }
+}
+
+/* error feedback: a short horizontal shake of the whole row */
+.typing-slots--shake {
+  animation: typing-shake 320ms var(--ease-out);
+}
+
+@keyframes typing-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  22% {
+    transform: translateX(-5px);
+  }
+  52% {
+    transform: translateX(4px);
+  }
+  82% {
+    transform: translateX(-2px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .typing-slots__glyph {
+    transform: none !important;
+    opacity: 1 !important;
+    transition: none !important;
+  }
+  .typing-slots--shake {
+    animation: none;
+  }
+  .typing-slots__caret[data-show='true'] {
+    animation: none;
+  }
+}

@@ -24,12 +24,9 @@ const SOUNDS = [
 ] as const;
 
 const RGB: { id: RgbStyle; label: string }[] = [
-  { id: 'solid', label: '单色' },
-  { id: 'wave', label: '波浪' },
-  { id: 'rainbow', label: '彩虹' },
-  { id: 'reactive', label: '按键触发' },
-  { id: 'starlight', label: '星光' },
-  { id: 'heatmap', label: '错误热力' }
+  { id: 'solid', label: '关闭' },
+  { id: 'reactive', label: '按键响应' },
+  { id: 'heatmap', label: '弱键标记' }
 ];
 
 const Settings = () => {

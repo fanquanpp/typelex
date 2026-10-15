@@ -231,6 +231,8 @@ interface WordCardProps {
   starred?: boolean;
   /** shown instead of the word while a session is idle */
   placeholder?: string;
+  /** flat glass panel instead of the hanging-badge stage */
+  flat?: boolean;
 }
 
 export const WordCard = ({
@@ -241,7 +243,8 @@ export const WordCard = ({
   height = 520,
   onStar,
   starred = false,
-  placeholder
+  placeholder,
+  flat = false
 }: WordCardProps) => {
   const [open, setOpen] = useState(false);
   const level = word?.level ?? 1;
@@ -250,6 +253,75 @@ export const WordCard = ({
   const backPainter = useBackPainter({ word, detail, level, accent, theme });
 
   const finger = word ? fingerForChar(word.word[0] ?? '') : null;
+
+  if (flat) {
+    return (
+      <div className="word-card">
+        <div className="word-card__panel" style={{ minHeight: Math.min(height, 300) }}>
+          {word ? (
+            <>
+              <div className="word-card__panel-head">
+                <span className="word-card__word">{word.word}</span>
+                <span className="word-card__phonetic">/{word.us || word.uk}/</span>
+              </div>
+              <p className="word-card__meaning">{word.cn}</p>
+              {detail?.r && detail.r.length > 0 && (
+                <div className="row wrap" style={{ gap: 6, marginTop: 'var(--s3)' }}>
+                  {detail.r
+                    .flatMap(group => group[1])
+                    .slice(0, 5)
+                    .map(([w, cn]) => (
+                      <span className="chip" key={w} title={cn}>
+                        {w}
+                      </span>
+                    ))}
+                </div>
+              )}
+              {detail?.s?.[0] && (
+                <div className="word-card__example">
+                  <span className="mono">{detail.s[0][0]}</span>
+                  <span className="muted">{detail.s[0][1]}</span>
+                </div>
+              )}
+            </>
+          ) : (
+            <p className="muted">{placeholder ?? '开始一次练习，单词卡会在这里出现'}</p>
+          )}
+        </div>
+
+        {word && (
+          <div className="word-card__bar">
+            <div className="row wrap" style={{ gap: 'var(--s2)' }}>
+              <span className="chip">{LEVEL_NAME[level] ?? '词汇'}</span>
+              {word.pos && <span className="chip">{word.pos}</span>}
+              {finger && <span className="chip">{FINGER_LABEL[finger]}</span>}
+            </div>
+            <div className="row" style={{ gap: 'var(--s2)' }}>
+              <button type="button" className="btn btn-sm" onClick={() => setOpen(value => !value)}>
+                {open ? '收起详解' : '展开详解'}
+              </button>
+              {onStar && (
+                <button
+                  type="button"
+                  className={`btn btn-sm ${starred ? 'btn-primary' : ''}`}
+                  onClick={onStar}
+                  aria-pressed={starred}
+                >
+                  {starred ? '已收藏' : '收藏'}
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
+        {word && open && detail && (
+          <div className="word-card__detail">
+            <WordDetail word={word} detail={detail} />
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="word-card">
@@ -265,7 +337,7 @@ export const WordCard = ({
             size={0.62}
             anchor="center"
             strapLength={0.42}
-            strapColor={accent}
+            strapColor="#3a4050"
             strapWidth={0.62}
             metal="silver"
             gravity={1}
@@ -285,9 +357,7 @@ export const WordCard = ({
       {word && (
         <div className="word-card__bar">
           <div className="row wrap" style={{ gap: 'var(--s2)' }}>
-            <span className="chip" style={{ borderColor: accent, color: accent }}>
-              {LEVEL_NAME[level] ?? '词汇'}
-            </span>
+            <span className="chip">{LEVEL_NAME[level] ?? '词汇'}</span>
             {word.pos && <span className="chip">{word.pos}</span>}
             {finger && <span className="chip">{FINGER_LABEL[finger]}</span>}
           </div>
@@ -343,7 +413,7 @@ export const WordDetail = ({ word, detail }: { word: Word; detail: Detail }) => 
           <p className="eyebrow">易混词</p>
           <div className="row wrap" style={{ gap: 'var(--s2)' }}>
             {detail.k.map(([other, cn]) => (
-              <span className="chip chip-rose" key={other} title={cn}>
+              <span className="chip" key={other} title={cn}>
                 {other}
               </span>
             ))}
@@ -394,7 +464,7 @@ export const WordDetail = ({ word, detail }: { word: Word; detail: Detail }) => 
                 {pos && <span className="tag-pos">{pos}</span>}
                 <div className="row wrap" style={{ gap: 'var(--s2)' }}>
                   {words.map(([w, cn]) => (
-                    <span className="chip chip-violet" key={w} title={cn}>
+                    <span className="chip" key={w} title={cn}>
                       {w}
                     </span>
                   ))}
@@ -442,7 +512,7 @@ export const WordDetail = ({ word, detail }: { word: Word; detail: Detail }) => 
                   <span className="faint">…</span>
                   {en}
                 </span>
-                <span className="chip chip-amber" style={{ alignSelf: 'flex-start' }}>
+                <span className="chip" style={{ alignSelf: 'flex-start' }}>
                   {meta}
                 </span>
               </li>

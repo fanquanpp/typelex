@@ -110,53 +110,19 @@
 /* ============================  shiny / gradient text  =================== */
 
 .shiny-text {
-  background-image: linear-gradient(
-    110deg,
-    var(--ink-muted) 0%,
-    var(--ink-muted) 38%,
-    var(--ink) 50%,
-    var(--ink-muted) 62%,
-    var(--ink-muted) 100%
-  );
-  background-size: 220% 100%;
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-  animation: shiny-sweep 4.2s linear infinite;
-}
-@keyframes shiny-sweep {
-  from {
-    background-position: 180% center;
-  }
-  to {
-    background-position: -80% center;
-  }
+  color: var(--ink);
+  background: none;
+  -webkit-text-fill-color: currentColor;
+  animation: none;
 }
 
 .gradient-text {
-  background-image: linear-gradient(
-    100deg,
-    var(--primary) 0%,
-    var(--violet) 34%,
-    var(--blue) 62%,
-    var(--primary) 100%
-  );
-  background-size: 280% 100%;
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-  animation: gradient-drift 9s ease-in-out infinite;
-}
-@keyframes gradient-drift {
-  0%,
-  100% {
-    background-position: 0% center;
-  }
-  50% {
-    background-position: 100% center;
-  }
+  /* The gradient-text effect is banned in this design: it renders as plain
+     accent-coloured ink instead, with the same class name so call sites
+     need no edits. */
+  color: var(--primary);
+  background: none;
+  -webkit-text-fill-color: currentColor;
 }
 
 /* ============================  spotlight card  ========================== */
@@ -175,7 +141,7 @@
   opacity: 0;
   background: radial-gradient(
     circle var(--spot-size, 320px) at var(--spot-x, 50%) var(--spot-y, 50%),
-    hsl(var(--hue-primary) 80% 60% / 0.16),
+    rgba(255, 255, 255, 0.05),
     transparent 62%
   );
   transition: opacity 320ms var(--ease-out);
@@ -283,7 +249,7 @@
 }
 .border-trace:hover::before,
 .border-trace[data-active='true']::before {
-  opacity: 1;
+  opacity: 0;
 }
 @property --trace-angle {
   syntax: '<angle>';

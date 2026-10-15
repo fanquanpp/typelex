@@ -34,6 +34,18 @@ export const useInView = <T extends HTMLElement>(options?: IntersectionObserverI
       setInView(true);
       return undefined;
     }
+
+    /* Anything already on screen at mount is revealed immediately. Relying on
+       the observer alone means a reveal that never fires leaves the content
+       permanently blurred and faded — which is exactly what happens in a
+       background tab, and is unforgivable for above-the-fold copy. */
+    const rect = element.getBoundingClientRect();
+    const viewportH = window.innerHeight || document.documentElement.clientHeight;
+    const viewportW = window.innerWidth || document.documentElement.clientWidth;
+    if (rect.top < viewportH * 0.96 && rect.bottom > 0 && rect.left < viewportW && rect.right > 0) {
+      setInView(true);
+      return undefined;
+    }
     const observer = new IntersectionObserver(
       entries => {
         const entry = entries[entries.length - 1];

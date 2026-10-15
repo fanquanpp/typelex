@@ -12,11 +12,11 @@
 }
 
 .jp-level[data-active] {
-  border-color: var(--rose);
+  border-color: var(--ink);
 }
 
 .jp-level .stat-value {
-  color: var(--rose);
+  color: var(--ink);
 }
 
 .jp-charts {

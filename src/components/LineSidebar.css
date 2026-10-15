@@ -1,0 +1,105 @@
+/* LineSidebar — ported from react-bits, recoloured to TypeLex tokens. */
+
+.line-sidebar {
+  --ls-accent: var(--primary);
+  --ls-text: var(--ink-muted);
+  --ls-marker: var(--ink-ghost);
+  --ls-marker-length: 46px;
+  --ls-marker-gap: 2px;
+  --ls-tick-scale: 0.45;
+  --ls-max-shift: 22px;
+  --ls-item-gap: 18px;
+  --ls-font-size: 0.92rem;
+
+  position: relative;
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.line-sidebar--markers {
+  padding-left: calc(var(--ls-marker-length) + var(--ls-marker-gap));
+}
+
+.line-sidebar__list {
+  list-style: none;
+  margin: 0;
+  padding: var(--s3) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ls-item-gap);
+  width: 100%;
+}
+
+/* --effect (0..1) is driven per item by a rAF lerp in JS, so every derived
+   property below reads the same continuously-animating value. */
+.line-sidebar__item {
+  position: relative;
+  cursor: pointer;
+}
+
+/* Widen the pointer target so items react just before the cursor arrives */
+.line-sidebar__item::before {
+  content: '';
+  position: absolute;
+  inset: -6px -48px;
+}
+
+.line-sidebar__label {
+  position: relative;
+  display: inline-flex;
+  align-items: baseline;
+  font-size: var(--ls-font-size);
+  line-height: 1.2;
+  color: color-mix(in srgb, var(--ls-accent) calc(var(--effect, 0) * 100%), var(--ls-text));
+  transform: translateX(calc(var(--effect, 0) * var(--ls-max-shift)));
+  white-space: nowrap;
+}
+
+.line-sidebar__item[aria-current='true'] .line-sidebar__label {
+  font-weight: 650;
+}
+
+.line-sidebar__index {
+  font-family: var(--font-mono);
+  margin-right: 0.6rem;
+  font-size: 0.82em;
+  opacity: calc(0.5 + var(--effect, 0) * 0.5);
+  font-variant-numeric: tabular-nums;
+}
+
+.line-sidebar__marker {
+  position: absolute;
+  top: 50%;
+  left: calc(-1 * var(--ls-marker-length) - var(--ls-marker-gap));
+  height: 1px;
+  width: var(--ls-marker-length);
+  background-color: color-mix(in srgb, var(--ls-accent) calc(var(--effect, 0) * 100%), var(--ls-marker));
+  transform-origin: left center;
+  transform: translateY(-50%) scaleX(calc(0.7 + var(--effect, 0) * 0.5));
+}
+
+/* Short static tick centred in the gap between two items */
+.line-sidebar--markers .line-sidebar__item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: calc(100% + var(--ls-item-gap) / 2);
+  left: calc(-1 * var(--ls-marker-length) - var(--ls-marker-gap));
+  height: 1px;
+  width: calc(var(--ls-marker-length) * var(--ls-tick-scale));
+  background-color: var(--ls-marker);
+  opacity: 0.45;
+  transform: translateY(-50%);
+}
+
+.line-sidebar--scale-tick .line-sidebar__item:not(:last-child)::after {
+  transform-origin: left center;
+  transform: translateY(-50%) scaleX(calc(0.7 + var(--effect, 0) * 0.6));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .line-sidebar__label,
+  .line-sidebar__marker {
+    transform: none !important;
+  }
+}

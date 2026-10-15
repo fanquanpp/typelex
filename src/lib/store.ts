@@ -109,13 +109,13 @@ const dayGap = (a: string, b: string) => {
 
 const DEFAULT_SETTINGS: Settings = {
   theme: 'dark',
-  keyboardModel: 'tuf-a15',
+  keyboardModel: 'laptop',
   soundEnabled: true,
   soundProfile: 'laptop',
   volume: 0.6,
   fingerHints: false,
   showNextKey: true,
-  rgbStyle: 'reactive',
+  rgbStyle: 'solid',
   romajiStyle: 'hepburn',
   keyboardVisible: true,
   keyboardView: 'angled',

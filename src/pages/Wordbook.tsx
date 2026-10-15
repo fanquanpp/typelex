@@ -125,9 +125,6 @@ const Wordbook = () => {
       <header className="page-head">
         <span className="eyebrow">Wordbook</span>
         <h1 className="page-title">词库</h1>
-        <p className="page-sub">
-          浏览全部词条。点击任意词查看完整释义、例句、常用搭配、同根词与易混词；收藏的词会进入记忆页。
-        </p>
       </header>
 
       <Reveal as="section" className="stack-5">

@@ -1,29 +1,53 @@
 /**
- * AppShell — the persistent chrome around every page.
+ * AppShell — the single-screen application frame.
  *
- * Owns the GooeyNav, the theme switch, the XP/level readout and the global
- * ambience (grid backdrop, noise, click sparks). Route changes fade the outlet
- * through a short blur-rise transition and restore the previous scroll position.
+ * The whole product lives in one viewport: a fixed glass header, a stage that
+ * fills the remaining height, and ambient layers (colour field, cursor grid,
+ * glyph field, crosshair) shared by every view. Views are switched in place —
+ * a session you leave stays mounted exactly where it was.
  */
 import { useEffect, useMemo } from 'react';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 
 import { setVolume, unlockAudio } from '../lib/audio';
 import { levelProgress } from '../lib/typing/metrics';
 import { useApp } from '../lib/store';
-import { CountUp, DotGrid, useClickSpark } from './effects';
-import GooeyNav, { type GooeyNavItem } from './GooeyNav';
+import Backdrop from './Backdrop';
+import Crosshair from './Crosshair';
+import CursorGrid from './CursorGrid';
+import LetterGlitch from './LetterGlitch';
+import { Counter } from './motion';
+import LineSidebar from './LineSidebar';
 import './AppShell.css';
 
-const NAV: GooeyNavItem[] = [
-  { label: '首页', to: '/' },
+const NAV = [
+  { label: '总览', to: '/' },
   { label: '练习', to: '/practice' },
-  { label: '记忆', to: '/study' },
-  { label: '词库', to: '/wordbook' },
-  { label: '键盘', to: '/keyboard' },
-  { label: '日语', to: '/japanese' },
-  { label: '数据', to: '/stats' }
+  { label: '记忆复习', to: '/study' },
+  { label: '词库浏览', to: '/wordbook' },
+  { label: '键盘实验室', to: '/keyboard' },
+  { label: '日语训练', to: '/japanese' },
+  { label: '学习数据', to: '/stats' },
+  { label: '偏好设置', to: '/settings' }
 ];
+
+/** A restrained glyph field: faint, slow, centre kept clear for content. */
+const LetterGlitchLite = () => (
+  <div className="app__glitch" aria-hidden="true">
+    <LetterGlitch
+      baseOpacity={0.09}
+      glitchAmount={0.3}
+      speed={0.9}
+      density={0.75}
+      fontSize={13}
+      flow={0.45}
+      edgeFade={0.26}
+      centerFade={0.58}
+      interactive
+      cursorRadius={160}
+    />
+  </div>
+);
 
 export const AppShell = () => {
   const location = useLocation();
@@ -35,7 +59,6 @@ export const AppShell = () => {
   const streak = useApp(state => state.streak);
 
   const progress = useMemo(() => levelProgress(xp), [xp]);
-  useClickSpark(true, 7);
 
   useEffect(() => {
     setVolume(volume);
@@ -51,27 +74,40 @@ export const AppShell = () => {
     };
   }, []);
 
-  /* per-route scroll restoration: remember where each page was left */
-  useEffect(() => {
-    const key = `typelex.scroll:${location.pathname}`;
-    const saved = Number(sessionStorage.getItem(key) ?? '0');
-    const frame = requestAnimationFrame(() => window.scrollTo({ top: saved, behavior: 'auto' }));
-    return () => {
-      cancelAnimationFrame(frame);
-      sessionStorage.setItem(key, String(window.scrollY));
-    };
+  const crumbLabel = useMemo(() => {
+    const entry = [...NAV].sort((a, b) => b.to.length - a.to.length).find(item => location.pathname === item.to || (item.to !== '/' && location.pathname.startsWith(item.to)));
+    return entry?.label ?? '总览';
   }, [location.pathname]);
+  const activeIndex = useMemo(() => Math.max(0, NAV.findIndex(item => location.pathname === item.to || (item.to !== '/' && location.pathname.startsWith(item.to)))), [location.pathname]);
+
+  const navigate = (index: number) => {
+    window.location.hash = `#${NAV[index].to}`;
+  };
 
   return (
-    <div className="app">
-      <div className="app__ambience" aria-hidden="true">
-        <DotGrid className="app__dots" gap={30} dotSize={1.7} radius={150} />
-        <div className="app__glow" />
+    <div className="app" data-route={location.pathname}>
+      <Backdrop />
+
+      {/* ambient layers: above the colour field, below every glass panel */}
+      <div className="app__ambient" aria-hidden="true">
+        <CursorGrid
+          cellSize={64}
+          radius={170}
+          gridStyle="lines"
+          gridOpacity={0.05}
+          fillOpacity={0.05}
+          maxOpacity={0.5}
+          spotlight={0.4}
+          ambient={0.12}
+          holdTime={260}
+          fadeDuration={1100}
+        />
+        <LetterGlitchLite />
       </div>
 
       <header className="app__header">
         <div className="shell app__header-inner">
-          <Link to="/" className="brand" aria-label="TypeLex 首页">
+          <a href="#/" className="brand" aria-label="TypeLex 首页">
             <span className="brand__mark" aria-hidden="true">
               <svg viewBox="0 0 32 32" width="26" height="26" fill="none">
                 <rect x="2.5" y="9" width="27" height="14" rx="4" stroke="currentColor" strokeWidth="2" />
@@ -85,16 +121,16 @@ export const AppShell = () => {
               <strong>TypeLex</strong>
               <em>打字 · 词汇</em>
             </span>
-          </Link>
+          </a>
 
-          <div className="app__nav">
-            <GooeyNav items={NAV} theme={theme} size="sm" particleCount={12} spread={48} gooeyness={0.52} />
+          <div className="app__crumb">
+            <span className="app__crumb-label">{crumbLabel}</span>
           </div>
 
           <div className="app__actions">
             <div className="xp-chip" title={`等级 ${progress.level} · ${Math.round(progress.current)} / ${progress.need} XP`}>
               <span className="xp-chip__level">
-                LV <CountUp to={progress.level} duration={600} />
+                LV <Counter value={progress.level} />
               </span>
               <span className="xp-chip__bar" aria-hidden="true">
                 <i style={{ width: `${progress.ratio * 100}%` }} />
@@ -148,41 +184,31 @@ export const AppShell = () => {
               )}
             </button>
 
-            <Link to="/settings" className="btn btn-icon" aria-label="设置">
+            <a href="#/settings" className="btn btn-icon" aria-label="设置">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.7">
                 <circle cx="12" cy="12" r="3" />
                 <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2 2 2 0 1 1-4 0 1.7 1.7 0 0 0-2.9-1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 2.6 15a2 2 0 1 1 0-4 1.7 1.7 0 0 0 1.2-2.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.7 1.7 0 0 0 9.5 4.1a2 2 0 1 1 4 0 1.7 1.7 0 0 0 2.9 1.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1A1.7 1.7 0 0 0 21.4 11a2 2 0 1 1 0 4 1.7 1.7 0 0 0-1.2 1z" />
               </svg>
-            </Link>
+            </a>
           </div>
         </div>
       </header>
 
-      <main className="app__main" key={location.pathname}>
-        <div className="page-enter">
-          <Outlet />
-        </div>
-      </main>
-
-      <footer className="app__footer">
-        <div className="shell app__footer-inner">
-          <div className="stack-1">
-            <strong>TypeLex</strong>
-            <span className="faint">用拟真键盘把词汇刻进肌肉记忆</span>
+      <div className="app__body">
+        <aside className="app__sidebar" aria-label="主导航">
+          <LineSidebar items={NAV.map(item => item.label)} activeIndex={activeIndex} onItemClick={navigate} />
+          <div className="app__sidebar-foot">
+            <span className="app__sidebar-meta">已累计 {Math.round(Object.values(useApp.getState().daily).reduce((sum, entry) => sum + entry.seconds, 0) / 60)} 分钟</span>
           </div>
-          <div className="app__footer-links">
-            <Link to="/practice">开始练习</Link>
-            <Link to="/wordbook">浏览词库</Link>
-            <Link to="/keyboard">键盘实验室</Link>
-            <Link to="/settings">设置</Link>
+        </aside>
+        <main className="app__stage">
+          <div className="app__view" key={location.pathname}>
+            <Outlet />
           </div>
-          <p className="faint app__footer-note">
-            词库数据来自百词斩公开词表与 JLPT 开源词表，例句与真题例句随词条提供。仅供学习使用。
-          </p>
-        </div>
-      </footer>
+        </main>
+      </div>
 
-      <div className="noise-overlay" aria-hidden="true" />
+      <Crosshair blendMode="normal" opacity={0.55} smoothing={0.42} gap={12} />
     </div>
   );
 };

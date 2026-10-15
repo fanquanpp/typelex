@@ -19,12 +19,9 @@ import type { RgbStyle } from '../three/keyboard/models';
 import './KeyboardLab.css';
 
 const RGB_STYLES: { id: RgbStyle; label: string }[] = [
-  { id: 'solid', label: '单色' },
-  { id: 'wave', label: '波浪' },
-  { id: 'rainbow', label: '彩虹' },
-  { id: 'reactive', label: '触发' },
-  { id: 'starlight', label: '星光' },
-  { id: 'heatmap', label: '热力' }
+  { id: 'solid', label: '关闭' },
+  { id: 'reactive', label: '按键响应' },
+  { id: 'heatmap', label: '弱键标记' }
 ];
 
 const VIEWS: { id: ViewPreset; label: string }[] = [
@@ -112,8 +109,8 @@ const KeyboardLab = () => {
         <span className="eyebrow">Keyboard lab</span>
         <h1 className="page-title">键盘实验室</h1>
         <p className="page-sub">
-          十五种键盘手感，从笔记本巧克力键到 75% 客制化机械键盘。换一把键盘，键位布局、键帽高度、
-          背光方式都会跟着变；练习页用的是同一套模型。
+          四种键盘手感，从笔记本巧克力键到 60% 客制化机械键盘。换一把键盘，键位布局与键帽高度
+          会跟着变；练习页用的是同一套模型。
         </p>
       </header>
 
@@ -213,7 +210,7 @@ const KeyboardLab = () => {
 
           {model.backlight === 'none' && (
             <p className="faint" style={{ fontSize: 'var(--text-xs)' }}>
-              当前这把键盘没有背光（HHKB 风格），切换键盘后即可体验灯光效果。
+              当前这把键盘没有背光；机械键盘可开启按键响应与弱键标记。
             </p>
           )}
         </div>
@@ -247,9 +244,8 @@ const KeyboardLab = () => {
                   <span className="model-card__meta">
                     <span className="chip">{getLayout(entry.layoutId).keys.length} 键</span>
                     <span className="chip">
-                      {entry.backlight === 'rgb' ? 'RGB' : entry.backlight === 'white' ? '白色背光' : '无背光'}
+                      {entry.sound === 'laptop' ? '剪刀脚' : entry.sound === 'linear' ? '线性轴' : '段落轴'}
                     </span>
-                    <span className="chip">{entry.sound === 'laptop' ? '剪刀脚' : entry.sound === 'clicky' ? '青轴' : entry.sound === 'linear' ? '红轴' : '茶轴'}</span>
                   </span>
                 </button>
               ))}

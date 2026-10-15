@@ -4,6 +4,7 @@
   position: relative;
   margin-left: auto;
   margin-right: auto;
+  max-height: 100%;
   isolation: isolate;
   user-select: none;
   -webkit-user-select: none;
@@ -60,26 +61,17 @@
 }
 
 .orbit-item-inner::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  border-top: 2px solid var(--orbit-accent, var(--primary));
-  opacity: 0.75;
-  pointer-events: none;
+  display: none;
 }
 
 .orbit-item[data-active] .orbit-item-inner {
-  border-color: var(--orbit-accent, var(--primary));
-  box-shadow:
-    0 0 0 1px var(--orbit-accent, var(--primary)),
-    0 18px 40px -20px var(--orbit-accent, var(--primary));
+  border-color: var(--ink);
 }
 
 .orbit-item:hover .orbit-item-inner,
 .orbit-item:focus-visible .orbit-item-inner {
-  transform: scale(var(--orbit-hover-scale, 1.08));
-  border-color: var(--border-strong);
+  transform: translateY(-2px);
+  border-color: var(--ink-muted);
 }
 
 .orbit-item:focus-visible {
@@ -99,8 +91,8 @@
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
-  padding: 12px 14px;
-  gap: 6px;
+  padding: 9px 11px;
+  gap: 3px;
 }
 
 .orbit-card__top {
@@ -112,22 +104,22 @@
 
 .orbit-card__tag {
   font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 700;
+  font-size: 8.5px;
+  font-weight: 600;
   letter-spacing: var(--tracking-widest);
-  color: var(--orbit-accent, var(--primary));
+  color: var(--ink-faint);
 }
 
 .orbit-card__count {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 8.5px;
   font-weight: 600;
   color: var(--ink-faint);
   font-variant-numeric: tabular-nums;
 }
 
 .orbit-card__name {
-  font-size: 15px;
+  font-size: 12.5px;
   font-weight: 650;
   letter-spacing: var(--tracking-tight);
   color: var(--ink);
@@ -135,24 +127,13 @@
 }
 
 .orbit-card__sub {
-  font-size: 11px;
+  font-size: 9.5px;
   color: var(--ink-faint);
   line-height: 1.35;
 }
 
 .orbit-card__bar {
-  height: 3px;
-  border-radius: var(--r-full);
-  background: var(--border);
-  overflow: hidden;
-}
-
-.orbit-card__bar > span {
-  display: block;
-  height: 100%;
-  border-radius: inherit;
-  background: var(--orbit-accent, var(--primary));
-  transition: width 0.6s var(--ease-out);
+  display: none;
 }
 
 .orbit-center-content {

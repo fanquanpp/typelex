@@ -29,25 +29,11 @@
 }
 
 .loop-card__index {
-  position: absolute;
-  top: var(--s3);
-  right: var(--s4);
-  font-family: var(--font-mono);
-  font-size: var(--text-2xl);
-  font-weight: 700;
-  color: var(--ink-ghost);
-  opacity: 0.5;
-  line-height: 1;
+  display: none;
 }
 
 .loop-card__icon {
-  display: grid;
-  place-items: center;
-  width: 38px;
-  height: 38px;
-  border-radius: var(--r-sm);
-  background: var(--primary-soft);
-  color: var(--primary);
+  display: none;
 }
 
 .loop-card__title {
@@ -91,4 +77,80 @@
   .home {
     gap: var(--s12);
   }
+}
+
+/* Compact capability strip — the single-screen replacement for four sections. */
+.home-strip {
+  display: grid;
+  gap: var(--s4);
+  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+}
+
+.home-strip__item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: var(--s4) var(--s5);
+  border-radius: var(--r-md);
+  background: var(--glass-tint);
+  border: 1px solid var(--glass-edge-soft);
+  -webkit-backdrop-filter: blur(14px) saturate(1.5);
+  backdrop-filter: blur(14px) saturate(1.5);
+}
+
+.home-strip__item strong {
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.home-strip__item span {
+  font-size: var(--text-xs);
+  color: var(--ink-faint);
+  line-height: 1.5;
+}
+
+.home-cta {
+  padding: var(--s4) var(--s5);
+  border-radius: var(--r-md);
+  border: 1px solid var(--glass-edge-soft);
+  background: color-mix(in srgb, var(--glass-tint) 60%, transparent);
+}
+
+/* Compact single-screen variants. */
+.loop-grid--compact {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s3);
+}
+
+.loop-card--compact {
+  padding: var(--s4) var(--s5);
+  gap: var(--s2);
+}
+
+.loop-card--compact .loop-card__icon {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-xs);
+}
+
+.loop-card--compact .loop-card__title {
+  font-size: var(--text-sm);
+}
+
+.loop-card--compact .loop-card__body {
+  font-size: var(--text-xs);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.loop-card--compact .loop-card__meta {
+  display: none;
+}
+
+.loop-card--compact .loop-card__index {
+  font-size: var(--text-lg);
 }

@@ -17,15 +17,6 @@ import { loadBooks, loadCategories } from '../lib/vocab';
 
 const MODE_ORDER: PracticeMode[] = ['random', 'sequential', 'category', 'sentence', 'weak', 'srs', 'japanese'];
 
-const MODE_ICON: Record<PracticeMode, string> = {
-  random: 'M4 7h4l3 10h4l3-10h2',
-  sequential: 'M4 6h16M4 12h10M4 18h6',
-  category: 'M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z',
-  sentence: 'M4 6h16M4 11h16M4 16h9',
-  weak: 'M3 12h4l2-6 3 12 2-6h7',
-  srs: 'M12 3a9 9 0 1 1-8.5 6M3 4v5h5',
-  japanese: 'M5 5h14M12 5v14M8 19h8M9 9h6'
-};
 
 const JLPT = [
   { level: 5, name: 'N5', desc: '入门' },
@@ -178,9 +169,6 @@ const Practice = () => {
       <header className="page-head">
         <span className="eyebrow">Practice</span>
         <h1 className="page-title">配置一次练习</h1>
-        <p className="page-sub">
-          先选词库，再选模式。所有设置都会保存下来，刷新页面后回到这里仍然是同样的配置。
-        </p>
       </header>
 
       {/* ---------------- word list picker ---------------- */}
@@ -188,9 +176,6 @@ const Practice = () => {
         <div className="section-head">
           <div>
             <h2 className="section-title">选择词库</h2>
-            <p className="muted" style={{ fontSize: 'var(--text-sm)' }}>
-              拖拽圆环可以旋转，点击卡片直接进入。可以多选英语词库叠加练习。
-            </p>
           </div>
           <span className="chip">
             已选 <strong className="tnum">{config.mode === 'japanese' ? (config.jlpt ?? []).length : config.books.length}</strong>
@@ -228,9 +213,6 @@ const Practice = () => {
                         .map(book => book.short)
                         .join(' + ') || '未选择'}
                 </strong>
-                <span className="faint" style={{ fontSize: 'var(--text-xs)' }}>
-                  点击卡片切换词库
-                </span>
               </div>
             }
           />
@@ -249,16 +231,14 @@ const Practice = () => {
                 toggleBook(book.id);
               }}
             >
-              <span className="book-row__dot" style={{ background: book.accent }} />
               <span className="book-row__body">
                 <span className="book-row__name">{book.name}</span>
-                <span className="book-row__desc">{book.desc}</span>
                 <span className="row wrap" style={{ gap: 6, marginTop: 6 }}>
                   <span className="chip">{book.count} 词</span>
                   <span className="chip">{book.coverage.sentence} 例句</span>
                   <span className="chip">{book.coverage.related} 同根词</span>
-                  {book.coverage.exam > 0 && <span className="chip chip-amber">{book.coverage.exam} 真题句</span>}
-                  {book.coverage.mnemonic > 0 && <span className="chip chip-violet">{book.coverage.mnemonic} 记忆法</span>}
+                  {book.coverage.exam > 0 && <span className="chip">{book.coverage.exam} 真题句</span>}
+                  {book.coverage.mnemonic > 0 && <span className="chip">{book.coverage.mnemonic} 记忆法</span>}
                 </span>
               </span>
               <span className="book-row__count">{book.short}</span>
@@ -308,9 +288,6 @@ const Practice = () => {
         <div className="section-head">
           <div>
             <h2 className="section-title">练习模式</h2>
-            <p className="muted" style={{ fontSize: 'var(--text-sm)' }}>
-              随机与顺序练手感，专项与句子练具体知识点，弱键与复习负责查漏补缺。
-            </p>
           </div>
         </div>
 
@@ -318,14 +295,9 @@ const Practice = () => {
           {MODE_ORDER.map(mode => (
             <ModeCard key={mode} active={config.mode === mode} onClick={() => patch({ mode })}>
               <span className="mode-card__head">
-                <span className="mode-card__name">
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.7">
-                    <path d={MODE_ICON[mode]} />
-                  </svg>
-                  {MODE_LABEL[mode]}
-                </span>
-                {mode === 'srs' && dueCount > 0 && <span className="chip chip-amber">{dueCount} 待复习</span>}
-                {mode === 'japanese' && <span className="chip chip-rose">罗马音</span>}
+                <span className="mode-card__name">{MODE_LABEL[mode]}</span>
+                {mode === 'srs' && dueCount > 0 && <span className="chip">{dueCount} 待复习</span>}
+                {mode === 'japanese' && <span className="chip">罗马音</span>}
               </span>
               <span className="mode-card__desc">{MODE_DESC[mode]}</span>
               <span className="mode-card__meta">
@@ -359,9 +331,7 @@ const Practice = () => {
               >
                 <span className="mode-card__head">
                   <span className="mode-card__name">{category.name}</span>
-                  <span className="chip" style={{ color: category.accent, borderColor: category.accent }}>
-                    {category.count}
-                  </span>
+                  <span className="chip">{category.count}</span>
                 </span>
                 <span className="mode-card__desc">{category.desc}</span>
               </button>

@@ -1,0 +1,74 @@
+/* The page backdrop: a WebGL colour field over a CSS gradient mesh.
+   The CSS layer is not a fallback afterthought — it paints first, so the glass
+   has colour behind it even before the shader compiles. */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background: var(--scene-base);
+}
+
+.backdrop__canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* CSS mesh gradient — always present, visible under the shader and on its own
+   when WebGL is unavailable. Four offset radial blooms read as a mesh gradient. */
+.backdrop__mesh {
+  position: absolute;
+  inset: -12%;
+  background:
+    radial-gradient(46% 40% at 16% 14%, var(--scene-1) 0%, transparent 62%),
+    radial-gradient(40% 38% at 84% 22%, var(--scene-2) 0%, transparent 60%),
+    radial-gradient(44% 42% at 68% 86%, var(--scene-3) 0%, transparent 62%),
+    radial-gradient(48% 44% at 24% 78%, var(--scene-4) 0%, transparent 64%);
+  filter: blur(58px) saturate(1.25);
+  animation: mesh-drift 34s var(--ease-in-out) infinite alternate;
+}
+
+@keyframes mesh-drift {
+  0% {
+    transform: translate3d(-2%, -1.5%, 0) scale(1.02);
+  }
+  50% {
+    transform: translate3d(2.5%, 1.5%, 0) scale(1.08);
+  }
+  100% {
+    transform: translate3d(-1%, 2.5%, 0) scale(1.03);
+  }
+}
+
+/* A very faint technical grid, masked to the centre. Keeps the page from
+   reading as a plain gradient without adding visual noise. */
+.backdrop__grid {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 78% 66% at 50% 30%, #000 12%, transparent 78%);
+  -webkit-mask-image: radial-gradient(ellipse 78% 66% at 50% 30%, #000 12%, transparent 78%);
+  opacity: 0.75;
+}
+
+/* Vignette so the very edges recede and content keeps its contrast. */
+.backdrop::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 92% 78% at 50% 42%, transparent 38%, var(--scene-vignette) 100%);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backdrop__mesh {
+    animation: none;
+  }
+}

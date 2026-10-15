@@ -265,7 +265,7 @@ const Study = () => {
             <div className="study-main">
               <SpotlightCard className="study-card">
                 <div className="study-card__head">
-                  <span className="chip" style={{ borderColor: current.level === 1 ? '#2fb8a4' : current.level === 2 ? '#5b8def' : '#a06bf0' }}>
+                  <span className="chip">
                     {current.level === 1 ? '高中' : current.level === 2 ? 'CET-4' : 'CET-6'}
                   </span>
                   <span className="faint mono" style={{ fontSize: 'var(--text-xs)' }}>
@@ -318,7 +318,7 @@ const Study = () => {
                           .flatMap(group => group[1])
                           .slice(0, 5)
                           .map(([word, cn]) => (
-                            <span className="chip chip-violet" key={word} title={cn}>
+                            <span className="chip" key={word} title={cn}>
                               {word}
                             </span>
                           ))}

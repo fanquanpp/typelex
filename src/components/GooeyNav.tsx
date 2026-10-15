@@ -803,8 +803,17 @@ export const GooeyNav = ({
     const onVisibilityChange = () => {
       if (!document.hidden) refresh();
     };
+    /* The first pointer movement anywhere is the most reliable "layout is
+       settled and the user is here" signal available, and it costs nothing. */
+    let nudged = false;
+    const onFirstPointer = () => {
+      if (nudged) return;
+      nudged = true;
+      refresh();
+    };
     window.addEventListener('load', onWindowLoad);
     document.addEventListener('visibilitychange', onVisibilityChange);
+    window.addEventListener('pointermove', onFirstPointer, { once: true, passive: true });
 
     measure();
     settle(indexRef.current);
@@ -829,6 +838,7 @@ export const GooeyNav = ({
       resizeObserver.disconnect();
       window.removeEventListener('load', onWindowLoad);
       document.removeEventListener('visibilitychange', onVisibilityChange);
+      window.removeEventListener('pointermove', onFirstPointer);
       list.removeEventListener('pointerover', onOver);
       list.removeEventListener('pointerleave', onLeave);
       if (gl && pipeline) {
