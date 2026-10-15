@@ -6,6 +6,18 @@
   gap: var(--s4);
 }
 
+/* fill mode: the badge stage claims every pixel of free column height so the
+   lanyard reads as the right column's main content, not a stamp in a corner. */
+.word-card--fill {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.word-card--fill .word-card__stage {
+  flex: 1 1 auto;
+  min-height: 380px;
+}
+
 .word-card__stage {
   position: relative;
   border-radius: var(--r-xl);
@@ -135,43 +147,6 @@
 
 .decrypt-done {
   letter-spacing: normal;
-}
-
-/* ---- compact inline card used inside the practice sidebar ---- */
-
-.mini-card {
-  padding: var(--s4);
-  border-radius: var(--r-lg);
-  border: 1px solid var(--border);
-  background: var(--surface);
-}
-
-.mini-card__word {
-  font-family: var(--font-mono);
-  font-size: var(--text-lg);
-  font-weight: 700;
-  letter-spacing: var(--tracking-tight);
-}
-
-.mini-card__phonetic {
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  color: var(--ink-faint);
-  margin-top: 2px;
-}
-
-.mini-card__meaning {
-  margin-top: var(--s3);
-  font-size: var(--text-sm);
-  color: var(--ink-muted);
-  line-height: 1.6;
-}
-
-.mini-card__family {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--s2);
-  margin-top: var(--s3);
 }
 
 /* Flat glass word card — the session-side variant (no 3D badge). */

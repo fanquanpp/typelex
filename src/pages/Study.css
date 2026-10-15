@@ -4,7 +4,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
   gap: var(--s8);
-  align-items: start;
+  align-items: stretch;
 }
 
 .study-main {
@@ -14,12 +14,15 @@
   min-width: 0;
 }
 
+/* The badge column stretches to match the card column and the lanyard fills
+   it — the badge is this page's main visual, not a corner stamp. */
 .study-side {
   display: flex;
   flex-direction: column;
   gap: var(--s5);
   position: sticky;
   top: calc(var(--header-h) + var(--s4));
+  max-height: calc(100dvh - var(--header-h) - var(--s8));
 }
 
 .study-card {
@@ -156,6 +159,7 @@
   }
   .study-side {
     position: static;
+    max-height: none;
   }
   .study-card {
     padding: var(--s6) var(--s5);

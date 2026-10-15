@@ -8,7 +8,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import KeyboardStage from '../components/KeyboardStage';
-import { Reveal, SpotlightCard } from '../components/effects';
+import { Reveal } from '../components/effects';
 import { TypingLine } from '../components/TypingLine';
 import { useApp } from '../lib/store';
 import { FINGER_COLOR, FINGER_LABEL, FINGERS } from '../lib/typing/fingers';
@@ -159,10 +159,6 @@ const KeyboardLab = () => {
                     ? 'Cherry 高度'
                     : 'OEM 高度'}
             </span>
-          </div>
-
-          <div className="keyboard-overlay keyboard-overlay--br">
-            <span className="keyboard-chip">拖动旋转 · 滚轮缩放 · 点击按键</span>
           </div>
         </div>
 
@@ -338,31 +334,6 @@ const KeyboardLab = () => {
               </>
             )}
           </div>
-        </div>
-      </Reveal>
-
-      {/* ---------------- why it matters ---------------- */}
-      <Reveal as="section" className="stack-5">
-        <div className="feature-grid">
-          {[
-            {
-              title: '布局影响肌肉记忆',
-              body: '60% 没有方向键，98 键把数字区压进主键区，笔记本的半高方向键位置也不同。换布局练习能让你在真实设备上更快适应。'
-            },
-            {
-              title: '键帽高度影响手感',
-              body: 'OEM 比 Cherry 高约 2.5mm，下排倾角更大；巧克力键帽几乎平的，行程只有 1.2–1.8mm。这些差别在打字节奏上能听出来。'
-            },
-            {
-              title: '背光不只是好看',
-              body: '把背光设为「热力」时，键盘会按你的错误率上色；「触发」模式则让按下的键亮起并扩散，是最贴近真实机械键盘的反馈。'
-            }
-          ].map(entry => (
-            <SpotlightCard className="feature" key={entry.title}>
-              <h3 className="feature__title">{entry.title}</h3>
-              <p className="feature__body">{entry.body}</p>
-            </SpotlightCard>
-          ))}
         </div>
       </Reveal>
     </div>

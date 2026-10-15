@@ -233,6 +233,8 @@ interface WordCardProps {
   placeholder?: string;
   /** flat glass panel instead of the hanging-badge stage */
   flat?: boolean;
+  /** stretch the badge stage to fill the available column height */
+  fill?: boolean;
 }
 
 export const WordCard = ({
@@ -244,7 +246,8 @@ export const WordCard = ({
   onStar,
   starred = false,
   placeholder,
-  flat = false
+  flat = false,
+  fill = false
 }: WordCardProps) => {
   const [open, setOpen] = useState(false);
   const level = word?.level ?? 1;
@@ -256,8 +259,11 @@ export const WordCard = ({
 
   if (flat) {
     return (
-      <div className="word-card">
-        <div className="word-card__panel" style={{ minHeight: Math.min(height, 300) }}>
+      <div className={`word-card${fill ? ' word-card--fill' : ''}`}>
+        <div
+          className="word-card__panel"
+          style={fill ? { flex: '1 1 auto', minHeight: 280 } : { minHeight: Math.min(height, 300) }}
+        >
           {word ? (
             <>
               <div className="word-card__panel-head">
@@ -324,8 +330,8 @@ export const WordCard = ({
   }
 
   return (
-    <div className="word-card">
-      <div className="word-card__stage" style={{ height }}>
+    <div className={`word-card${fill ? ' word-card--fill' : ''}`}>
+      <div className="word-card__stage" style={fill ? undefined : { height }}>
         {word ? (
           <Lanyard
             frontPainter={frontPainter}

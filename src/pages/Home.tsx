@@ -155,7 +155,6 @@ const Home = () => {
               sceneRef.current = scene;
             }}
           />
-          <span className="hero__badge hero__badge--a">当前键盘</span>
         </div>
       </section>
 
@@ -168,9 +167,6 @@ const Home = () => {
               三套英语词表 + 日语 N1–N5
             </h2>
           </div>
-          <Link to="/wordbook" className="btn btn-sm">
-            浏览全部词条
-          </Link>
         </div>
         <div className="category-stage">
           <OrbitCards
@@ -191,9 +187,6 @@ const Home = () => {
                 <strong>
                   <CountUp to={totalWords || 16514} /> 词
                 </strong>
-                <span className="faint" style={{ fontSize: 'var(--text-2xs)' }}>
-                  拖动旋转 · 点击进入
-                </span>
               </div>
             }
           />
@@ -217,10 +210,6 @@ const Home = () => {
           <p className="muted" style={{ fontSize: 'var(--text-sm)' }}>
             全部进度保存在本地浏览器，无需注册。
           </p>
-          <div className="row wrap" style={{ gap: 'var(--s3)' }}>
-            <Link to="/practice" className="btn btn-primary">进入练习</Link>
-            <Link to="/wordbook" className="btn">浏览词库</Link>
-          </div>
         </div>
       </Reveal>
     </div>

@@ -50,7 +50,6 @@ const Session = () => {
   const [detail, setDetail] = useState<Detail | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [showKeyboard, setShowKeyboard] = useState(true);
-  const [lastCompleted, setLastCompleted] = useState<PracticeItem | null>(null);
   const [itemHadError, setItemHadError] = useState(false);
 
   const sceneRef = useRef<KeyboardScene | null>(null);
@@ -145,7 +144,6 @@ const Session = () => {
       onKeyUp: (code: string) => sceneRef.current?.release(code),
       onError: (code: string) => sceneRef.current?.error(code),
       onItemComplete: (item: PracticeItem, info: { ms: number; errors: number }) => {
-        setLastCompleted(item);
         setItemHadError(false);
         /* feed the spaced-repetition scheduler from the attempt itself */
         if (item.word) {
@@ -362,7 +360,6 @@ const Session = () => {
               className="btn btn-primary"
               onClick={() => {
                 setResult(null);
-                setLastCompleted(null);
                 setDetail(null);
                 restart();
               }}
@@ -522,54 +519,19 @@ const Session = () => {
                   window.setTimeout(() => sceneRef.current?.release(code), 110);
                 }}
               />
-              <div className="keyboard-overlay keyboard-overlay--tl">
-                <span className="keyboard-chip">
-                  <strong>{item ? item.text : ''}</strong>
-                </span>
-              </div>
-              <div className="keyboard-overlay keyboard-overlay--br">
-                <span className="keyboard-chip">拖动旋转 · 滚轮缩放</span>
-              </div>
             </div>
           )}
         </div>
 
         <aside className="session-side">
-          {lastCompleted && lastCompleted.kind === 'word' && lastCompleted.word && (
-            <div className="mini-card">
-              <div className="row-between">
-                <div>
-                  <div className="mini-card__word">{lastCompleted.word.word}</div>
-                  <div className="mini-card__phonetic">
-                    {lastCompleted.word.us || lastCompleted.word.uk}
-                  </div>
-                </div>
-                <span className="chip">已练</span>
-              </div>
-              <div className="mini-card__meaning">{lastCompleted.word.cn}</div>
-              {detail?.r && detail.r.length > 0 && (
-                <div className="mini-card__family">
-                  {detail.r
-                    .flatMap(group => group[1])
-                    .slice(0, 4)
-                    .map(([word, cn]) => (
-                      <span className="chip" key={word} title={cn}>
-                        {word}
-                      </span>
-                    ))}
-                </div>
-              )}
-            </div>
-          )}
-
           {config.showCard && (
             <WordCard
               word={activeWord}
               detail={detail}
               theme={settings.theme}
               accent={accent}
-              height={430}
               flat
+              fill
               starred={activeWordKey ? stars.includes(activeWordKey) : false}
               onStar={activeWordKey ? () => toggleStar(activeWordKey) : undefined}
               placeholder="当前不是单词模式"

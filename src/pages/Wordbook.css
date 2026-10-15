@@ -8,22 +8,25 @@
 
 .wordbook-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
   gap: var(--s6);
-  align-items: start;
+  align-items: stretch;
 }
 
 .wordbook-list {
   padding: var(--s2);
   border-radius: var(--r-lg);
+  max-height: calc(100dvh - var(--header-h) - 220px);
 }
 
+/* The badge column stretches with the list; the lanyard fills the height. */
 .wordbook-detail {
   display: flex;
   flex-direction: column;
   gap: var(--s5);
   position: sticky;
   top: calc(var(--header-h) + var(--s4));
+  max-height: calc(100dvh - var(--header-h) - var(--s8));
 }
 
 @media (max-width: 1080px) {
@@ -32,6 +35,7 @@
   }
   .wordbook-detail {
     position: static;
+    max-height: none;
   }
   .wordbook-list {
     max-height: 420px;

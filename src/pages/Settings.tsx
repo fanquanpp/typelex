@@ -450,17 +450,6 @@ const Settings = () => {
             TypeLex 是一个纯前端的打字练习与词汇记忆项目：3D 键盘用 Three.js 实时构建，
             词库来自公开词表并在构建期整理成可增量加载的数据，没有后端、没有账号，所有进度都在你自己的浏览器里。
           </p>
-          <div className="row wrap" style={{ gap: 'var(--s3)' }}>
-            <Link to="/practice" className="btn btn-primary">
-              去练习
-            </Link>
-            <Link to="/wordbook" className="btn">
-              浏览词库
-            </Link>
-            <Link to="/keyboard" className="btn btn-ghost">
-              键盘实验室
-            </Link>
-          </div>
         </div>
       </Reveal>
     </div>

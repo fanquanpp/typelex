@@ -3,6 +3,9 @@
 .session-page {
   gap: var(--s5);
   padding-top: var(--s6);
+  /* single-screen view: the session must fit the viewport, not scroll */
+  height: 100%;
+  min-height: 0;
 }
 
 .session-bar {
@@ -48,6 +51,13 @@
   flex-wrap: wrap;
   font-size: var(--text-xs);
   padding-top: var(--s2);
+}
+
+/* The session view is height-constrained: the word card and the error panel
+   share the side column by their natural need, the card taking the bulk. */
+.session-page .session-side > .word-card {
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 @media (max-width: 1080px) {

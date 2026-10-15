@@ -259,15 +259,7 @@ const Wordbook = () => {
               <>
                 <div className="panel panel-pad stack-3">
                   <div className="row-between wrap">
-                    <div>
-                      <h2 className="mono" style={{ fontSize: 'var(--text-xl)' }}>
-                        {active.word}
-                      </h2>
-                      <p className="faint mono" style={{ fontSize: 'var(--text-xs)' }}>
-                        {active.uk && `英 /${active.uk}/`} {active.us && `美 /${active.us}/`}
-                      </p>
-                    </div>
-                    <div className="row" style={{ gap: 'var(--s2)' }}>
+                    <div className="row" style={{ gap: 'var(--s3)' }}>
                       <button
                         type="button"
                         className={`btn btn-sm ${stars.includes(`${active.book}:${active.word}`) ? 'btn-primary' : ''}`}
@@ -283,9 +275,12 @@ const Wordbook = () => {
                         {known[`${active.book}:${active.word}`] === 2 ? '取消掌握' : '标记掌握'}
                       </button>
                     </div>
+                    <span className="faint mono" style={{ fontSize: 'var(--text-xs)' }}>
+                      {active.uk && `英 /${active.uk}/`} {active.us && `美 /${active.us}/`}
+                    </span>
                   </div>
                 </div>
-                <WordCard word={active} detail={detail} theme={settings.theme} height={430} />
+                <WordCard word={active} detail={detail} theme={settings.theme} fill />
               </>
             ) : (
               <div className="empty">

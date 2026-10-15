@@ -383,7 +383,7 @@ const Study = () => {
                 detail={detail}
                 theme={settings.theme}
                 accent={current.level === 1 ? '#2fb8a4' : current.level === 2 ? '#5b8def' : '#a06bf0'}
-                height={400}
+                fill
               />
               <div className="panel panel-pad stack-3">
                 <p className="eyebrow">本次</p>
