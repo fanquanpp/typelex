@@ -1,0 +1,6 @@
+# Normalise line endings so the repo stays LF regardless of the authoring OS.
+* text=auto eol=lf
+
+# Generated vocabulary data: large, minified JSON on a single line.
+public/data/** linguist-generated=true -diff
+package-lock.json linguist-generated=true -diff

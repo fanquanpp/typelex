@@ -1,0 +1,42 @@
+/**
+ * Router.
+ *
+ * HashRouter rather than BrowserRouter: the built site is served as static files
+ * (GitHub Pages, or opened straight from disk), neither of which can rewrite
+ * deep links to index.html. Hash routing keeps every route refreshable, which is
+ * a hard requirement here — a mid-session refresh has to land back on the same
+ * page with the session intact.
+ */
+import { HashRouter, Navigate, Route, Routes } from 'react-router-dom';
+
+import AppShell from './components/AppShell';
+import Home from './pages/Home';
+import Practice from './pages/Practice';
+import Session from './pages/Session';
+import Study from './pages/Study';
+import Wordbook from './pages/Wordbook';
+import KeyboardLab from './pages/KeyboardLab';
+import Japanese from './pages/Japanese';
+import Stats from './pages/Stats';
+import Settings from './pages/Settings';
+
+const App = () => (
+  <HashRouter>
+    <Routes>
+      <Route element={<AppShell />}>
+        <Route index element={<Home />} />
+        <Route path="practice" element={<Practice />} />
+        <Route path="practice/session" element={<Session />} />
+        <Route path="study" element={<Study />} />
+        <Route path="wordbook" element={<Wordbook />} />
+        <Route path="keyboard" element={<KeyboardLab />} />
+        <Route path="japanese" element={<Japanese />} />
+        <Route path="stats" element={<Stats />} />
+        <Route path="settings" element={<Settings />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Route>
+    </Routes>
+  </HashRouter>
+);
+
+export default App;

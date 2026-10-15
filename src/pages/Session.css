@@ -1,0 +1,59 @@
+/* Practice session page. */
+
+.session-page {
+  gap: var(--s5);
+  padding-top: var(--s6);
+}
+
+.session-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--s4);
+  flex-wrap: wrap;
+}
+
+.session-progress {
+  flex: 1 1 180px;
+  height: 4px;
+  border-radius: var(--r-full);
+  background: var(--border);
+  overflow: hidden;
+  min-width: 120px;
+}
+
+.session-progress > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  transition: width var(--t-slow) var(--ease-out);
+}
+
+.session-pause {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  padding: var(--s6);
+  background: var(--scrim);
+  backdrop-filter: blur(10px);
+  animation: page-enter 260ms var(--ease-out);
+}
+
+.session-footer-hint {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s4);
+  flex-wrap: wrap;
+  font-size: var(--text-xs);
+  padding-top: var(--s2);
+}
+
+@media (max-width: 1080px) {
+  .session-side {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+    gap: var(--s5);
+  }
+}

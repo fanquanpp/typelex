@@ -1,0 +1,162 @@
+/* GooeyNav — adapted from react-bits (David Haz, MIT + Commons Clause).
+   Colours come from the TypeLex design tokens rather than the original theme map. */
+
+.gooey-nav {
+  --gn-pad: 6px;
+  --gn-gap: 4px;
+  --gn-font: 14px;
+  --gn-x: 16px;
+  --gn-y: 9px;
+  position: relative;
+  display: inline-flex;
+  max-width: 100%;
+  font-size: var(--gn-font);
+  line-height: 1.2;
+  --gn-frame: var(--glass);
+  --gn-frame-edge: var(--border);
+  --gn-frame-highlight: rgba(255, 255, 255, 0.07);
+  --gn-ink: var(--ink);
+  --gn-muted: var(--ink-muted);
+}
+
+[data-theme='light'] .gooey-nav {
+  --gn-frame-highlight: rgba(255, 255, 255, 0.9);
+}
+
+.gooey-nav--sm {
+  --gn-pad: 5px;
+  --gn-gap: 2px;
+  --gn-font: 13px;
+  --gn-x: 13px;
+  --gn-y: 7px;
+}
+
+.gooey-nav--lg {
+  --gn-pad: 7px;
+  --gn-gap: 6px;
+  --gn-font: 15px;
+  --gn-x: 19px;
+  --gn-y: 10px;
+}
+
+.gooey-nav--framed {
+  padding: var(--gn-pad);
+  border-radius: var(--r-full);
+  background: var(--gn-frame);
+  box-shadow: var(--shadow-md);
+  -webkit-backdrop-filter: blur(20px) saturate(1.6);
+  backdrop-filter: blur(20px) saturate(1.6);
+}
+
+.gooey-nav__stage {
+  position: relative;
+  max-width: 100%;
+}
+
+.gooey-nav__canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.gooey-nav__fallback {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: none;
+  border-radius: var(--r-full);
+  background: var(--gn-pill);
+  pointer-events: none;
+  transition: transform 320ms var(--ease-out), width 320ms var(--ease-out), height 320ms var(--ease-out);
+}
+
+.gooey-nav__list {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gn-gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gooey-nav__list--active {
+  position: absolute;
+  inset: 0;
+  color: var(--gn-active-ink);
+  visibility: hidden;
+  clip-path: inset(100%);
+  pointer-events: none;
+}
+
+.gooey-nav__item {
+  display: flex;
+}
+
+.gooey-nav__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: var(--gn-y) var(--gn-x);
+  border: none;
+  border-radius: var(--r-full);
+  background: none;
+  color: var(--gn-muted);
+  font: inherit;
+  font-weight: 600;
+  letter-spacing: var(--tracking-snug);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.gooey-nav__list--active .gooey-nav__link {
+  color: inherit;
+}
+
+.gooey-nav__item[data-active] .gooey-nav__link {
+  color: var(--gn-ink);
+}
+
+.gooey-nav__link:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.gooey-nav__icon {
+  display: inline-flex;
+  flex: none;
+  opacity: 0.85;
+}
+
+.gooey-nav__icon svg {
+  width: 1.15em;
+  height: 1.15em;
+}
+
+.gooey-nav__rim {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 1px var(--gn-frame-edge),
+    inset 0 1px 0 var(--gn-frame-highlight);
+  pointer-events: none;
+}
+
+@media (hover: hover) {
+  .gooey-nav__link:hover {
+    color: var(--gn-ink);
+  }
+}
+
+@media (max-width: 900px) {
+  .gooey-nav {
+    --gn-x: 12px;
+    --gn-y: 8px;
+    --gn-font: 13px;
+  }
+}

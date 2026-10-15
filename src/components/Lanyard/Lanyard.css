@@ -1,0 +1,27 @@
+/* Lanyard — adapted from react-bits (David Haz, MIT + Commons Clause). */
+
+.lanyard {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.lanyard-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: default;
+}
+
+.lanyard-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%);
+  font-size: var(--text-xs);
+  color: var(--ink-faint);
+  letter-spacing: var(--tracking-wide);
+  pointer-events: none;
+  white-space: nowrap;
+}

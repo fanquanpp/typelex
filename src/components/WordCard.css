@@ -1,0 +1,175 @@
+/* Vocabulary card + detail panel. */
+
+.word-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+}
+
+.word-card__stage {
+  position: relative;
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  background: radial-gradient(90% 70% at 50% 0%, var(--surface) 0%, transparent 60%);
+}
+
+.word-card__empty {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  padding: var(--s8);
+  text-align: center;
+  border: 1px dashed var(--border);
+  border-radius: var(--r-xl);
+}
+
+.word-card__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+  flex-wrap: wrap;
+}
+
+.word-card__detail {
+  border-top: 1px solid var(--border);
+  padding-top: var(--s5);
+}
+
+.word-detail__defs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+  margin-top: var(--s3);
+}
+
+.word-detail__defs > li {
+  display: flex;
+  gap: var(--s3);
+  align-items: flex-start;
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}
+
+.word-detail__sentences {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+  margin-top: var(--s3);
+}
+
+.word-detail__sentences > li {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-left: var(--s4);
+  border-left: 2px solid var(--border);
+  font-size: var(--text-sm);
+}
+
+.word-detail__sentences .mono {
+  color: var(--ink);
+  line-height: 1.6;
+}
+
+.word-detail__sentences .muted {
+  font-size: var(--text-xs);
+  line-height: 1.55;
+}
+
+.word-detail__phrases {
+  display: grid;
+  gap: var(--s2);
+  margin-top: var(--s3);
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.word-detail__phrases > li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--s3);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  border: 1px solid var(--border-faint);
+  font-size: var(--text-xs);
+}
+
+.word-detail__family {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+  margin-top: var(--s3);
+}
+
+.word-detail__family > div {
+  display: flex;
+  gap: var(--s3);
+  align-items: flex-start;
+}
+
+.word-detail__mnemonic {
+  margin-top: var(--s3);
+  padding: var(--s4);
+  border-radius: var(--r-md);
+  background: var(--amber-soft);
+  border: 1px solid transparent;
+  color: var(--ink);
+  font-size: var(--text-sm);
+  line-height: 1.65;
+}
+
+.word-detail__foot {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  font-size: var(--text-xs);
+  padding-top: var(--s2);
+  border-top: 1px solid var(--border-faint);
+}
+
+.decrypt {
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+}
+
+.decrypt-done {
+  letter-spacing: normal;
+}
+
+/* ---- compact inline card used inside the practice sidebar ---- */
+
+.mini-card {
+  padding: var(--s4);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.mini-card__word {
+  font-family: var(--font-mono);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  letter-spacing: var(--tracking-tight);
+}
+
+.mini-card__phonetic {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--ink-faint);
+  margin-top: 2px;
+}
+
+.mini-card__meaning {
+  margin-top: var(--s3);
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
+  line-height: 1.6;
+}
+
+.mini-card__family {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2);
+  margin-top: var(--s3);
+}

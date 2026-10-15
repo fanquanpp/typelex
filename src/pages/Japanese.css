@@ -1,0 +1,78 @@
+/* Japanese page. */
+
+.jp-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s8);
+  flex-wrap: wrap;
+  background:
+    radial-gradient(90% 140% at 6% 0%, hsl(var(--hue-rose) 70% 60% / 0.14), transparent 58%),
+    var(--surface);
+}
+
+.jp-level[data-active] {
+  border-color: var(--rose);
+}
+
+.jp-level .stat-value {
+  color: var(--rose);
+}
+
+.jp-charts {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: var(--s5);
+  align-items: start;
+}
+
+.kana-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.kana-grid--yoon {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.kana-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  padding: 7px 4px;
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  border: 1px solid var(--border-faint);
+  transition: border-color var(--t-fast) var(--ease-out), transform var(--t-fast) var(--ease-out);
+}
+
+.kana-cell:hover {
+  border-color: var(--rose);
+  transform: translateY(-2px);
+}
+
+.kana-cell--empty {
+  background: transparent;
+  border-color: transparent;
+}
+
+.kana-cell__kana {
+  font-size: var(--text-md);
+  line-height: 1.1;
+  color: var(--ink);
+}
+
+.kana-cell__romaji {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink-faint);
+}
+
+@media (max-width: 1080px) {
+  .jp-charts {
+    grid-template-columns: 1fr;
+  }
+}

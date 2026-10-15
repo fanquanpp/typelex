@@ -1,0 +1,17 @@
+/* Keyboard lab page. */
+
+.lab-stage {
+  height: clamp(280px, 42vw, 460px);
+}
+
+.lab-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+  gap: var(--s5);
+}
+
+.lab-clusters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2);
+}

@@ -1,0 +1,129 @@
+/* Stats page. */
+
+.stats-level {
+  display: flex;
+  align-items: center;
+  gap: var(--s6);
+  flex-wrap: wrap;
+  background:
+    radial-gradient(70% 160% at 0% 0%, var(--primary-soft), transparent 60%),
+    var(--surface);
+}
+
+.daily-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 150px;
+}
+
+.daily-bar {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  height: 100%;
+  min-width: 0;
+}
+
+.daily-bar__fill {
+  width: 100%;
+  border-radius: var(--r-xs);
+  background: linear-gradient(180deg, var(--primary), hsl(var(--hue-primary) 60% 40% / 0.55));
+  transition: height var(--t-slower) var(--ease-out);
+  min-height: 3px;
+}
+
+.daily-bar__fill[data-empty='true'] {
+  background: var(--border);
+}
+
+.daily-bar__label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--ink-faint);
+  white-space: nowrap;
+}
+
+.heat-keyboard {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: flex-start;
+}
+
+.heat-row {
+  display: flex;
+  gap: 5px;
+}
+
+.heat-row .heat-key {
+  width: 38px;
+  height: 38px;
+  aspect-ratio: auto;
+}
+
+.achievement-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(190px, 100%), 1fr));
+  gap: var(--s3);
+}
+
+.achievement {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: var(--s4);
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  transition: transform var(--t-base) var(--ease-out), border-color var(--t-base) var(--ease-out);
+}
+
+.achievement:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-strong);
+}
+
+.achievement__mark {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-xs);
+  background: var(--surface-strong);
+  color: var(--ink-faint);
+  margin-bottom: 4px;
+}
+
+.achievement__mark[data-done='true'] {
+  background: var(--ok-soft);
+  color: var(--ok);
+}
+
+.achievement__label {
+  font-size: var(--text-sm);
+  font-weight: 620;
+  color: var(--ink);
+}
+
+.achievement__hint {
+  font-size: 10px;
+  color: var(--ink-faint);
+  line-height: 1.45;
+}
+
+@media (max-width: 640px) {
+  .heat-row .heat-key {
+    width: 28px;
+    height: 28px;
+  }
+  .heat-row {
+    margin-left: 0 !important;
+  }
+  .daily-bar__label {
+    display: none;
+  }
+}

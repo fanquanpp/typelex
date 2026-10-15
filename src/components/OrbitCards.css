@@ -1,0 +1,176 @@
+/* OrbitCards — adapted from react-bits OrbitImages (Dominik Koch, MIT + Commons Clause). */
+
+.orbit-container {
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  isolation: isolate;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.orbit-container[data-draggable] {
+  cursor: grab;
+  touch-action: pan-y pinch-zoom;
+}
+
+.orbit-container[data-dragging],
+.orbit-container[data-dragging] * {
+  cursor: grabbing;
+}
+
+.orbit-path-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.orbit-item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  will-change: transform, opacity;
+}
+
+.orbit-container[data-intro] .orbit-item {
+  opacity: 0;
+}
+
+.orbit-item[data-clickable] {
+  cursor: pointer;
+}
+
+.orbit-item-inner {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: var(--orbit-radius, 14px);
+  background: var(--surface-solid);
+  border: 1px solid var(--border);
+  box-shadow: 0 calc(var(--orbit-shadow, 0) * 16px) calc(var(--orbit-shadow, 0) * 36px)
+    rgba(0, 0, 0, calc(var(--orbit-shadow, 0) * 0.42));
+  transition:
+    transform 0.45s var(--ease-out),
+    border-color 0.3s var(--ease-out),
+    box-shadow 0.3s var(--ease-out);
+}
+
+.orbit-item-inner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border-top: 2px solid var(--orbit-accent, var(--primary));
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+.orbit-item[data-active] .orbit-item-inner {
+  border-color: var(--orbit-accent, var(--primary));
+  box-shadow:
+    0 0 0 1px var(--orbit-accent, var(--primary)),
+    0 18px 40px -20px var(--orbit-accent, var(--primary));
+}
+
+.orbit-item:hover .orbit-item-inner,
+.orbit-item:focus-visible .orbit-item-inner {
+  transform: scale(var(--orbit-hover-scale, 1.08));
+  border-color: var(--border-strong);
+}
+
+.orbit-item:focus-visible {
+  outline: none;
+}
+
+.orbit-item:focus-visible .orbit-item-inner {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+
+/* ---- the card content ---- */
+
+.orbit-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  padding: 12px 14px;
+  gap: 6px;
+}
+
+.orbit-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.orbit-card__tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: var(--tracking-widest);
+  color: var(--orbit-accent, var(--primary));
+}
+
+.orbit-card__count {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.orbit-card__name {
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: var(--tracking-tight);
+  color: var(--ink);
+  line-height: 1.2;
+}
+
+.orbit-card__sub {
+  font-size: 11px;
+  color: var(--ink-faint);
+  line-height: 1.35;
+}
+
+.orbit-card__bar {
+  height: 3px;
+  border-radius: var(--r-full);
+  background: var(--border);
+  overflow: hidden;
+}
+
+.orbit-card__bar > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--orbit-accent, var(--primary));
+  transition: width 0.6s var(--ease-out);
+}
+
+.orbit-center-content {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.orbit-center-content > * {
+  pointer-events: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbit-item-inner {
+    transition: none;
+  }
+}
