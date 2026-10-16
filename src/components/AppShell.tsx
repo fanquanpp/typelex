@@ -19,6 +19,7 @@ import LetterGlitch from './LetterGlitch';
 import PillNav from './PillNav';
 import { Counter } from './motion';
 import LineSidebar from './LineSidebar';
+import WarmTooltip, { WarmTooltipGroup } from './WarmTooltip';
 import './AppShell.css';
 
 /**
@@ -211,83 +212,100 @@ export const AppShell = () => {
             />
           </div>
 
+          {/* One warm label for the whole cluster: the first hover waits out the
+              delay, every icon after that swaps the same label in place. This
+              replaces the native `title` tooltips, which took a second to appear,
+              ignored the theme and could not be styled. */}
           <div className="app__actions">
-            <a
-              href="https://github.com/fanquanpp/typelex"
-              target="_blank"
-              rel="noreferrer"
-              className="btn btn-icon"
-              aria-label="GitHub 源仓库"
-              title="GitHub 源仓库"
-            >
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
-                <path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.72.5.1.68-.22.68-.49 0-.24-.01-.88-.01-1.73-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.11-1.5-1.11-1.5-.91-.63.07-.62.07-.62 1 .07 1.53 1.06 1.53 1.06.9 1.57 2.35 1.12 2.92.85.09-.67.35-1.12.63-1.38-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.7 0 0 .84-.28 2.75 1.05a9.36 9.36 0 0 1 5 0c1.91-1.33 2.75-1.05 2.75-1.05.55 1.4.2 2.44.1 2.7.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.8-4.57 5.06.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .27.18.6.69.49A10.02 10.02 0 0 0 22 12.25C22 6.58 17.52 2 12 2z" />
-              </svg>
-            </a>
-            <div className="xp-chip" title={`等级 ${progress.level} · ${Math.round(progress.current)} / ${progress.need} XP`}>
-              <span className="xp-chip__level">
-                LV <Counter value={progress.level} />
-              </span>
-              <span className="xp-chip__bar" aria-hidden="true">
-                <i style={{ width: `${progress.ratio * 100}%` }} />
-              </span>
-            </div>
-
-            <div className="streak-chip" title={`连续练习 ${streak.current} 天`}>
-              <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true">
-                <path
-                  d="M12 2c1.6 3.2 4.6 4.7 4.6 8.3 0 1.5-.7 2.7-1.7 3.4.2-1.6-.4-3-1.6-4.2.1 2.6-1.2 3.6-2.4 4.6-1 .8-1.6 1.7-1.6 3 0 1.9 1.6 3.4 3.6 3.4 2.8 0 5.1-2.3 5.1-5.2 0-4.6-3.4-6.9-6-13.3z"
-                  fill="currentColor"
-                />
-              </svg>
-              <span className="tnum">{streak.current}</span>
-            </div>
-
-            <button
-              type="button"
-              className="btn btn-icon"
-              aria-label={theme === 'dark' ? '切换到浅色主题' : '切换到深色主题'}
-              onClick={() => setSetting('theme', theme === 'dark' ? 'light' : 'dark')}
-            >
-              {theme === 'dark' ? (
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8">
-                  <circle cx="12" cy="12" r="4.2" />
-                  <path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M18.4 5.6L17 7M7 17l-1.4 1.4" />
+            <WarmTooltipGroup delay={320} warmWindow={280}>
+            <WarmTooltip content="GitHub 源仓库" side="bottom">
+              <a
+                href="https://github.com/fanquanpp/typelex"
+                target="_blank"
+                rel="noreferrer"
+                className="btn btn-icon"
+                aria-label="GitHub 源仓库"
+              >
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
+                  <path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.72.5.1.68-.22.68-.49 0-.24-.01-.88-.01-1.73-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.11-1.5-1.11-1.5-.91-.63.07-.62.07-.62 1 .07 1.53 1.06 1.53 1.06.9 1.57 2.35 1.12 2.92.85.09-.67.35-1.12.63-1.38-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.7 0 0 .84-.28 2.75 1.05a9.36 9.36 0 0 1 5 0c1.91-1.33 2.75-1.05 2.75-1.05.55 1.4.2 2.44.1 2.7.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.8-4.57 5.06.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .27.18.6.69.49A10.02 10.02 0 0 0 22 12.25C22 6.58 17.52 2 12 2z" />
                 </svg>
-              ) : (
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8">
-                  <path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z" />
-                </svg>
-              )}
-            </button>
+              </a>
+            </WarmTooltip>
 
-            <button
-              type="button"
-              className="btn btn-icon"
-              aria-label={soundEnabled ? '关闭按键音' : '开启按键音'}
-              onClick={() => setSetting('soundEnabled', !soundEnabled)}
-            >
-              {soundEnabled ? (
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8">
-                  <path d="M4 9.5h3l4-3v11l-4-3H4z" />
-                  <path d="M15 9a4 4 0 0 1 0 6" />
-                </svg>
-              ) : (
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8">
-                  <path d="M4 9.5h3l4-3v11l-4-3H4z" />
-                  <path d="M15.5 9.5l4 5M19.5 9.5l-4 5" />
-                </svg>
-              )}
-            </button>
+            <WarmTooltip content={`等级 ${progress.level} · ${Math.round(progress.current)} / ${progress.need} XP`} side="bottom">
+              <div className="xp-chip">
+                <span className="xp-chip__level">
+                  LV <Counter value={progress.level} />
+                </span>
+                <span className="xp-chip__bar" aria-hidden="true">
+                  <i style={{ width: `${progress.ratio * 100}%` }} />
+                </span>
+              </div>
+            </WarmTooltip>
 
-            <a href="#/settings" className="btn btn-icon" aria-label="设置">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.7">
-                <circle cx="12" cy="12" r="3" />
-                <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2 2 2 0 1 1-4 0 1.7 1.7 0 0 0-2.9-1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 2.6 15a2 2 0 1 1 0-4 1.7 1.7 0 0 0 1.2-2.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.7 1.7 0 0 0 9.5 4.1a2 2 0 1 1 4 0 1.7 1.7 0 0 0 2.9 1.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1A1.7 1.7 0 0 0 21.4 11a2 2 0 1 1 0 4 1.7 1.7 0 0 0-1.2 1z" />
-              </svg>
-            </a>
-          </div>
-        </div>
+            <WarmTooltip content={`连续练习 ${streak.current} 天`} side="bottom">
+              <div className="streak-chip">
+                <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true">
+                  <path
+                    d="M12 2c1.6 3.2 4.6 4.7 4.6 8.3 0 1.5-.7 2.7-1.7 3.4.2-1.6-.4-3-1.6-4.2.1 2.6-1.2 3.6-2.4 4.6-1 .8-1.6 1.7-1.6 3 0 1.9 1.6 3.4 3.6 3.4 2.8 0 5.1-2.3 5.1-5.2 0-4.6-3.4-6.9-6-13.3z"
+                    fill="currentColor"
+                  />
+                </svg>
+                <span className="tnum">{streak.current}</span>
+              </div>
+            </WarmTooltip>
+
+            <WarmTooltip content={theme === 'dark' ? '切换到浅色主题' : '切换到深色主题'} side="bottom">
+              <button
+                type="button"
+                className="btn btn-icon"
+                aria-label={theme === 'dark' ? '切换到浅色主题' : '切换到深色主题'}
+                onClick={() => setSetting('theme', theme === 'dark' ? 'light' : 'dark')}
+              >
+                {theme === 'dark' ? (
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8">
+                    <circle cx="12" cy="12" r="4.2" />
+                    <path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M18.4 5.6L17 7M7 17l-1.4 1.4" />
+                  </svg>
+                ) : (
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8">
+                    <path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z" />
+                  </svg>
+                )}
+              </button>
+            </WarmTooltip>
+
+            <WarmTooltip content={soundEnabled ? '关闭按键音' : '开启按键音'} side="bottom">
+              <button
+                type="button"
+                className="btn btn-icon"
+                aria-label={soundEnabled ? '关闭按键音' : '开启按键音'}
+                onClick={() => setSetting('soundEnabled', !soundEnabled)}
+              >
+                {soundEnabled ? (
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8">
+                    <path d="M4 9.5h3l4-3v11l-4-3H4z" />
+                    <path d="M15 9a4 4 0 0 1 0 6" />
+                  </svg>
+                ) : (
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8">
+                    <path d="M4 9.5h3l4-3v11l-4-3H4z" />
+                    <path d="M15.5 9.5l4 5M19.5 9.5l-4 5" />
+                  </svg>
+                )}
+              </button>
+            </WarmTooltip>
+
+            <WarmTooltip content="偏好设置" side="bottom">
+              <a href="#/settings" className="btn btn-icon" aria-label="设置">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.7">
+                  <circle cx="12" cy="12" r="3" />
+                  <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2 2 2 0 1 1-4 0 1.7 1.7 0 0 0-2.9-1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 2.6 15a2 2 0 1 1 0-4 1.7 1.7 0 0 0 1.2-2.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.7 1.7 0 0 0 9.5 4.1a2 2 0 1 1 4 0 1.7 1.7 0 0 0 2.9 1.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1A1.7 1.7 0 0 0 21.4 11a2 2 0 1 1 0 4 1.7 1.7 0 0 0-1.2 1z" />
+                </svg>
+              </a>
+            </WarmTooltip>
+            </WarmTooltipGroup>
+          </div>        </div>
       </header>
 
       <div className="app__body">

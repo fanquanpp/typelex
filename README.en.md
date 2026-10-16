@@ -166,6 +166,8 @@ Key animations write inline styles directly, bypassing React state, so a keystro
 - **React Router** — HashRouter, so any route survives a reload
 - **motion** — spring animation for a few interactive components (nav capsule, rubber segment)
 - No UI kit, no CSS framework: the design system is hand-written CSS custom properties
+- Everything is custom-drawn: dropdowns use `GlideSelect` (no native `<select>` left) and the icon
+  buttons' hints use `WarmTooltip` (native `title` attributes are gone)
 - Self-hosted fonts (`@fontsource-variable`: Sora / Manrope / JetBrains Mono); Chinese falls back to
   the system font stack
 

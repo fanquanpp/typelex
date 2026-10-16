@@ -110,7 +110,7 @@ export const TypingSlots = ({
       bodies.current.forEach((body, i) => {
         const node = refs.current[i];
         body.land = body.present ? 1 : 0;
-        if (node) node.dataset.state = body.present ? 'landed' : 'empty';
+        if (node) node.style.setProperty('--land', body.land.toFixed(4));
       });
       return undefined;
     }
@@ -134,10 +134,11 @@ export const TypingSlots = ({
             moving = true;
           }
         }
-        if (node) {
-          node.dataset.state = body.land > 0.02 ? (body.present ? 'landed' : 'draining') : 'empty';
-          node.style.setProperty('--land', body.land.toFixed(4));
-        }
+        /* `--land` drives the arrival pop only. It must not be written to
+           `data-state`: React owns that attribute (pending / correct /
+           incorrect / extra) and the loop was overwriting it one frame after
+           every render, which killed every state-dependent colour. */
+        if (node) node.style.setProperty('--land', body.land.toFixed(4));
       });
 
       /* caret glides between slots */

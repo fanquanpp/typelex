@@ -7,6 +7,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import AnimatedList from '../components/AnimatedList';
+import GlideSelect from '../components/GlideSelect';
 import RubberSegment from '../components/RubberSegment';
 import { Reveal } from '../components/effects';
 import { WordCard } from '../components/WordCard';
@@ -164,20 +165,21 @@ const Wordbook = () => {
           />
 
           <div className="row wrap" style={{ gap: 'var(--s3)' }}>
-            <label className="field">
-              <select
-                value={posFilter}
-                onChange={event => setPosFilter(event.target.value)}
-                aria-label="按词性筛选"
-              >
-                <option value="">全部词性</option>
-                {posOptions.map(([pos, count]) => (
-                  <option key={pos} value={pos}>
-                    {pos} ({count})
-                  </option>
-                ))}
-              </select>
-            </label>
+            {/* a real list: a dozen parts of speech with counts, so each row
+                carries its count as a muted tag instead of "n. (3080)" */}
+            <GlideSelect
+              size="md"
+              showTags
+              menuWidth={196}
+              className="wordbook-pos"
+              ariaLabel="按词性筛选"
+              options={[
+                { value: '', label: '全部词性' },
+                ...posOptions.map(([pos, count]) => ({ value: pos, label: pos, tag: `${count}` }))
+              ]}
+              value={posFilter}
+              onChange={value => setPosFilter(value)}
+            />
 
             <button
               type="button"

@@ -4,13 +4,15 @@
   position: relative;
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  /* Wider gaps than the original 6px: at drill size a slot is ~45px wide, and
+     boxes that nearly touch read as one striped block instead of as letters. */
+  gap: 10px;
   align-items: stretch;
   z-index: 1;
 }
 
 .typing-slots--sentence {
-  gap: 4px;
+  gap: 6px;
 }
 
 .typing-slots__slot {
@@ -18,10 +20,12 @@
   position: relative;
   display: inline-grid;
   place-items: center;
-  min-width: 1.32em;
-  height: 1.72em;
-  padding: 0 0.14em;
-  border-radius: var(--r-sm);
+  /* Slightly wider than tall: a portrait box reads as a tile, and what it holds
+     is a letter. */
+  min-width: 1.18em;
+  height: 1.42em;
+  padding: 0 0.08em;
+  border-radius: var(--r-md);
   font-family: var(--font-mono);
   font-size: inherit;
   line-height: 1;
@@ -35,24 +39,28 @@
 }
 
 .typing-slots--sentence .typing-slots__slot {
-  min-width: 1.2em;
-  height: 1.55em;
+  min-width: 1.1em;
+  height: 1.3em;
 }
 
-/* the glyph: rises into place as the slot lands, drains downward on delete */
+/**
+ * The glyph is never hidden: every character still to be typed already sits in
+ * its slot as a ghost, so the row reads as the word you are typing. Typing no
+ * longer moves it into place — it brightens it — and the spring only adds a
+ * small pop on arrival (or on removal) through `--land`.
+ */
 .typing-slots__glyph {
   display: inline-block;
-  transform: translateY(calc((1 - var(--land)) * 0.55em)) scale(calc(0.82 + 0.18 * var(--land)));
-  opacity: var(--land);
-  will-change: transform, opacity;
+  transform: scale(calc(0.9 + 0.1 * var(--land)));
   color: var(--ink-ghost);
-  transition: color var(--t-fast) var(--ease-out);
+  transition: color 140ms var(--ease-out);
 }
 
 .typing-slots__slot[data-state='correct'] {
   background: var(--surface-strong);
   border-color: var(--glass-edge-soft);
 }
+
 .typing-slots__slot[data-state='correct'] .typing-slots__glyph {
   color: var(--ink);
 }
@@ -61,6 +69,7 @@
   background: var(--danger-soft);
   border-color: color-mix(in srgb, var(--danger) 42%, transparent);
 }
+
 .typing-slots__slot[data-state='incorrect'] .typing-slots__glyph {
   color: var(--danger);
 }
@@ -69,13 +78,14 @@
   background: var(--danger-soft);
   border-style: dashed;
 }
+
 .typing-slots__slot--extra .typing-slots__glyph {
   color: var(--danger);
-  opacity: 0.7;
   text-decoration: line-through;
 }
 
-/* pending slots keep a faint placeholder tone so the word shape is readable */
+/* pending slots keep a fainter surface so what you have typed still stands out
+   from what is still to come */
 .typing-slots__slot[data-state='pending'] {
   background: color-mix(in srgb, var(--surface) 70%, transparent);
 }
@@ -92,7 +102,7 @@
 .typing-slots__slot[data-chunk-first]::before {
   content: '';
   position: absolute;
-  left: -0.22em;
+  left: -0.26em;
   top: 18%;
   bottom: 18%;
   width: 1px;
@@ -109,8 +119,8 @@
 /* the caret glides between slots */
 .typing-slots__caret {
   position: absolute;
-  top: 6%;
-  bottom: 6%;
+  top: 4%;
+  bottom: 4%;
   left: 0;
   width: 2px;
   border-radius: 1px;
@@ -161,7 +171,6 @@
 @media (prefers-reduced-motion: reduce) {
   .typing-slots__glyph {
     transform: none !important;
-    opacity: 1 !important;
     transition: none !important;
   }
   .typing-slots--shake {

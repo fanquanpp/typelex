@@ -434,57 +434,42 @@ const Session = () => {
                   sentence={item.kind === 'sentence'}
                   errorAt={view.missedAt}
                 />
-                <div className="typing-hint">
+
+                {/* The prompt: what the word means and how it sounds. It sits
+                    under the slot row and is set at reading size — the phonetic
+                    line used to be 14px mono in --ink-faint, which is unreadable
+                    next to the thing you are typing. */}
+                <div className="typing-prompt">
                   {item.kind === 'japanese' && item.jp ? (
                     <>
-                      <span className="jp" style={{ fontSize: 'var(--text-lg)' }}>
-                        {item.jp.kanji || item.jp.kana}
-                      </span>
-                      <span className="mono faint">{item.jp.kana}</span>
-                      <span className="divider-dot" />
-                      <span>{item.meaning}</span>
+                      <span className="jp typing-prompt__jp">{item.jp.kanji || item.jp.kana}</span>
+                      <span className="typing-prompt__phonetic">{item.jp.kana}</span>
                     </>
-                  ) : item.kind === 'sentence' ? (
-                    <span className="muted">{item.translation}</span>
-                  ) : (
-                    <>
-                      <span className="mono faint">{item.phonetic}</span>
-                      <span className="divider-dot" />
-                      <span>{item.meaning}</span>
-                    </>
+                  ) : item.kind === 'sentence' ? null : (
+                    <span className="typing-prompt__phonetic">{item.phonetic}</span>
                   )}
+                  <span className="typing-prompt__meaning">
+                    {item.kind === 'sentence' ? item.translation : item.meaning}
+                  </span>
                 </div>
+
+                {/* The keyboard hint: the next key and the finger that owns it
+                    on the left, the cheat sheet parked at the far right as a
+                    footnote instead of a third item in the same sentence. */}
                 <div className="typing-hint">
                   {nextChar && nextCode && (
-                    <>
-                      <span className="row" style={{ gap: 6 }}>
-                        <span className="eyebrow" style={{ letterSpacing: 'var(--tracking-wide)' }}>
-                          下一个键
+                    <span className="next-key">
+                      <span className="eyebrow">下一个键</span>
+                      <span className="kbd kbd--next">{nextChar === ' ' ? 'Space' : nextChar.toUpperCase()}</span>
+                      {nextFinger && (
+                        <span className="next-key__finger">
+                          <i style={{ background: FINGER_COLOR[nextFinger] }} />
+                          {FINGER_LABEL[nextFinger]}
                         </span>
-                        <span className="kbd">{nextChar === ' ' ? 'Space' : nextChar}</span>
-                        {nextFinger && (
-                          <span className="row" style={{ gap: 5 }}>
-                            <i
-                              style={{
-                                width: 9,
-                                height: 9,
-                                borderRadius: 3,
-                                background: FINGER_COLOR[nextFinger],
-                                display: 'inline-block'
-                              }}
-                            />
-                            <span className="faint" style={{ fontSize: 'var(--text-xs)' }}>
-                              {FINGER_LABEL[nextFinger]}
-                            </span>
-                          </span>
-                        )}
-                      </span>
-                      <span className="divider-dot" />
-                    </>
+                      )}
+                    </span>
                   )}
-                  <span className="faint" style={{ fontSize: 'var(--text-xs)' }}>
-                    按 Esc 退出 · Backspace 删除 · 直接开始打字即可
-                  </span>
+                  <span className="typing-hint__cheat">按 Esc 退出 · Backspace 删除 · 直接开始打字即可</span>
                 </div>
               </>
             ) : (

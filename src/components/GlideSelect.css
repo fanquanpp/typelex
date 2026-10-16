@@ -1,0 +1,209 @@
+/* GlideSelect — react-bits port on the app's tokens.
+   Geometry, timings and the pill's travel are the original's; only the palette
+   is ours (and the menu gained a hairline, because a shadow alone does not
+   separate it from the glass backdrop here). */
+
+.gs {
+  position: relative;
+  display: inline-block;
+}
+
+.gs[data-disabled] {
+  opacity: 0.5;
+}
+
+.gs__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 0 8px 0 10px;
+  height: var(--gs-chip);
+  border: 0;
+  border-radius: var(--gs-inner-radius);
+  background: var(--gs-surface);
+  color: var(--gs-text);
+  font-family: inherit;
+  font-size: var(--gs-font);
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color 100ms ease,
+    transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
+  box-shadow: inset 0 0 0 1px var(--border-faint);
+}
+
+.gs__trigger:enabled:hover,
+.gs__trigger[aria-expanded='true'] {
+  background: color-mix(in srgb, var(--gs-highlight) 60%, var(--gs-surface));
+}
+
+.gs__trigger:enabled:active {
+  transform: scale(0.97);
+}
+
+.gs__trigger:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.gs__trigger:disabled {
+  cursor: default;
+}
+
+.gs__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.gs__label[data-empty] {
+  opacity: 0.6;
+}
+
+/* the chip label re-enters with a small defocus when a pick changes it */
+.gs[data-swap] .gs__label {
+  animation: gs-swap 160ms ease;
+}
+
+@keyframes gs-swap {
+  from {
+    opacity: 0.6;
+    filter: blur(2px);
+  }
+}
+
+.gs__caret {
+  display: inline-flex;
+  color: color-mix(in srgb, var(--gs-text) 55%, transparent);
+  transition: transform 200ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.gs__trigger[aria-expanded='true'] .gs__caret {
+  transform: rotate(180deg);
+}
+
+/* ---- menu (portalled, so `fixed` with a measured origin) ---- */
+
+.gs__menu {
+  position: fixed;
+  z-index: 120;
+  /* width is set from the measured box: menuWidth, or the chip if it is wider */
+  width: var(--gs-menu-w);
+  padding: 4px;
+  border-radius: var(--gs-radius);
+  background: var(--gs-surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md), 0 4px 16px color-mix(in srgb, #000 22%, transparent);
+  transform-origin: var(--gs-origin);
+  transform: scale(0.95);
+  opacity: 0;
+  transition:
+    opacity var(--gs-pop) cubic-bezier(0.23, 1, 0.32, 1),
+    transform var(--gs-pop) cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.gs__menu[data-state='open'] {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.gs__menu[data-state='closed'] {
+  transform: scale(0.95);
+  opacity: 0;
+  pointer-events: none;
+  transition-duration: var(--gs-pop-out);
+}
+
+.gs__list {
+  position: relative;
+  display: grid;
+  gap: 1px;
+  touch-action: none;
+}
+
+.gs__pill {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: var(--gs-row);
+  border-radius: var(--gs-inner-radius);
+  background: var(--gs-highlight);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform var(--gs-glide) cubic-bezier(0.23, 1, 0.32, 1),
+    opacity 150ms ease;
+}
+
+.gs__row {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 8px 0 10px;
+  height: var(--gs-row);
+  border-radius: var(--gs-inner-radius);
+  color: var(--gs-text);
+  font-size: var(--gs-font);
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 150ms ease;
+}
+
+.gs__row[aria-selected='true'] {
+  background: color-mix(in srgb, var(--gs-highlight) 60%, transparent);
+}
+
+/* while the pointer is driving the highlight, the pill is the only marker */
+.gs__list[data-live] .gs__row[aria-selected='true'] {
+  background: transparent;
+}
+
+.gs__row-label {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gs__tag {
+  flex: none;
+  color: color-mix(in srgb, var(--gs-text) 55%, transparent);
+  font-size: calc(var(--gs-font) - 2px);
+  font-variant-numeric: tabular-nums;
+}
+
+.gs__check {
+  display: inline-flex;
+  flex: none;
+  color: var(--gs-accent);
+  visibility: hidden;
+}
+
+.gs__check[data-on] {
+  visibility: visible;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gs__menu,
+  .gs__pill,
+  .gs__caret,
+  .gs__trigger {
+    transition-duration: 1ms !important;
+  }
+  .gs[data-swap] .gs__label {
+    animation: none;
+  }
+}

@@ -9,10 +9,12 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { Reveal } from '../components/effects';
+import GlideSelect from '../components/GlideSelect';
 import RubberSegment from '../components/RubberSegment';
 import WakeSlider from '../components/WakeSlider';
 import { playKey, playSuccess, setVolume } from '../lib/audio';
 import { useApp } from '../lib/store';
+import { getLayout } from '../three/keyboard/layouts';
 import { MODELS } from '../three/keyboard/models';
 import type { RgbStyle } from '../three/keyboard/models';
 
@@ -146,19 +148,20 @@ const Settings = () => {
               <span>{MODELS.find(model => model.id === settings.keyboardModel)?.desc}</span>
             </div>
             <div className="setting-row__control setting-row__control--wide">
-              <label className="field" style={{ width: '100%' }}>
-                <select
-                  value={settings.keyboardModel}
-                  onChange={event => setSetting('keyboardModel', event.target.value)}
-                  aria-label="键盘型号"
-                >
-                  {MODELS.map(model => (
-                    <option key={model.id} value={model.id}>
-                      {model.brand} · {model.name}
-                    </option>
-                  ))}
-                </select>
-              </label>
+              <GlideSelect
+                size="md"
+                showTags
+                menuWidth={260}
+                className="settings-select"
+                ariaLabel="键盘型号"
+                options={MODELS.map(model => ({
+                  value: model.id,
+                  label: model.name,
+                  tag: `${getLayout(model.layoutId).keys.length} 键`
+                }))}
+                value={settings.keyboardModel}
+                onChange={value => setSetting('keyboardModel', value)}
+              />
             </div>
           </div>
 

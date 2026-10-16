@@ -90,8 +90,10 @@ file carries the original attribution in its header.
 | `src/components/WakeSlider.tsx`, `.css` | `WakeSlider` | Velocity-reactive bar slider; Tailwind replaced with plain CSS |
 | `src/components/TypingSlots.tsx`, `.css` | `CodeSlots` | Slot technique reused for the typed-character line |
 | `src/components/FlipCard.tsx`, `.css` | `FlipCard` by David Haz | Card flip micro-interaction |
+| `src/components/GlideSelect.tsx`, `.css` | `GlideSelect` | Dropdown with a gliding highlight pill. Tailwind replaced with design-token CSS, Hugeicons replaced with inline SVGs, and the menu is portalled with measured coordinates so an `overflow: hidden` ancestor cannot clip it. Replaces every native `<select>` in the app |
 | `src/components/OrbitCards.tsx`, `.css` | `OrbitImages` by **Dominik Koch** ([@dominikkoch](https://x.com/dominikkoch)), curated by David Haz | Extended so items render arbitrary card content instead of only `<img>` |
 | `src/components/Lanyard/Lanyard.tsx`, `.css` | `Lanyard` by David Haz | Ported to TypeScript and extended with canvas painter callbacks so the badge faces can be drawn from live word data |
+| `src/components/WarmTooltip.tsx`, `.css` | `WarmTooltip` | Grouped tooltips that keep one label warm and glide it between triggers. Tailwind replaced with design-token CSS, sizes raised to the site's 12px floor, the group's velocity `lean` not ported. Drives the whole header action cluster instead of native `title` |
 
 `src/components/effects.tsx` and `src/components/motion.tsx` are hand-written
 implementations of effect techniques we wanted from react-bits; they contain no
