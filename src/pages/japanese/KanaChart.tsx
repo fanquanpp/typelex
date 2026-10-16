@@ -34,9 +34,16 @@ const KanaChart = () => {
           onChange={value => setSetting('romajiStyle', value as typeof romajiStyle)}
         />
         <p className="kana-hint">
-          平文式（Hepburn）贴近英语拼读：<code className="mono">し → shi</code>、<code className="mono">つ → tsu</code>；
-          训令式（Kunrei）按五十音的行列规律转写：<code className="mono">し → si</code>、<code className="mono">つ → tu</code>。
-          练习时两种写法都算对。
+          {romajiStyle === 'hepburn' ? (
+            <>
+              平文式（Hepburn）按英语拼读习惯转写：<code className="mono">し → shi</code>、<code className="mono">つ → tsu</code>、<code className="mono">ふ → fu</code>。
+            </>
+          ) : (
+            <>
+              训令式（Kunrei）按五十音行列规律转写：<code className="mono">し → si</code>、<code className="mono">つ → tu</code>、<code className="mono">ふ → hu</code>。
+            </>
+          )}
+          打字时两种写法都算对。
         </p>
       </header>
 
