@@ -6,6 +6,7 @@
  * grades against, so what you see is exactly what you have to type.
  */
 import { Reveal } from '../../components/effects';
+import RubberSegment from '../../components/RubberSegment';
 import { useApp } from '../../lib/store';
 import { kanaToRomaji } from '../../lib/romaji';
 import { SEION, DAKUON, YOON } from './kanaData';
@@ -13,16 +14,25 @@ import '../Japanese.css';
 
 const KanaChart = () => {
   const romajiStyle = useApp(state => state.settings.romajiStyle);
+  const setSetting = useApp(state => state.setSetting);
 
   return (
     <div className="shell page">
       <header className="page-head">
         <span className="eyebrow">Reference</span>
         <h1 className="page-title">五十音与罗马音对照</h1>
-        <p className="page-sub">
-          当前使用 {romajiStyle === 'hepburn' ? '平文式（Hepburn）' : '训令式（Kunrei）'}。
-          打字时两种写法都算对，例如 <code className="mono">shi</code> 与 <code className="mono">si</code> 都可以。
-        </p>
+        <RubberSegment
+          size="sm"
+          equalSlots={false}
+          className="kana-style"
+          aria-label="日语罗马音体系"
+          items={[
+            { value: 'hepburn', label: 'Hepburn' },
+            { value: 'kunrei', label: 'Kunrei' }
+          ]}
+          value={romajiStyle}
+          onChange={value => setSetting('romajiStyle', value as typeof romajiStyle)}
+        />
       </header>
 
       <Reveal as="section" className="stack-6">

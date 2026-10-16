@@ -11,24 +11,62 @@
     var(--surface);
 }
 
-.jp-level[data-on] {
-  border-color: transparent;
-  background: var(--ink);
-}
-
-.jp-level[data-on] .stat-value,
-.jp-level[data-on] .stat-label {
-  color: var(--bg);
-}
-
-.jp-level[data-on] .chip {
-  background: color-mix(in srgb, var(--bg) 14%, transparent);
-  border-color: transparent;
-  color: color-mix(in srgb, var(--bg) 86%, transparent);
+/* Level tiles on the Japanese home: each one leads into the word list. */
+.jp-level {
+  /* the link carries the padding below so its hit area is the whole tile */
+  --jp-tile-pad: var(--s5);
+  padding: var(--jp-tile-pad);
 }
 
 .jp-level .stat-value {
   color: var(--ink);
+}
+
+.jp-level__link {
+  display: block;
+  width: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+
+.jp-level__link::after {
+  content: '';
+  position: absolute;
+  inset: calc(var(--jp-tile-pad) * -1);
+  border-radius: var(--r-lg);
+}
+
+.jp-level__go {
+  display: inline-block;
+  margin-top: var(--s4);
+  font-size: var(--text-xs);
+  color: var(--ink-ghost);
+  transition: color var(--t-fast) var(--ease-out);
+}
+
+.jp-level:hover .jp-level__go {
+  color: var(--rose);
+}
+
+/* Word list sub-page: level switcher next to the search box. */
+.jp-word-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s4);
+  flex-wrap: wrap;
+  max-width: 100%;
+}
+
+.jp-word-bar > :first-child {
+  width: fit-content;
+  max-width: 100%;
+}
+
+.jp-word-search {
+  flex: 1 1 260px;
+  min-width: min(240px, 100%);
+  max-width: 380px;
 }
 
 .jp-charts {
@@ -81,5 +119,11 @@
   font-family: var(--font-mono);
   font-size: 10px;
   color: var(--ink-faint);
+}
+
+/* The rōmaji-system switch lives in the chart's head, hugging its labels. */
+.kana-style {
+  width: fit-content;
+  max-width: 100%;
 }
 
