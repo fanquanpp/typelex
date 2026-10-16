@@ -141,7 +141,23 @@ samp {
   padding-inline: var(--shell-pad);
 }
 
-.stack {
+/**
+ * A stack is a flex column with a gap. Each numbered step carries the whole
+ * stack, not just the gap: a class that only sets `gap` does nothing at all on
+ * a `display: block` element — which is how `<Reveal as="section"
+ * className="stack-8">` ended up with its children touching (a flex gap that
+ * was never applied). If you only need the gap on an element you already made
+ * a flex/grid container, write the gap in that rule instead of reaching here.
+ */
+.stack,
+.stack-1,
+.stack-2,
+.stack-3,
+.stack-4,
+.stack-5,
+.stack-6,
+.stack-8,
+.stack-12 {
   display: flex;
   flex-direction: column;
 }

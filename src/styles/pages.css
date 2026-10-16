@@ -555,10 +555,15 @@
   gap: var(--s2);
 }
 
+/* A wide control is a slot, not a left-aligned one: the slider fills it, but the
+   chip and the segments sit on the same right edge as every other row's control.
+   Without this the hugging controls (GlideSelect chip, RubberSegment) floated at
+   the left edge of a 480px slot, half a panel away from the rows around them. */
 .setting-row__control--wide {
   flex: 1 1 260px;
   max-width: 480px;
   min-width: 0;
+  justify-content: flex-end;
 }
 
 .divider {
