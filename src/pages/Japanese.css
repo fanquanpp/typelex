@@ -13,6 +13,9 @@
 
 /* Level tiles on the Japanese home: each one leads into the word list. */
 .jp-level {
+  /* a column so the link can stretch and the label sit at the tile foot */
+  display: flex;
+  flex-direction: column;
   /* the link carries the padding below so its hit area is the whole tile */
   --jp-tile-pad: var(--s5);
   padding: var(--jp-tile-pad);
@@ -23,7 +26,9 @@
 }
 
 .jp-level__link {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
   width: 100%;
   color: inherit;
   text-decoration: none;
@@ -37,8 +42,9 @@
 }
 
 .jp-level__go {
-  display: inline-block;
-  margin-top: var(--s4);
+  /* pushed to the tile foot whatever the note above wraps to */
+  margin-top: auto;
+  padding-top: var(--s4);
   font-size: var(--text-xs);
   color: var(--ink-ghost);
   transition: color var(--t-fast) var(--ease-out);
@@ -91,8 +97,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1px;
-  padding: 7px 4px;
+  gap: 3px;
+  padding: 9px 6px;
   border-radius: var(--r-sm);
   background: var(--surface);
   border: 1px solid var(--border-faint);
@@ -109,21 +115,38 @@
   border-color: transparent;
 }
 
+/* Readability pass: the kana need to be readable at a glance and the rōmaji
+   must not be sub-11px grey-on-glass (it is the thing you actually type). */
 .kana-cell__kana {
-  font-size: var(--text-md);
-  line-height: 1.1;
+  font-size: var(--text-lg);
+  line-height: 1.15;
+  letter-spacing: 0.01em;
   color: var(--ink);
 }
 
 .kana-cell__romaji {
   font-family: var(--font-mono);
-  font-size: 10px;
-  color: var(--ink-faint);
+  font-size: var(--text-2xs);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--ink-muted);
 }
 
 /* The rōmaji-system switch lives in the chart's head, hugging its labels. */
 .kana-style {
   width: fit-content;
   max-width: 100%;
+}
+
+/* One-line explanation of how the two rōmaji systems differ. */
+.kana-hint {
+  max-width: 76ch;
+  font-size: var(--text-xs);
+  line-height: 1.8;
+  color: var(--ink-muted);
+}
+
+.kana-hint code {
+  color: var(--ink);
 }
 

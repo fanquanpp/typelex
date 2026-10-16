@@ -33,6 +33,11 @@ const KanaChart = () => {
           value={romajiStyle}
           onChange={value => setSetting('romajiStyle', value as typeof romajiStyle)}
         />
+        <p className="kana-hint">
+          平文式（Hepburn）贴近英语拼读：<code className="mono">し → shi</code>、<code className="mono">つ → tsu</code>；
+          训令式（Kunrei）按五十音的行列规律转写：<code className="mono">し → si</code>、<code className="mono">つ → tu</code>。
+          练习时两种写法都算对。
+        </p>
       </header>
 
       <Reveal as="section" className="stack-6">
