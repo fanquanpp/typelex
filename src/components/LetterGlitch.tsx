@@ -191,20 +191,28 @@ export const LetterGlitch = ({
   className = '',
   style
 }: LetterGlitchProps) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const hostRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const container = containerRef.current;
-    const canvas = canvasRef.current;
-    const gl = canvas?.getContext('webgl2', {
+    const host = hostRef.current;
+    if (!host) return undefined;
+    /* The canvas is created per effect run, never shared through a ref: under
+       StrictMode the effect runs, cleans up (which calls loseContext), and runs
+       again on the SAME element — a second getContext then returns the already-
+       lost context, every draw silently fails, and the lost canvas composites
+       as an opaque white sheet over the whole page. */
+    const canvas = document.createElement('canvas');
+    canvas.className = 'letter-glitch__canvas';
+    canvas.setAttribute('aria-hidden', 'true');
+    const gl = canvas.getContext('webgl2', {
       alpha: true,
       premultipliedAlpha: true,
       antialias: false,
       depth: false,
       stencil: false
     });
-    if (!container || !canvas || !gl) return undefined;
+    if (!host || !gl) return undefined;
+    host.appendChild(canvas);
 
     const compile = (type: number, source: string) => {
       const shader = gl.createShader(type)!;
@@ -693,8 +701,8 @@ export const LetterGlitch = ({
     };
 
     const resize = () => {
-      view.width = Math.max(1, container.clientWidth);
-      view.height = Math.max(1, container.clientHeight);
+      view.width = Math.max(1, host.clientWidth);
+      view.height = Math.max(1, host.clientHeight);
       view.ratio = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = Math.max(1, Math.round(view.width * view.ratio));
       canvas.height = Math.max(1, Math.round(view.height * view.ratio));
@@ -705,7 +713,7 @@ export const LetterGlitch = ({
     };
 
     const locate = (event: PointerEvent) => {
-      const rect = container.getBoundingClientRect();
+      const rect = host.getBoundingClientRect();
       const x = event.clientX - rect.left;
       const y = event.clientY - rect.top;
       pointer.inside = x >= 0 && y >= 0 && x <= rect.width && y <= rect.height;
@@ -729,12 +737,12 @@ export const LetterGlitch = ({
     };
 
     const resizeObserver = new ResizeObserver(resize);
-    resizeObserver.observe(container);
+    resizeObserver.observe(host);
     const intersection = new IntersectionObserver(entries => {
       visible = entries.some(entry => entry.isIntersecting);
       if (visible) wake();
     });
-    intersection.observe(container);
+    intersection.observe(host);
     /* Follow the page theme: re-resolve the palette uniforms when `data-theme`
        flips, then wake so the change is on screen within a frame. */
     const themeObserver = new MutationObserver(() => {
@@ -770,13 +778,14 @@ export const LetterGlitch = ({
       gl.deleteVertexArray(vao);
       gl.deleteProgram(program);
       gl.getExtension('WEBGL_lose_context')?.loseContext();
+      /* Drop the canvas with the context: the next effect run must not reuse
+         an element whose context is already lost. */
+      canvas.remove();
     };
   }, [glitchColors, baseColor, characters, fontSize, spacing, density, baseOpacity, glitchAmount, speed, interactive, cursorRadius, flow, edgeFade, centerFade]);
 
   return (
-    <div ref={containerRef} className={`letter-glitch ${className}`.trim()} style={style} aria-hidden="true">
-      <canvas ref={canvasRef} className="letter-glitch__canvas" />
-    </div>
+    <div ref={hostRef} className={`letter-glitch ${className}`.trim()} style={style} aria-hidden="true" />
   );
 };
 

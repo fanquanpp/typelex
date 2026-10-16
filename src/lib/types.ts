@@ -97,7 +97,7 @@ export interface JapaneseWord {
   kanji: string;
   /** hepburn rōmaji of the kana reading */
   romaji: string;
-  /** Chinese gloss; empty for N3–N1 where only the English gloss is available */
+  /** hand-curated Chinese gloss (all JLPT levels) */
   cn: string;
   /** English gloss from the source dataset */
   en: string;

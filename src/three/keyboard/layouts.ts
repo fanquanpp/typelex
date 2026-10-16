@@ -699,85 +699,6 @@ const K98: LayoutDef = (() => {
 })();
 
 /* ------------------------------------------------------------------ */
-/* Laptop — 78-key chiclet (no numpad, half-height arrows, media row)   */
-/* ------------------------------------------------------------------ */
-
-const LAPTOP_78: LayoutDef = (() => {
-  const keys = buildRows([
-    {
-      y: 0,
-      cluster: 'func',
-      keys: [
-        { code: 'Escape', label: 'esc' },
-        { code: 'F1', label: '☀', x: 1.5 },
-        { code: 'F2', label: '☀−', x: 2.5 },
-        { code: 'F3', label: '☀+', x: 3.5 },
-        { code: 'F4', label: '⌨', x: 4.5 },
-        { code: 'F5', label: '🔇', x: 5.5 },
-        { code: 'F6', label: '🔉', x: 6.5 },
-        { code: 'F7', label: '🔊', x: 7.5 },
-        { code: 'F8', label: '⏏', x: 8.5 },
-        { code: 'F9', label: '⏪', x: 9.5 },
-        { code: 'F10', label: '⏯', x: 10.5 },
-        { code: 'F11', label: '⏩', x: 11.5 },
-        { code: 'F12', label: '✈', x: 12.5 }
-      ]
-    },
-    {
-      y: 1,
-      keys: [
-        ...NUM_ROW,
-        { code: 'Backspace', label: '⌫', x: 13, w: 2 }
-      ]
-    },
-    {
-      y: 2,
-      keys: [
-        { code: 'Tab', label: '⇥', w: 1.5 },
-        ...QWERTY_ROW,
-        { code: 'Backslash', label: '\\', x: 13.5, w: 1.5 }
-      ]
-    },
-    {
-      y: 3,
-      keys: [
-        { code: 'CapsLock', label: '⇪', w: 1.75 },
-        ...HOME_ROW,
-        { code: 'Enter', label: '⏎', x: 12.75, w: 2.25 }
-      ]
-    },
-    {
-      y: 4,
-      keys: [
-        { code: 'ShiftLeft', label: '⇧', w: 2.25 },
-        ...BOTTOM_ROW,
-        { code: 'ShiftRight', label: '⇧', x: 12.25, w: 2.75 },
-        { code: 'ArrowUp', label: '↑', x: 15.25, h: 0.5, cluster: 'arrow' }
-      ]
-    },
-    {
-      y: 4.5,
-      keys: [{ code: 'ArrowDown', label: '↓', x: 15.25, h: 0.5, cluster: 'arrow' }]
-    },
-    {
-      y: 5,
-      keys: [
-        { code: 'ControlLeft', label: 'ctrl', w: 1.25 },
-        { code: 'MetaLeft', label: 'fn', w: 1.25 },
-        { code: 'AltLeft', label: 'alt', w: 1.25 },
-        { code: 'Space', label: '', x: 3.75, w: 6.25 },
-        { code: 'AltRight', label: 'alt', x: 10, w: 1.25 },
-        { code: 'MetaRight', label: '⌘', x: 11.25, w: 1.25 },
-        { code: 'ControlRight', label: 'ctrl', x: 12.5, w: 1.25 },
-        { code: 'ArrowLeft', label: '←', x: 13.75, h: 0.5, cluster: 'arrow' },
-        { code: 'ArrowRight', label: '→', x: 14.75, h: 0.5, cluster: 'arrow' }
-      ]
-    }
-  ]);
-  return { id: 'laptop78', name: '78 键笔记本', width: 16.75, depth: 5.5, keys, accent: ['Escape'] };
-})();
-
-/* ------------------------------------------------------------------ */
 
 export const LAYOUTS: Record<string, LayoutDef> = {
   full104: FULL_104,
@@ -785,8 +706,7 @@ export const LAYOUTS: Record<string, LayoutDef> = {
   k75: K75_84,
   k65: K65_68,
   k60: K60_61,
-  k98: K98,
-  laptop78: LAPTOP_78
+  k98: K98
 };
 
 export const getLayout = (id: string): LayoutDef => LAYOUTS[id] ?? LAYOUTS.full104;

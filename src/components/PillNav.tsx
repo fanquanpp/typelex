@@ -79,7 +79,7 @@ interface Engine {
 
 const SIZES: Record<string, Record<string, string>> = {
   sm: { '--pn-h': '36px', '--pn-pad': '3px', '--pn-inner': '30px', '--pn-x': '12px', '--pn-font': '13px', '--pn-gap': '6px', '--pn-mark': '18px' },
-  md: { '--pn-h': '42px', '--pn-pad': '4px', '--pn-inner': '34px', '--pn-x': '14px', '--pn-font': '13.5px', '--pn-gap': '8px', '--pn-mark': '22px' }
+  md: { '--pn-h': '48px', '--pn-pad': '5px', '--pn-inner': '38px', '--pn-x': '24px', '--pn-font': '15.5px', '--pn-gap': '8px', '--pn-mark': '22px' }
 };
 
 const DEFAULT_ITEMS: PillNavItem[] = [{ label: 'Home', href: '#' }];

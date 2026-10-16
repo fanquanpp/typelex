@@ -11,17 +11,17 @@
     var(--surface);
 }
 
-.jp-level[data-active] {
+.jp-level[data-on] {
   border-color: transparent;
   background: var(--ink);
 }
 
-.jp-level[data-active] .stat-value,
-.jp-level[data-active] .stat-label {
+.jp-level[data-on] .stat-value,
+.jp-level[data-on] .stat-label {
   color: var(--bg);
 }
 
-.jp-level[data-active] .chip {
+.jp-level[data-on] .chip {
   background: color-mix(in srgb, var(--bg) 14%, transparent);
   border-color: transparent;
   color: color-mix(in srgb, var(--bg) 86%, transparent);
@@ -83,8 +83,3 @@
   color: var(--ink-faint);
 }
 
-@media (max-width: 1080px) {
-  .jp-charts {
-    grid-template-columns: 1fr;
-  }
-}

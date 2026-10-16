@@ -109,7 +109,7 @@ const dayGap = (a: string, b: string) => {
 
 const DEFAULT_SETTINGS: Settings = {
   theme: 'dark',
-  keyboardModel: 'laptop',
+  keyboardModel: 'office',
   soundEnabled: true,
   soundProfile: 'laptop',
   volume: 0.6,

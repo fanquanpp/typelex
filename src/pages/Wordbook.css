@@ -2,14 +2,56 @@
 
 /* Single-screen feel: compress page head/gaps so the two-column body gets the
    vertical space it needs without a long scroll. */
-.wordbook-page {
+.shell.wordbook-page {
   height: 100%;
   gap: var(--s5);
   padding-top: var(--s5);
+  /* The wordbook owns the whole stage. The 1320px shell cap (meant for prose
+     pages) only bought dead margins here — the badge column is the page. */
+  max-width: none;
 }
 
+@media (min-width: 900px) {
+  /* Single-screen view: drop the global bottom pad and scroll fade so the
+     layout closes on the stage's bottom edge. */
+  .app[data-route='/wordbook'] .app__view > .page {
+    padding-bottom: 0;
+    scrollbar-gutter: auto;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+}
+
+/* The layout section takes every pixel the head leaves behind; inside it the
+   grid stretches, so list, badge and bar all reach the bottom edge. */
+.wordbook-page > #sec-search {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* The head is one row: the title block on the left, the search parked on the
+   right edge of the stage-wide head. */
 .wordbook-page > .page-head {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s5);
+  flex-wrap: wrap;
+  max-width: none;
+}
+
+.wordbook-head__title {
+  display: flex;
+  flex-direction: column;
   gap: var(--s2);
+}
+
+/* The search owns the head's right slot instead of a toolbar cell. */
+.wordbook-search {
+  flex: 0 1 360px;
+  min-width: min(240px, 100%);
 }
 
 .wordbook-page .page-title {
@@ -20,6 +62,13 @@
   display: flex;
   flex-direction: column;
   gap: var(--s4);
+  /* Never paint outside the list column: the detail column right of it is the
+     badge's alone. */
+  overflow: hidden;
+  max-width: 100%;
+  /* Inside the stretched section the toolbar keeps its natural height: its
+     content, not the flex algorithm, decides. */
+  flex: 0 0 auto;
 }
 
 /* Full-height two-column view: a narrow word list on the left, the badge card
@@ -29,7 +78,9 @@
   grid-template-columns: minmax(300px, 0.62fr) minmax(0, 1.38fr);
   gap: var(--s6);
   align-items: stretch;
-  flex: 1 1 auto;
+  /* Basis 0, not auto: the list's content is thousands of pixels tall, so an
+     auto basis would let it crush every other flex item in the section. */
+  flex: 1 1 0;
   min-height: 0;
 }
 
@@ -65,32 +116,21 @@
   min-height: 0;
 }
 
-/* Star/known actions float over the stage top so the canvas claims the column. */
+/* The detail column is the badge stage's alone: no floating chrome above it.
+   Star/known actions live in the card bar beneath the canvas instead. */
 .wordbook-detail__actions {
-  position: absolute;
-  top: var(--s4);
-  left: var(--s4);
-  right: var(--s4);
-  z-index: 5;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--s3);
-  pointer-events: none;
+  display: none;
 }
 
-.wordbook-detail__actions > * {
-  pointer-events: auto;
+
+/* The book switcher hugs its labels instead of stretching across the toolbar. */
+.wordbook-books {
+  width: fit-content;
+  max-width: 100%;
 }
 
-@media (max-width: 1080px) {
-  .wordbook-layout {
-    grid-template-columns: 1fr;
-  }
-  .wordbook-detail {
-    min-height: 560px;
-  }
-  .wordbook-list {
-    max-height: 420px;
-  }
+/* The sort switcher sits alone on its own row, same treatment. */
+.wordbook-sorts {
+  width: fit-content;
+  max-width: 100%;
 }

@@ -8,6 +8,14 @@
 }
 
 .lanyard-canvas {
+  /* Absolutely positioned: the canvas must never contribute to its parent's
+     content height. The drawing buffer is set imperatively by the renderer;
+     with static flow layout a transient mismatch (e.g. during a word switch
+     reflow) grew the parent, which grew the next measurement, which grew the
+     buffer again — an unbounded feedback loop that stretched the badge to
+     hundreds of thousands of pixels. */
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
   height: 100%;

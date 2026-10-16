@@ -9,6 +9,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Reveal, useSpotlight } from '../components/effects';
+import RubberSegment from '../components/RubberSegment';
 import OrbitCards, { type OrbitItem } from '../components/OrbitCards';
 import { useApp } from '../lib/store';
 import { MODE_DESC, MODE_LABEL } from '../lib/typing/session';
@@ -41,7 +42,7 @@ const ModeCard = ({
       ref={ref}
       type="button"
       className="spotlight mode-card"
-      data-active={active}
+      data-active={active ? 'true' : undefined}
       onClick={onClick}
     >
       {children}
@@ -172,7 +173,7 @@ const Practice = () => {
       </header>
 
       {/* ---------------- word list picker ---------------- */}
-      <Reveal as="section" className="stack-6">
+      <Reveal as="section" id="sec-books" className="stack-6">
         <div className="section-head">
           <div>
             <h2 className="section-title">选择词库</h2>
@@ -255,7 +256,7 @@ const Practice = () => {
             <span className="book-row__body">
               <span className="book-row__name">日语 JLPT 词表</span>
               <span className="book-row__desc">
-                用罗马音输入日语单词：N5–N4 提供中文释义，N3–N1 提供英文释义。假名、汉字与罗马音同步显示。
+                用罗马音输入日语单词：N5–N1 全部级别提供中文释义。假名、汉字与罗马音同步显示。
               </span>
               <span className="row wrap" style={{ gap: 6, marginTop: 6 }}>
                 {JLPT.map(entry => {
@@ -283,7 +284,7 @@ const Practice = () => {
       </Reveal>
 
       {/* ---------------- mode ---------------- */}
-      <Reveal as="section" className="stack-6">
+      <Reveal as="section" id="sec-mode" className="stack-6">
         <div className="section-head">
           <div>
             <h2 className="section-title">练习模式</h2>
@@ -309,7 +310,7 @@ const Practice = () => {
 
       {/* ---------------- category ---------------- */}
       {config.mode === 'category' && (
-        <Reveal as="section" className="stack-6">
+        <Reveal as="section" id="sec-category" className="stack-6">
           <div className="section-head">
             <div>
               <h2 className="section-title">专项分类</h2>
@@ -340,7 +341,7 @@ const Practice = () => {
       )}
 
       {/* ---------------- length ---------------- */}
-      <Reveal as="section" className="stack-6">
+      <Reveal as="section" id="sec-summary" className="stack-6">
         <div className="section-head">
           <div>
             <h2 className="section-title">本次设置</h2>
@@ -356,14 +357,16 @@ const Practice = () => {
               <strong>练习长度</strong>
               <span>用时间限制，还是用词数限制</span>
             </div>
-            <div className="segmented">
-              <button type="button" data-active={config.length === 'count'} onClick={() => patch({ length: 'count' })}>
-                词数
-              </button>
-              <button type="button" data-active={config.length === 'time'} onClick={() => patch({ length: 'time' })}>
-                时间
-              </button>
-            </div>
+            <RubberSegment
+              size="sm"
+              aria-label="练习长度"
+              items={[
+                { value: 'count', label: '词数' },
+                { value: 'time', label: '时间' }
+              ]}
+              value={config.length}
+              onChange={value => patch({ length: value as 'count' | 'time' })}
+            />
           </div>
 
           <div className="divider" />
@@ -375,20 +378,17 @@ const Practice = () => {
                 当前：{config.amount} {config.length === 'count' ? '个' : '秒'}
               </span>
             </div>
-            <div className="pill-row">
-              {(config.length === 'count' ? [10, 20, 30, 50, 100] : [30, 60, 120, 180, 300]).map(value => (
-                <button
-                  type="button"
-                  key={value}
-                  className="pill"
-                  data-active={config.amount === value}
-                  onClick={() => patch({ amount: value })}
-                >
-                  {value}
-                  {config.length === 'count' ? ' 词' : ' 秒'}
-                </button>
-              ))}
-            </div>
+            <RubberSegment
+              size="sm"
+              aria-label="练习数量"
+              key={config.length}
+              items={(config.length === 'count' ? [10, 20, 30, 50, 100] : [30, 60, 120, 180, 300]).map(value => ({
+                value: String(value),
+                label: `${value}${config.length === 'count' ? ' 词' : ' 秒'}`
+              }))}
+              value={String(config.amount)}
+              onChange={value => patch({ amount: Number(value) })}
+            />
           </div>
 
           <div className="divider" />

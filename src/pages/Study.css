@@ -153,15 +153,3 @@
   background: var(--ok-soft);
 }
 
-@media (max-width: 1080px) {
-  .study-layout {
-    grid-template-columns: 1fr;
-  }
-  .study-side {
-    position: static;
-    max-height: none;
-  }
-  .study-card {
-    padding: var(--s6) var(--s5);
-  }
-}

@@ -8,6 +8,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import AnimatedList from '../components/AnimatedList';
+import RubberSegment from '../components/RubberSegment';
 import { Reveal } from '../components/effects';
 import { WordCard } from '../components/WordCard';
 import { useApp } from '../lib/store';
@@ -123,44 +124,49 @@ const Wordbook = () => {
   return (
     <div className="shell page wordbook-page">
       <header className="page-head">
-        <span className="eyebrow">Wordbook</span>
-        <h1 className="page-title">词库</h1>
+        <div className="wordbook-head__title">
+          <span className="eyebrow">Wordbook</span>
+          <h1 className="page-title">词库</h1>
+        </div>
+
+        <label className="field wordbook-search">
+          <svg className="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+            <circle cx="11" cy="11" r="6.5" />
+            <path d="M16 16l4 4" />
+          </svg>
+          <input
+            value={query}
+            onChange={event => {
+              setQuery(event.target.value);
+              setLimit(PAGE);
+            }}
+            placeholder="搜索单词、释义或音标"
+            aria-label="搜索单词"
+          />
+        </label>
       </header>
 
-      <Reveal as="section" className="stack-5">
+      <Reveal as="section" id="sec-search" className="stack-5">
         <div className="wordbook-toolbar">
-          <div className="pill-row">
-            {books.map(entry => (
-              <button
-                type="button"
-                key={entry.id}
-                className="pill"
-                data-active={bookId === entry.id}
-                onClick={() => setBookId(entry.id)}
-              >
-                {entry.name}
-                <span className="faint"> {entry.count}</span>
-              </button>
-            ))}
-          </div>
+          <RubberSegment
+            size="sm"
+            equalSlots={false}
+            className="wordbook-books"
+            aria-label="选择词表"
+            items={books.map(entry => ({
+              value: entry.id,
+              label: (
+                <>
+                  {entry.name}
+                  <span className="faint"> {entry.count}</span>
+                </>
+              )
+            }))}
+            value={bookId}
+            onChange={value => setBookId(value)}
+          />
 
           <div className="row wrap" style={{ gap: 'var(--s3)' }}>
-            <label className="field" style={{ minWidth: 220 }}>
-              <svg className="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-                <circle cx="11" cy="11" r="6.5" />
-                <path d="M16 16l4 4" />
-              </svg>
-              <input
-                value={query}
-                onChange={event => {
-                  setQuery(event.target.value);
-                  setLimit(PAGE);
-                }}
-                placeholder="搜索单词、释义或音标"
-                aria-label="搜索单词"
-              />
-            </label>
-
             <label className="field">
               <select
                 value={posFilter}
@@ -176,16 +182,6 @@ const Wordbook = () => {
               </select>
             </label>
 
-            <label className="field">
-              <select value={sort} onChange={event => setSort(event.target.value as SortId)} aria-label="排序方式">
-                {SORTS.map(entry => (
-                  <option key={entry.id} value={entry.id}>
-                    {entry.label}
-                  </option>
-                ))}
-              </select>
-            </label>
-
             <button
               type="button"
               className="btn btn-sm"
@@ -195,6 +191,16 @@ const Wordbook = () => {
               只看收藏 {stars.length > 0 && `· ${stars.length}`}
             </button>
           </div>
+
+          <RubberSegment
+            size="sm"
+            equalSlots={false}
+            className="wordbook-sorts"
+            aria-label="排序方式"
+            items={SORTS.map(entry => ({ value: entry.id, label: entry.label }))}
+            value={sort}
+            onChange={value => setSort(value as SortId)}
+          />
         </div>
 
         <div className="row-between wrap">
@@ -229,6 +235,9 @@ const Wordbook = () => {
               showGradients
               fadeSize={48}
               gap={5}
+              /* the column owns its height: no fixed cap, the list scrolls
+                 inside the flex-stretched viewport */
+              maxHeight="none"
               className="wordbook-animated-list"
               onItemSelect={item => {
                 const word = visible.find(entry => `${entry.book}:${entry.word}` === (item as { id?: string }).id);
@@ -250,32 +259,19 @@ const Wordbook = () => {
             )}
           </div>
 
-          <aside className="wordbook-detail">
+          <aside id="sec-word-detail" className="wordbook-detail">
             {active ? (
-              <>
-                <div className="wordbook-detail__actions">
-                  <span className="faint mono" style={{ fontSize: 'var(--text-xs)' }}>
-                    {active.uk && `英 /${active.uk}/`} {active.us && `美 /${active.us}/`}
-                  </span>
-                  <div className="row" style={{ gap: 'var(--s2)' }}>
-                    <button
-                      type="button"
-                      className={`btn btn-sm ${stars.includes(`${active.book}:${active.word}`) ? 'btn-primary' : ''}`}
-                      onClick={() => toggleStar(`${active.book}:${active.word}`)}
-                    >
-                      {stars.includes(`${active.book}:${active.word}`) ? '已收藏' : '收藏'}
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-sm"
-                      onClick={() => setKnown(`${active.book}:${active.word}`, known[`${active.book}:${active.word}`] === 2 ? 0 : 2)}
-                    >
-                      {known[`${active.book}:${active.word}`] === 2 ? '取消掌握' : '标记掌握'}
-                    </button>
-                  </div>
-                </div>
-                <WordCard word={active} detail={detail} theme={settings.theme} fill />
-              </>
+              <WordCard
+                word={active}
+                detail={detail}
+                theme={settings.theme}
+                fill
+                landscape
+                starred={stars.includes(`${active.book}:${active.word}`)}
+                onStar={() => toggleStar(`${active.book}:${active.word}`)}
+                onKnown={() => setKnown(`${active.book}:${active.word}`, known[`${active.book}:${active.word}`] === 2 ? 0 : 2)}
+                knownState={known[`${active.book}:${active.word}`]}
+              />
             ) : (
               <div className="empty">
                 <strong>选择一个词</strong>

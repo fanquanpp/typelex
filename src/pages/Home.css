@@ -3,27 +3,3 @@
 .home {
   gap: var(--s16);
 }
-
-.home-cta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--s8);
-  flex-wrap: wrap;
-  background:
-    radial-gradient(90% 140% at 8% 0%, var(--primary-soft), transparent 58%),
-    var(--surface);
-}
-
-@media (max-width: 1080px) {
-  .home {
-    gap: var(--s12);
-  }
-}
-
-.home-cta {
-  padding: var(--s4) var(--s5);
-  border-radius: var(--r-md);
-  border: 1px solid var(--glass-edge-soft);
-  background: color-mix(in srgb, var(--glass-tint) 60%, transparent);
-}

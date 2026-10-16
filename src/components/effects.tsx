@@ -68,14 +68,17 @@ interface RevealProps {
   delay?: number;
   as?: 'div' | 'section' | 'li' | 'article';
   style?: CSSProperties;
+  /** anchor id so the sidebar's secondary menu can scroll to this section */
+  id?: string;
 }
 
-export const Reveal = ({ children, className = '', delay = 0, as = 'div', style }: RevealProps) => {
+export const Reveal = ({ children, className = '', delay = 0, as = 'div', style, id }: RevealProps) => {
   const { ref, inView } = useInView<HTMLDivElement>();
   const Tag = as;
   return (
     <Tag
       ref={ref as never}
+      id={id}
       className={`reveal ${className}`.trim()}
       data-visible={inView ? 'true' : 'false'}
       style={{ transitionDelay: delay ? `${delay}ms` : undefined, ...style }}
@@ -301,16 +304,17 @@ export const SpotlightCard = ({
   children,
   className = '',
   size = 320,
-  style
+  style,
+  ...rest
 }: {
   children: ReactNode;
   className?: string;
   size?: number;
   style?: CSSProperties;
-}) => {
+} & React.HTMLAttributes<HTMLDivElement>) => {
   const ref = useSpotlight<HTMLDivElement>(size);
   return (
-    <div ref={ref} className={`spotlight ${className}`.trim()} style={style}>
+    <div ref={ref} className={`spotlight ${className}`.trim()} style={style} {...rest}>
       {children}
     </div>
   );

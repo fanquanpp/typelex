@@ -42,6 +42,7 @@ export interface LanyardProps {
   orientation?: Orientation;
   finish?: Finish;
   cornerRadius?: number;
+  /** fraction of the canvas width the card spans (strap fills the height) */
   size?: number;
   anchor?: Anchor;
   strapLength?: number;
@@ -927,7 +928,7 @@ const Lanyard = ({
 
     let renderer: THREE.WebGLRenderer;
     try {
-      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+      renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, powerPreference: 'high-performance' });
     } catch {
       return undefined;
     }
@@ -1003,7 +1004,7 @@ const Lanyard = ({
       normalMap: weave,
       normalScale: new THREE.Vector2(0.7, 0.7),
       roughness: 0.68,
-      sheen: 1,
+      sheen: 0,
       sheenRoughness: 0.42,
       sheenColor: new THREE.Color(0.32, 0.32, 0.34),
       side: THREE.DoubleSide
@@ -1088,11 +1089,34 @@ const Lanyard = ({
     const frameView = () => {
       const s = settingsRef.current!;
       const aspect = view.width / view.height;
-      let viewHeight = layout.height / clamp(s.size ?? 0.6, 0.15, 0.9);
-      const minimumWidth = layout.width / 0.72;
-      if (viewHeight * aspect < minimumWidth) viewHeight = minimumWidth / aspect;
-      const viewWidth = viewHeight * aspect;
+      const strap = clamp(s.strapLength ?? 0.5, 0, 1);
+      /* Fill framing: the card spans `size` of the view width with a sway
+         margin each side, and the strap stretches to whatever the canvas
+         height has left over — so the badge composes the full column
+         (strap off the top edge, card closing on the bottom pad) with no
+         dead band above or below, whatever the canvas aspect. */
+      const sway = mix(0.03, 0.1, strap);
+      const size = clamp(s.size ?? 0.92, 0.15, 1);
+      let viewWidth = (layout.width * (1 + 2 * sway)) / size;
+      let viewHeight = viewWidth / aspect;
+      const topPad = -0.02 * layout.height;
+      const bottomPad = layout.height * mix(0.05, 0.1, strap);
+      const minStrap = layout.height * mix(0.08, 0.45, strap);
+      const hangOffset = layout.hangY - layout.height / 2;
+      const needed = topPad + bottomPad + hangOffset + layout.height + minStrap;
+      if (viewHeight < needed) {
+        viewHeight = needed;
+        viewWidth = viewHeight * aspect;
+      }
+      const strapLength = Math.max(viewHeight - topPad - bottomPad - hangOffset - layout.height, minStrap);
       camera.aspect = aspect;
+      camera.updateProjectionMatrix();
+      const anchorX = ((ANCHORS[s.anchor ?? 'center'] ?? 0.5) - 0.5) * viewWidth;
+      const anchorY = viewHeight / 2 - topPad;
+      sim.anchor.set(anchorX, anchorY, 0);
+      configureSimulation(sim, layout, strapLength);
+      sim.nodes[0].copy(sim.anchor);
+      sim.previous[0].copy(sim.anchor);
       camera.position.set(0, 0, viewHeight / 2 / Math.tan((FOV * Math.PI) / 360));
       camera.lookAt(0, 0, 0);
       camera.updateProjectionMatrix();
@@ -1100,14 +1124,6 @@ const Lanyard = ({
       foilUniforms.foilKey.value.set(-2.5, 4, 6).normalize().transformDirection(camera.matrixWorldInverse);
       foilUniforms.foilFill.value.set(3, -1, 4).normalize().transformDirection(camera.matrixWorldInverse);
       foilUniforms.foilTop.value.set(0.5, 4.5, 8).normalize().transformDirection(camera.matrixWorldInverse);
-      const anchorX = ((ANCHORS[s.anchor ?? 'center'] ?? 0.5) - 0.5) * viewWidth;
-      const anchorY = viewHeight / 2 + 0.2;
-      const cardTop = viewHeight / 2 - viewHeight * mix(0.12, 0.42, clamp(s.strapLength ?? 0.5, 0, 1));
-      const hangTop = cardTop + (layout.hangY - layout.height / 2);
-      sim.anchor.set(anchorX, anchorY, 0);
-      configureSimulation(sim, layout, anchorY - hangTop);
-      sim.nodes[0].copy(sim.anchor);
-      sim.previous[0].copy(sim.anchor);
     };
 
     const apply = () => {
@@ -1165,7 +1181,7 @@ const Lanyard = ({
       const strapPainterChanged = s.strapPainter !== applied.strapPainter;
       if (s.strapColor !== applied.strapColor || strapPainterChanged) repaintStrap();
 
-      const look = FINISHES[s.finish ?? 'glossy'] || FINISHES.glossy;
+      const look = FINISHES[s.finish ?? 'matte'] || FINISHES.matte;
       const card = parseColor(s.cardColor ?? '#ffffff', [1, 1, 1]);
       [frontMaterial, backMaterial].forEach(material => {
         material.roughness = look.roughness;
@@ -1179,8 +1195,8 @@ const Lanyard = ({
       edgeMaterial.color.setRGB(card[0] * 0.92, card[1] * 0.92, card[2] * 0.92, THREE.SRGBColorSpace);
       edgeMaterial.roughness = Math.min(look.roughness, 0.35);
       edgeMaterial.metalness = look.metalness;
-      edgeMaterial.clearcoat = 1;
-      edgeMaterial.clearcoatRoughness = 0.08;
+      edgeMaterial.clearcoat = 0;
+      edgeMaterial.clearcoatRoughness = 0.6;
       const metalLook = METALS[s.metal ?? 'silver'] || METALS.silver;
       metalMaterial.color.set(metalLook.color);
       metalMaterial.roughness = metalLook.roughness;
@@ -1443,7 +1459,10 @@ const Lanyard = ({
          to the right drawing-buffer size. */
       const rect = container.getBoundingClientRect();
       const width = Math.round(rect.width || container.clientWidth);
-      const height = Math.round(rect.height || container.clientHeight);
+      /* Clamp the height: a layout glitch mid-reflow must never seed the
+         drawing buffer with a runaway value (see .lanyard-canvas on why the
+         feedback loop is otherwise possible at all). */
+      const height = Math.round(Math.min(4096, rect.height || container.clientHeight));
       /* A hidden or not-yet-laid-out tab reports a zero-size box; resizing to
          that would throw away a good buffer. */
       if (width < 2 || height < 2) return;
@@ -1451,7 +1470,7 @@ const Lanyard = ({
       lastMeasured = { width, height };
       view.width = width;
       view.height = height;
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
       renderer.setSize(width, height, false);
       apply();
       render();

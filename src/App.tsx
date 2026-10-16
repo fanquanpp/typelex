@@ -17,7 +17,10 @@ import Study from './pages/Study';
 import Wordbook from './pages/Wordbook';
 import KeyboardLab from './pages/KeyboardLab';
 import Japanese from './pages/Japanese';
+import KanaChart from './pages/japanese/KanaChart';
 import Stats from './pages/Stats';
+import KeyStats from './pages/stats/KeyStats';
+import SessionHistory from './pages/stats/SessionHistory';
 import Settings from './pages/Settings';
 
 const App = () => (
@@ -31,7 +34,10 @@ const App = () => (
         <Route path="wordbook" element={<Wordbook />} />
         <Route path="keyboard" element={<KeyboardLab />} />
         <Route path="japanese" element={<Japanese />} />
+        <Route path="japanese/kana" element={<KanaChart />} />
         <Route path="stats" element={<Stats />} />
+        <Route path="stats/keys" element={<KeyStats />} />
+        <Route path="stats/history" element={<SessionHistory />} />
         <Route path="settings" element={<Settings />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>

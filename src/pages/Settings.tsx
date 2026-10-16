@@ -9,6 +9,8 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { Reveal } from '../components/effects';
+import RubberSegment from '../components/RubberSegment';
+import WakeSlider from '../components/WakeSlider';
 import { playKey, playSuccess, setVolume } from '../lib/audio';
 import { useApp } from '../lib/store';
 import { MODELS } from '../three/keyboard/models';
@@ -61,7 +63,7 @@ const Settings = () => {
         </p>
       </header>
 
-      <Reveal as="section" className="stack-5">
+      <Reveal as="section" id="sec-appearance" className="stack-5">
         <h2 className="section-title">外观</h2>
         <div className="panel panel-pad-lg">
           <div className="setting-row">
@@ -70,14 +72,16 @@ const Settings = () => {
               <span>深色适合长时间练习，浅色适合白天</span>
             </div>
             <div className="setting-row__control">
-              <div className="segmented">
-                <button type="button" data-active={settings.theme === 'dark'} onClick={() => setSetting('theme', 'dark')}>
-                  深色
-                </button>
-                <button type="button" data-active={settings.theme === 'light'} onClick={() => setSetting('theme', 'light')}>
-                  浅色
-                </button>
-              </div>
+              <RubberSegment
+                size="sm"
+                aria-label="主题"
+                items={[
+                  { value: 'dark', label: '深色' },
+                  { value: 'light', label: '浅色' }
+                ]}
+                value={settings.theme}
+                onChange={value => setSetting('theme', value as 'dark' | 'light')}
+              />
             </div>
           </div>
 
@@ -134,7 +138,7 @@ const Settings = () => {
         </div>
       </Reveal>
 
-      <Reveal as="section" className="stack-5">
+      <Reveal as="section" id="sec-kb" className="stack-5">
         <h2 className="section-title">键盘</h2>
         <div className="panel panel-pad-lg">
           <div className="setting-row">
@@ -164,20 +168,14 @@ const Settings = () => {
               <strong>背光效果</strong>
               <span>不同键盘支持的灯光不同，没有背光的键盘此项无效</span>
             </div>
-            <div className="setting-row__control">
-              <div className="pill-row">
-                {RGB.map(entry => (
-                  <button
-                    type="button"
-                    key={entry.id}
-                    className="pill"
-                    data-active={settings.rgbStyle === entry.id}
-                    onClick={() => setSetting('rgbStyle', entry.id)}
-                  >
-                    {entry.label}
-                  </button>
-                ))}
-              </div>
+            <div className="setting-row__control setting-row__control--wide">
+              <RubberSegment
+                size="sm"
+                aria-label="背光效果"
+                items={RGB.map(entry => ({ value: entry.id, label: entry.label }))}
+                value={settings.rgbStyle}
+                onChange={value => setSetting('rgbStyle', value as typeof settings.rgbStyle)}
+              />
             </div>
           </div>
 
@@ -187,18 +185,18 @@ const Settings = () => {
               <span>键盘实验室里保存的视角</span>
             </div>
             <div className="setting-row__control">
-              <div className="segmented">
-                {(['angled', 'top', 'front', 'close'] as const).map(entry => (
-                  <button
-                    type="button"
-                    key={entry}
-                    data-active={settings.keyboardView === entry}
-                    onClick={() => setSetting('keyboardView', entry)}
-                  >
-                    {entry === 'angled' ? '斜视' : entry === 'top' ? '俯视' : entry === 'front' ? '正视' : '近景'}
-                  </button>
-                ))}
-              </div>
+              <RubberSegment
+                size="sm"
+                aria-label="默认视角"
+                items={[
+                  { value: 'angled', label: '斜视' },
+                  { value: 'top', label: '俯视' },
+                  { value: 'front', label: '正视' },
+                  { value: 'close', label: '近景' }
+                ]}
+                value={settings.keyboardView}
+                onChange={value => setSetting('keyboardView', value as typeof settings.keyboardView)}
+              />
             </div>
           </div>
 
@@ -216,7 +214,7 @@ const Settings = () => {
         </div>
       </Reveal>
 
-      <Reveal as="section" className="stack-5">
+      <Reveal as="section" id="sec-sound" className="stack-5">
         <h2 className="section-title">声音</h2>
         <div className="panel panel-pad-lg">
           <div className="setting-row">
@@ -241,27 +239,21 @@ const Settings = () => {
               <strong>轴体音色</strong>
               <span>点击试听</span>
             </div>
-            <div className="setting-row__control">
-              <div className="pill-row">
-                {SOUNDS.map(entry => (
-                  <button
-                    type="button"
-                    key={entry.id}
-                    className="pill"
-                    data-active={settings.soundProfile === entry.id}
-                    onClick={() => {
-                      setSetting('soundProfile', entry.id);
-                      if (entry.id !== 'off') {
-                        playKey(entry.id, true);
-                        window.setTimeout(() => playSuccess(true), 130);
-                      }
-                    }}
-                    title={entry.hint}
-                  >
-                    {entry.label}
-                  </button>
-                ))}
-              </div>
+            <div className="setting-row__control setting-row__control--wide">
+              <RubberSegment
+                size="sm"
+                aria-label="轴体音色"
+                items={SOUNDS.map(entry => ({ value: entry.id, label: entry.label }))}
+                value={settings.soundProfile}
+                onChange={value => {
+                  const entry = SOUNDS.find(item => item.id === value)!;
+                  setSetting('soundProfile', entry.id);
+                  if (entry.id !== 'off') {
+                    playKey(entry.id, true);
+                    window.setTimeout(() => playSuccess(true), 130);
+                  }
+                }}
+              />
             </div>
           </div>
 
@@ -271,19 +263,26 @@ const Settings = () => {
               <span>{Math.round(settings.volume * 100)}%</span>
             </div>
             <div className="setting-row__control setting-row__control--wide">
-              <input
-                type="range"
+              <WakeSlider
                 min={0}
-                max={1}
-                step={0.05}
-                value={settings.volume}
-                onChange={event => {
-                  const value = Number(event.target.value);
-                  setSetting('volume', value);
-                  setVolume(value);
+                max={100}
+                step={5}
+                value={Math.round(settings.volume * 100)}
+                bars={40}
+                height={44}
+                restHeight={10}
+                gap={3}
+                fillColor="var(--ink)"
+                trackColor="var(--border)"
+                crestColor="var(--primary)"
+                showValue
+                formatValue={value => `${value}%`}
+                onChange={value => {
+                  const volume = value / 100;
+                  setSetting('volume', volume);
+                  setVolume(volume);
                 }}
-                onPointerUp={() => playKey(settings.soundProfile, settings.soundEnabled)}
-                aria-label="音量"
+                ariaLabel="音量"
               />
             </div>
           </div>
@@ -309,7 +308,7 @@ const Settings = () => {
         </div>
       </Reveal>
 
-      <Reveal as="section" className="stack-5">
+      <Reveal as="section" id="sec-typing" className="stack-5">
         <h2 className="section-title">练习</h2>
         <div className="panel panel-pad-lg">
           <div className="setting-row">
@@ -335,22 +334,16 @@ const Settings = () => {
               <span>平文式是主流教材用法；训令式更贴近五十音表的拼写</span>
             </div>
             <div className="setting-row__control">
-              <div className="segmented">
-                <button
-                  type="button"
-                  data-active={settings.romajiStyle === 'hepburn'}
-                  onClick={() => setSetting('romajiStyle', 'hepburn')}
-                >
-                  Hepburn
-                </button>
-                <button
-                  type="button"
-                  data-active={settings.romajiStyle === 'kunrei'}
-                  onClick={() => setSetting('romajiStyle', 'kunrei')}
-                >
-                  Kunrei
-                </button>
-              </div>
+              <RubberSegment
+                size="sm"
+                aria-label="日语罗马音体系"
+                items={[
+                  { value: 'hepburn', label: 'Hepburn' },
+                  { value: 'kunrei', label: 'Kunrei' }
+                ]}
+                value={settings.romajiStyle}
+                onChange={value => setSetting('romajiStyle', value as typeof settings.romajiStyle)}
+              />
             </div>
           </div>
 
@@ -360,24 +353,23 @@ const Settings = () => {
               <span>翻卡时使用的过渡效果</span>
             </div>
             <div className="setting-row__control">
-              <div className="segmented">
-                {(['pixel', 'flip', 'fade'] as const).map(entry => (
-                  <button
-                    type="button"
-                    key={entry}
-                    data-active={settings.cardAnimation === entry}
-                    onClick={() => setSetting('cardAnimation', entry)}
-                  >
-                    {entry === 'pixel' ? '像素' : entry === 'flip' ? '翻转' : '淡入'}
-                  </button>
-                ))}
-              </div>
+              <RubberSegment
+                size="sm"
+                aria-label="单词卡动画"
+                items={[
+                  { value: 'pixel', label: '像素' },
+                  { value: 'flip', label: '翻转' },
+                  { value: 'fade', label: '淡入' }
+                ]}
+                value={settings.cardAnimation}
+                onChange={value => setSetting('cardAnimation', value as typeof settings.cardAnimation)}
+              />
             </div>
           </div>
         </div>
       </Reveal>
 
-      <Reveal as="section" className="stack-5">
+      <Reveal as="section" id="sec-data" className="stack-5">
         <h2 className="section-title">数据</h2>
         <div className="panel panel-pad-lg">
           <div className="setting-row">
@@ -443,12 +435,16 @@ const Settings = () => {
         </div>
       </Reveal>
 
-      <Reveal as="section">
+      <Reveal as="section" id="sec-about">
         <div className="panel panel-pad stack-4">
           <h2 className="section-title">关于</h2>
           <p className="muted" style={{ fontSize: 'var(--text-sm)', lineHeight: 1.7 }}>
-            TypeLex 是一个纯前端的打字练习与词汇记忆项目：3D 键盘用 Three.js 实时构建，
-            词库来自公开词表并在构建期整理成可增量加载的数据，没有后端、没有账号，所有进度都在你自己的浏览器里。
+            TypeLex 是一个纯前端的打字练习与词汇记忆项目：模拟键盘用 CSS/DOM 构建，
+            词库（英语 9,482 词 + 日语 JLPT 7,032 词，全部带中文释义）来自公开数据集，
+            并在构建期整理成可增量加载的静态文件；没有后端、没有账号，所有进度都保存在你自己的浏览器里。
+          </p>
+          <p className="faint" style={{ fontSize: 'var(--text-xs)', lineHeight: 1.7 }}>
+            数据来源与授权说明见仓库中的 ATTRIBUTION.md —— 代码以 MIT 授权，词表另有权属。
           </p>
           <div className="row wrap" style={{ gap: 'var(--s3)' }}>
             <Link to="/practice" className="btn btn-primary">

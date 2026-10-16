@@ -5,15 +5,3 @@
   gap: var(--s5);
 }
 
-@media (max-width: 720px) {
-  .setting-row {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .setting-row__control {
-    width: 100%;
-  }
-  .setting-row__control--wide {
-    max-width: none;
-  }
-}

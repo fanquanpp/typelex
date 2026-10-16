@@ -80,6 +80,32 @@
   background: color-mix(in srgb, var(--surface) 70%, transparent);
 }
 
+/* ---- pronunciation chunks ----
+   Each chunk (spelling syllable / kana) gets a boundary: the first slot carries
+   a left divider, and the chunk the cursor sits in lifts onto a stronger
+   surface so the eye tracks the reading unit being typed. */
+
+.typing-slots__slot[data-chunk-first]:not(:first-child) {
+  margin-left: 0.42em;
+}
+
+.typing-slots__slot[data-chunk-first]::before {
+  content: '';
+  position: absolute;
+  left: -0.22em;
+  top: 18%;
+  bottom: 18%;
+  width: 1px;
+  border-radius: 1px;
+  background: var(--border-strong);
+  opacity: 0.55;
+}
+
+.typing-slots__slot[data-chunk-active] {
+  background: var(--primary-soft);
+  border-color: color-mix(in srgb, var(--primary) 38%, transparent);
+}
+
 /* the caret glides between slots */
 .typing-slots__caret {
   position: absolute;

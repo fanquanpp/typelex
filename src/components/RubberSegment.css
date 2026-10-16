@@ -1,0 +1,102 @@
+/* RubberSegment — converted from the react-bits Tailwind classes to plain CSS
+   on the app's tokens. Colors still arrive as props so a caller can theme it. */
+
+.rubber-segment {
+  position: relative;
+  display: inline-grid;
+  grid-auto-flow: column;
+  grid-auto-columns: auto;
+  align-items: middle;
+  vertical-align: middle;
+  user-select: none;
+  touch-action: pan-y;
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  padding: var(--rs-inset);
+  border-radius: var(--rs-radius);
+  background: var(--rs-track);
+}
+.rubber-segment[data-equal] {
+  grid-auto-columns: minmax(0, 1fr);
+}
+.rubber-segment[data-held] {
+  cursor: grabbing;
+}
+.rubber-segment[aria-disabled='true'] {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.rubber-segment__button {
+  display: inline-flex;
+  height: calc(var(--rs-h) - var(--rs-inset) * 2);
+  min-width: var(--rs-min);
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  padding: 0 var(--rs-pad);
+  border-radius: var(--rs-thumb-radius);
+  font: inherit;
+  font-size: var(--rs-font);
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  outline: none;
+  transition: opacity 160ms ease, transform 160ms var(--rs-ease-out);
+  cursor: pointer;
+  color: var(--rs-ink);
+  opacity: 0.7;
+}
+.rubber-segment__button[aria-checked='true'] {
+  cursor: default;
+}
+.rubber-segment[data-draggable] .rubber-segment__button[aria-checked='true'] {
+  cursor: grab;
+}
+.rubber-segment[data-held] .rubber-segment__button {
+  cursor: grabbing;
+}
+.rubber-segment__button[data-pressed] {
+  transform: scale(0.96);
+}
+.rubber-segment__button:focus-visible {
+  outline: 2px solid var(--rs-thumb);
+  outline-offset: 3px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .rubber-segment__button[aria-checked='false']:hover {
+    opacity: 0.9;
+  }
+}
+
+/* The thumb: a full copy of the labels, revealed through a clipping window that
+   the springs drive. transform:none keeps the text static while the window moves. */
+.rubber-segment__thumb {
+  pointer-events: none;
+  position: absolute;
+  inset: var(--rs-inset);
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: auto;
+  background: var(--rs-thumb);
+  color: var(--rs-ink-active);
+}
+.rubber-segment[data-equal] .rubber-segment__thumb {
+  grid-auto-columns: minmax(0, 1fr);
+}
+
+.rubber-segment__thumb > .rubber-segment__button {
+  cursor: default;
+  color: inherit;
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rubber-segment__button {
+    transition: opacity 160ms ease;
+  }
+}

@@ -16,7 +16,7 @@ import { fingerForCode, FINGER_COLOR } from '../../lib/typing/fingers';
 import type { Theme } from '../../lib/types';
 import { getLayout, type LayoutDef } from './layouts';
 import { getModel, type KeyboardModel, type RgbStyle } from './models';
-import type { ViewPreset } from './KeyboardScene';
+import type { ViewPreset } from './view';
 import './csskb.css';
 
 export interface CssKeyboardSceneOptions {

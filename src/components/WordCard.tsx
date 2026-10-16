@@ -1,42 +1,93 @@
 /**
  * The vocabulary card — a Lanyard badge whose faces are painted from live word
- * data, plus an expandable detail panel.
+ * data, plus a flat glass variant that carries the same record on two sides.
  *
- * The painters are the reason this component exists: the lanyard's card faces
- * are canvas textures, so anything we can draw becomes the badge. Memoising the
- * painter on the word keeps the 1024px canvas from being repainted per frame.
+ * The painters are the reason the badge half of this component exists: the
+ * lanyard's card faces are canvas textures, so anything we can draw becomes the
+ * badge. Memoising the painter on the word keeps the 1024px canvas from being
+ * repainted per frame.
  */
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import type { Detail, Word } from '../lib/types';
 import { FINGER_LABEL, fingerForChar } from '../lib/typing/fingers';
+import FlipCard from './FlipCard';
 import Lanyard, { type FacePainter } from './Lanyard/Lanyard';
 import { DecryptText, Reveal } from './effects';
 import './WordCard.css';
 
 const LEVEL_NAME: Record<number, string> = { 1: '高中', 2: 'CET-4', 3: 'CET-6' };
 
+/** Lay `text` into at most `maxLines` lines that fit `maxWidth`. Tokens wider
+ *  than the line are hard-broken per character — CJK definitions and compounds
+ *  like `ac(表加强)+celer(速度)` have no spaces to break at — and when the line
+ *  budget runs out the last line ends in an ellipsis instead of spilling past
+ *  the card edge. */
 const wrapText = (
   ctx: CanvasRenderingContext2D,
   text: string,
   maxWidth: number,
   maxLines = 3
 ): string[] => {
-  const words = text.split(/\s+/);
   const lines: string[] = [];
   let line = '';
-  for (const word of words) {
-    const candidate = line ? `${line} ${word}` : word;
-    if (ctx.measureText(candidate).width > maxWidth && line) {
-      lines.push(line);
-      line = word;
-      if (lines.length >= maxLines) break;
-    } else {
-      line = candidate;
+  let dropped = false;
+
+  const commit = () => {
+    lines.push(line);
+    line = '';
+  };
+  const breakToken = (token: string) => {
+    for (const ch of token) {
+      if (line && ctx.measureText(line + ch).width > maxWidth) {
+        if (lines.length + 1 >= maxLines) {
+          dropped = true;
+          return;
+        }
+        commit();
+      }
+      line += ch;
     }
+  };
+
+  for (const token of text.split(/\s+/)) {
+    if (!token) continue;
+    const candidate = line ? `${line} ${token}` : token;
+    if (ctx.measureText(candidate).width <= maxWidth) {
+      line = candidate;
+      continue;
+    }
+    if (line && ctx.measureText(token).width <= maxWidth) {
+      if (lines.length + 1 >= maxLines) {
+        dropped = true;
+        break;
+      }
+      commit();
+      line = token;
+      continue;
+    }
+    breakToken(token);
+    if (dropped) break;
   }
-  if (line && lines.length < maxLines) lines.push(line);
+
+  if (line && lines.length < maxLines) commit();
+  else if (line) dropped = true;
+
+  if (dropped && lines.length) {
+    let last = lines[lines.length - 1];
+    while (last.length > 0 && ctx.measureText(`${last}…`).width > maxWidth) last = last.slice(0, -1);
+    lines[lines.length - 1] = `${last}…`;
+  }
   return lines;
+};
+
+/** One-line fit: the text cut to `maxWidth` with a trailing ellipsis when it
+ *  has to be. A no-op when the text already fits. */
+const fitLine = (ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string => {
+  if (ctx.measureText(text).width <= maxWidth) return text;
+  let cut = text;
+  while (cut.length > 0 && ctx.measureText(`${cut}…`).width > maxWidth) cut = cut.slice(0, -1);
+  return `${cut}…`;
 };
 
 const FONT = '"Inter", "Segoe UI", system-ui, sans-serif';
@@ -57,165 +108,234 @@ export const useFrontPainter = ({ word, detail, level, accent = '#5b8def', theme
     (ctx, width, height) => {
       if (!word) {
         ctx.fillStyle = theme === 'dark' ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.45)';
-        ctx.font = `600 ${width * 0.055}px ${FONT}`;
+        ctx.font = `600 ${width * 0.045}px ${FONT}`;
         ctx.textAlign = 'center';
         ctx.fillText('准备开始', width / 2, height / 2);
         return;
       }
 
-      const pad = width * 0.085;
+      /* Landscape geometry: wide and short, so type scales off the HEIGHT. */
+      const pad = height * 0.11;
+      const unit = height;
       const ink = theme === 'dark' ? '#e8eaf0' : '#1b1e24';
       const muted = theme === 'dark' ? 'rgba(232,234,240,0.62)' : 'rgba(27,30,36,0.6)';
 
-      /* top accent rule + level tag */
+      /* top accent rule + level tag along the top edge */
       ctx.fillStyle = accent;
-      ctx.fillRect(pad, pad * 0.85, width * 0.18, height * 0.009);
-      ctx.font = `700 ${width * 0.036}px ${MONO}`;
+      ctx.fillRect(pad, pad * 0.72, unit * 0.16, unit * 0.014);
+      ctx.font = `700 ${unit * 0.05}px ${MONO}`;
       ctx.textAlign = 'left';
       ctx.fillStyle = accent;
-      ctx.fillText(`LEVEL ${level} · ${LEVEL_NAME[level] ?? ''}`, pad, pad * 1.5);
+      ctx.fillText(`LEVEL ${level} · ${LEVEL_NAME[level] ?? ''}`, pad, pad * 1.62);
 
-      /* headword */
-      const size = word.word.length > 14 ? width * 0.115 : word.word.length > 9 ? width * 0.15 : width * 0.19;
+      /* headword, one line wherever it fits; the ellipsis is the safety net for
+         words too long even at the minimum size */
+      let size = unit * 0.34;
       ctx.font = `700 ${size}px ${MONO}`;
-      ctx.fillStyle = ink;
-      ctx.textAlign = 'left';
-      const wordLines = wrapText(ctx, word.word, width - pad * 2, 2);
-      let y = height * 0.32;
-      for (const line of wordLines) {
-        ctx.fillText(line, pad, y);
-        y += size * 1.12;
+      while (size > unit * 0.12 && ctx.measureText(word.word).width > width - pad * 2) {
+        size *= 0.94;
+        ctx.font = `700 ${size}px ${MONO}`;
       }
+      ctx.fillStyle = ink;
+      ctx.fillText(fitLine(ctx, word.word, width - pad * 2), pad, height * 0.56);
 
-      /* phonetic */
+      /* phonetic right under the headword */
       const phonetic = word.us || word.uk;
       if (phonetic) {
-        ctx.font = `500 ${width * 0.05}px ${MONO}`;
+        ctx.font = `500 ${unit * 0.07}px ${MONO}`;
         ctx.fillStyle = muted;
-        ctx.fillText(`/${phonetic}/`, pad, y + width * 0.035);
-        y += width * 0.09;
-      } else {
-        y += width * 0.045;
+        ctx.fillText(`/${phonetic}/`, pad, height * 0.56 + unit * 0.14);
       }
 
-      /* meanings */
+      /* first meanings flow in the remaining lower band */
       const defs = detail?.d ?? [];
-      ctx.font = `600 ${width * 0.052}px ${FONT}`;
-      let lineY = y + width * 0.055;
-      const maxY = height - pad * 1.6;
+      let lineY = height * 0.56 + (phonetic ? unit * 0.24 : unit * 0.16);
+      const maxY = height - pad * 1.35;
       for (const [pos, cn] of defs.slice(0, 3)) {
-        ctx.font = `700 ${width * 0.048}px ${MONO}`;
-        ctx.fillStyle = accent;
-        const posWidth = pos ? ctx.measureText(pos).width + width * 0.018 : 0;
-        if (pos) ctx.fillText(pos, pad, lineY);
-        ctx.font = `600 ${width * 0.052}px ${FONT}`;
-        ctx.fillStyle = ink;
-        const cnLines = wrapText(ctx, cn, width - pad * 2 - posWidth, 2);
-        cnLines.forEach((line, index) => {
-          if (lineY > maxY) return;
-          ctx.fillText(line, pad + posWidth, lineY + index * width * 0.064);
-        });
-        lineY += width * 0.064 * cnLines.length + width * 0.04;
         if (lineY > maxY) break;
+        ctx.font = `700 ${unit * 0.065}px ${MONO}`;
+        ctx.fillStyle = accent;
+        const posWidth = pos ? ctx.measureText(pos).width + unit * 0.025 : 0;
+        if (pos) ctx.fillText(pos, pad, lineY);
+        ctx.font = `600 ${unit * 0.07}px ${FONT}`;
+        ctx.fillStyle = ink;
+        const cnLines = wrapText(ctx, cn, width - pad * 2 - posWidth, 1);
+        ctx.fillText(cnLines[0], pad + posWidth, lineY);
+        lineY += unit * 0.105;
       }
 
       /* footer */
-      ctx.font = `600 ${width * 0.032}px ${MONO}`;
+      ctx.font = `600 ${unit * 0.045}px ${MONO}`;
       ctx.fillStyle = muted;
-      ctx.fillText('TypeLex', pad, height - pad * 0.9);
+      ctx.fillText('TypeLex', pad, height - pad * 0.72);
       ctx.textAlign = 'right';
-      ctx.fillText('TAP TO FLIP', width - pad, height - pad * 0.9);
+      ctx.fillText('TAP TO FLIP', width - pad, height - pad * 0.72);
       ctx.textAlign = 'left';
     },
     [word, detail, level, accent, theme]
   );
 
-/** Back face: usage, related words and the memory hook. */
+/** Back face: the full reference record — definitions, example, phrases,
+    word family, confusables and the memory hook, in two columns on landscape. */
 export const useBackPainter = ({ word, detail, level, accent = '#5b8def', theme }: PainterInput) =>
   useCallback<FacePainter>(
     (ctx, width, height) => {
       if (!word) return;
-      const pad = width * 0.085;
+      const pad = height * 0.11;
+      const unit = height;
       const ink = theme === 'dark' ? '#e8eaf0' : '#1b1e24';
       const muted = theme === 'dark' ? 'rgba(232,234,240,0.6)' : 'rgba(27,30,36,0.58)';
 
-      ctx.fillStyle = accent;
-      ctx.fillRect(pad, pad * 0.85, width * 0.18, height * 0.009);
-      ctx.font = `700 ${width * 0.036}px ${MONO}`;
-      ctx.textAlign = 'left';
-      ctx.fillStyle = accent;
-      ctx.fillText('USAGE', pad, pad * 1.5);
+      /* two column rails with a real gutter: the left column's text must stop
+         before the right column starts, and both stay inside the face. */
+      const colX = width * 0.56;
+      const leftW = colX - unit * 0.05 - pad;
+      const rightW = width - pad - colX;
 
-      let y = height * 0.16;
-      const maxY = height - pad * 1.5;
-      const section = (title: string) => {
-        if (y > maxY) return;
-        ctx.font = `700 ${width * 0.036}px ${MONO}`;
+      const section = (title: string, x: number, y: number) => {
+        ctx.font = `700 ${unit * 0.05}px ${MONO}`;
         ctx.fillStyle = accent;
-        ctx.fillText(title, pad, y);
-        y += width * 0.056;
+        ctx.fillText(title, x, y);
+      };
+      const paragraph = (text: string, x: number, y: number, max: number, font: string, color: string, leading: number, lines: number) => {
+        ctx.font = font;
+        ctx.fillStyle = color;
+        let cursor = y;
+        for (const line of wrapText(ctx, text, max, lines)) {
+          ctx.fillText(line, x, cursor);
+          cursor += leading;
+        }
+        return cursor;
       };
 
-      /* example sentence */
+      /* header: the headword with its phonetic trailing on the same line. The
+         headword shrinks to keep the pair inside the content width; only a
+         pathological length drops the phonetic and clips the word itself. */
+      ctx.fillStyle = accent;
+      ctx.fillRect(pad, pad * 0.72, unit * 0.16, unit * 0.014);
+      const phonetic = word.us || word.uk;
+      ctx.font = `500 ${unit * 0.055}px ${MONO}`;
+      const phText = phonetic ? `/${phonetic}/` : '';
+      const phGap = unit * 0.05;
+      const phWidth = phText ? ctx.measureText(phText).width : 0;
+      const fullW = width - pad * 2;
+      const pairW = fullW - (phText ? phWidth + phGap : 0);
+      let headSize = unit * 0.075;
+      ctx.font = `700 ${headSize}px ${MONO}`;
+      while (headSize > unit * 0.045 && ctx.measureText(word.word).width > pairW) {
+        headSize *= 0.94;
+        ctx.font = `700 ${headSize}px ${MONO}`;
+      }
+      let headText = word.word;
+      let showPhonetic = Boolean(phText);
+      if (ctx.measureText(headText).width > pairW) {
+        headText = fitLine(ctx, word.word, fullW);
+        showPhonetic = false;
+      }
+      ctx.textAlign = 'left';
+      ctx.fillStyle = ink;
+      /* measure the headword while the head font is still current — the
+         phonetic offset depends on it */
+      const headWidth = ctx.measureText(headText).width;
+      ctx.fillText(headText, pad, pad * 1.78);
+      if (showPhonetic) {
+        ctx.font = `500 ${unit * 0.055}px ${MONO}`;
+        ctx.fillStyle = muted;
+        ctx.fillText(phText, pad + headWidth + phGap, pad * 1.78);
+      }
+
+      /* left column: definitions + example */
+      let y = pad * 3;
+      const defs = detail?.d ?? [];
+      if (defs.length) {
+        section('释义', pad, y);
+        y += unit * 0.1;
+        for (const [pos, cn] of defs.slice(0, 4)) {
+          if (y > height - pad * 2.4) break;
+          ctx.font = `700 ${unit * 0.058}px ${MONO}`;
+          ctx.fillStyle = accent;
+          const posWidth = pos ? ctx.measureText(pos).width + unit * 0.02 : 0;
+          if (pos) ctx.fillText(pos, pad, y);
+          y = paragraph(cn, pad + posWidth, y, Math.max(leftW - posWidth, unit * 0.2), `600 ${unit * 0.062}px ${FONT}`, ink, unit * 0.088, 2);
+          y += unit * 0.03;
+        }
+      }
+
       const example = detail?.s?.[0];
-      if (example) {
-        section('EXAMPLE');
-        ctx.font = `500 ${width * 0.046}px ${FONT}`;
-        ctx.fillStyle = ink;
-        const lines = wrapText(ctx, example[0], width - pad * 2, 3);
-        for (const line of lines) {
-          ctx.fillText(line, pad, y);
-          y += width * 0.06;
+      if (example && y < height - pad * 2.6) {
+        section('例句', pad, y + unit * 0.05);
+        y += unit * 0.15;
+        if (y < height - pad * 2) {
+          y = paragraph(example[0], pad, y, leftW, `500 ${unit * 0.06}px ${FONT}`, ink, unit * 0.082, 2);
+          y = paragraph(example[1], pad, y, leftW, `500 ${unit * 0.054}px ${FONT}`, muted, unit * 0.075, 2);
         }
-        ctx.font = `500 ${width * 0.041}px ${FONT}`;
-        ctx.fillStyle = muted;
-        const cnLines = wrapText(ctx, example[1], width - pad * 2, 2);
-        for (const line of cnLines) {
-          ctx.fillText(line, pad, y);
-          y += width * 0.053;
-        }
-        y += width * 0.035;
       }
 
-      /* related words */
-      const rels = detail?.r ?? [];
-      if (rels.length && y < maxY) {
-        section('WORD FAMILY');
-        for (const [pos, words] of rels.slice(0, 2)) {
-          if (y > maxY) break;
-          ctx.font = `500 ${width * 0.044}px ${MONO}`;
+      /* right column: phrases, family, confusables, mnemonic */
+      let ry = pad * 3;
+      const phrases = detail?.p ?? [];
+      if (phrases.length) {
+        section('常用搭配', colX, ry);
+        ry += unit * 0.1;
+        for (const [en, cn] of phrases.slice(0, 3)) {
+          if (ry > height - pad * 2.4) break;
+          ctx.font = `500 ${unit * 0.058}px ${MONO}`;
           ctx.fillStyle = ink;
+          ctx.fillText(fitLine(ctx, en, rightW), colX, ry);
+          ry += unit * 0.078;
+          ctx.font = `500 ${unit * 0.05}px ${FONT}`;
+          ctx.fillStyle = muted;
+          ctx.fillText(fitLine(ctx, cn, rightW), colX, ry);
+          ry += unit * 0.082;
+        }
+        ry += unit * 0.02;
+      }
+
+      const rels = detail?.r ?? [];
+      if (rels.length && ry < height - pad * 2.4) {
+        section('同根词', colX, ry);
+        ry += unit * 0.1;
+        for (const [, words] of rels.slice(0, 2)) {
+          if (ry > height - pad * 2) break;
           const text = words.map(entry => entry[0]).join(' · ');
-          ctx.fillText(text.slice(0, 44), pad, y);
-          y += width * 0.055;
-          void pos;
+          ctx.font = `500 ${unit * 0.058}px ${MONO}`;
+          ctx.fillStyle = ink;
+          ctx.fillText(fitLine(ctx, text, rightW), colX, ry);
+          ry += unit * 0.085;
         }
-        y += width * 0.02;
+        ry += unit * 0.02;
       }
 
-      /* mnemonic */
-      if (detail?.m && y < maxY) {
-        section('MEMORY');
-        ctx.font = `500 ${width * 0.041}px ${FONT}`;
+      const confusables = detail?.k ?? [];
+      if (confusables.length && ry < height - pad * 2.4) {
+        section('易混词', colX, ry);
+        ry += unit * 0.1;
+        ctx.font = `500 ${unit * 0.058}px ${MONO}`;
+        ctx.fillStyle = ink;
+        ctx.fillText(fitLine(ctx, confusables.map(([other]) => other).join(' · '), rightW), colX, ry);
+        ry += unit * 0.085;
+      }
+
+      if (detail?.m && ry < height - pad * 2) {
+        section('记忆法', colX, ry);
+        ry += unit * 0.1;
+        /* only the lines that end above the footer — a blind 3-line block would
+           run through the bottom edge */
+        const leading = unit * 0.075;
+        const fits = Math.max(1, Math.min(3, Math.floor((height - pad * 1.35 - ry) / leading) + 1));
+        paragraph(detail.m, colX, ry, rightW, `500 ${unit * 0.054}px ${FONT}`, muted, leading, fits);
+      }
+
+      if (!defs.length && !example && !phrases.length && !rels.length && !confusables.length && !detail?.m) {
+        ctx.font = `500 ${unit * 0.06}px ${FONT}`;
         ctx.fillStyle = muted;
-        const lines = wrapText(ctx, detail.m, width - pad * 2, 3);
-        for (const line of lines) {
-          if (y > maxY) break;
-          ctx.fillText(line, pad, y);
-          y += width * 0.053;
-        }
+        ctx.fillText('这个词暂无更多数据', pad, height / 2);
       }
 
-      if (!example && !rels.length && !detail?.m) {
-        ctx.font = `500 ${width * 0.046}px ${FONT}`;
-        ctx.fillStyle = muted;
-        ctx.fillText('这个词暂无更多用法数据', pad, y + width * 0.02);
-      }
-
-      ctx.font = `600 ${width * 0.032}px ${MONO}`;
+      ctx.font = `600 ${unit * 0.045}px ${MONO}`;
       ctx.fillStyle = muted;
       ctx.textAlign = 'right';
-      ctx.fillText(LEVEL_NAME[level] ?? '', width - pad, height - pad * 0.9);
+      ctx.fillText('TAP TO FLIP BACK', width - pad, height - pad * 0.72);
       ctx.textAlign = 'left';
     },
     [word, detail, level, accent, theme]
@@ -235,6 +355,12 @@ interface WordCardProps {
   flat?: boolean;
   /** stretch the badge stage to fill the available column height */
   fill?: boolean;
+  /** hang the badge in landscape (2.25:1) instead of portrait */
+  landscape?: boolean;
+  /** mastery state of the word, 0 = none, 2 = known */
+  knownState?: number;
+  /** toggle the mastery state */
+  onKnown?: () => void;
 }
 
 export const WordCard = ({
@@ -247,8 +373,12 @@ export const WordCard = ({
   starred = false,
   placeholder,
   flat = false,
-  fill = false
+  fill = false,
+  landscape = false,
+  knownState = 0,
+  onKnown
 }: WordCardProps) => {
+  /* which side of the flat card is up; the badge turns itself */
   const [open, setOpen] = useState(false);
   const level = word?.level ?? 1;
 
@@ -256,44 +386,75 @@ export const WordCard = ({
   const backPainter = useBackPainter({ word, detail, level, accent, theme });
 
   const finger = word ? fingerForChar(word.word[0] ?? '') : null;
+  const wordKey = word ? `${word.book}:${word.word}` : '';
+
+  /* a new word comes up face first — the back of the last one is never the
+     first thing shown for the next */
+  useEffect(() => setOpen(false), [wordKey]);
 
   if (flat) {
+    const related = detail?.r?.flatMap(group => group[1]).slice(0, 5) ?? [];
+    const example = detail?.s?.[0];
+
     return (
       <div className={`word-card${fill ? ' word-card--fill' : ''}`}>
-        <div
-          className="word-card__panel"
-          style={fill ? { flex: '1 1 auto', minHeight: 280 } : { minHeight: Math.min(height, 300) }}
-        >
-          {word ? (
-            <>
-              <div className="word-card__panel-head">
-                <span className="word-card__word">{word.word}</span>
-                <span className="word-card__phonetic">/{word.us || word.uk}/</span>
+        <FlipCard
+          className="word-card__flip"
+          disabled={!word}
+          flipped={open}
+          onFlipChange={setOpen}
+          front={
+            <div className="word-card__face">
+              <div className="word-card__face-body">
+                {word ? (
+                  <>
+                    <div className="word-card__panel-head">
+                      <span className="word-card__word">{word.word}</span>
+                      <span className="word-card__phonetic">/{word.us || word.uk}/</span>
+                    </div>
+                    <p className="word-card__meaning">{word.cn}</p>
+                    {related.length > 0 && (
+                      <div className="row wrap" style={{ gap: 6, marginTop: 'var(--s3)' }}>
+                        {related.map(([w, cn]) => (
+                          <span className="chip" key={w} title={cn}>
+                            {w}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    {example && (
+                      <div className="word-card__example">
+                        <span className="mono">{example[0]}</span>
+                        <span className="muted">{example[1]}</span>
+                      </div>
+                    )}
+                    <p className="word-card__flip-hint">点击卡片查看详解</p>
+                  </>
+                ) : (
+                  <p className="muted">{placeholder ?? '开始一次练习，单词卡会在这里出现'}</p>
+                )}
               </div>
-              <p className="word-card__meaning">{word.cn}</p>
-              {detail?.r && detail.r.length > 0 && (
-                <div className="row wrap" style={{ gap: 6, marginTop: 'var(--s3)' }}>
-                  {detail.r
-                    .flatMap(group => group[1])
-                    .slice(0, 5)
-                    .map(([w, cn]) => (
-                      <span className="chip" key={w} title={cn}>
-                        {w}
-                      </span>
-                    ))}
-                </div>
-              )}
-              {detail?.s?.[0] && (
-                <div className="word-card__example">
-                  <span className="mono">{detail.s[0][0]}</span>
-                  <span className="muted">{detail.s[0][1]}</span>
-                </div>
-              )}
-            </>
-          ) : (
-            <p className="muted">{placeholder ?? '开始一次练习，单词卡会在这里出现'}</p>
-          )}
-        </div>
+            </div>
+          }
+          back={
+            <div className="word-card__face">
+              <div className="word-card__face-body">
+                {word && detail ? (
+                  <>
+                    {/* the headword rides along, so the back reads on its own */}
+                    <div className="word-card__panel-head">
+                      <span className="word-card__word">{word.word}</span>
+                      <span className="word-card__phonetic">/{word.us || word.uk}/</span>
+                    </div>
+                    <WordDetail word={word} detail={detail} />
+                  </>
+                ) : (
+                  <p className="muted">这个词还没有详解数据。</p>
+                )}
+              </div>
+            </div>
+          }
+        />
 
         {word && (
           <div className="word-card__bar">
@@ -303,8 +464,8 @@ export const WordCard = ({
               {finger && <span className="chip">{FINGER_LABEL[finger]}</span>}
             </div>
             <div className="row" style={{ gap: 'var(--s2)' }}>
-              <button type="button" className="btn btn-sm" onClick={() => setOpen(value => !value)}>
-                {open ? '收起详解' : '展开详解'}
+              <button type="button" className="btn btn-sm" onClick={() => setOpen(value => !value)} aria-pressed={open}>
+                {open ? '返回' : '查看详解'}
               </button>
               {onStar && (
                 <button
@@ -319,12 +480,6 @@ export const WordCard = ({
             </div>
           </div>
         )}
-
-        {word && open && detail && (
-          <div className="word-card__detail">
-            <WordDetail word={word} detail={detail} />
-          </div>
-        )}
       </div>
     );
   }
@@ -337,10 +492,10 @@ export const WordCard = ({
             frontPainter={frontPainter}
             backPainter={backPainter}
             cardColor={theme === 'dark' ? '#23262e' : '#ffffff'}
-            orientation="portrait"
-            finish="glossy"
+            orientation={landscape ? 'landscape' : 'portrait'}
+            finish="matte"
             cornerRadius={0.34}
-            size={0.8}
+            size={landscape ? 0.95 : 0.8}
             anchor="center"
             strapLength={0.15}
             strapColor="#3a4050"
@@ -349,7 +504,7 @@ export const WordCard = ({
             gravity={1}
             damping={0.55}
             elasticity={0.5}
-            breeze={0.42}
+            breeze={0.22}
             interactive
             intro
           />
@@ -368,9 +523,16 @@ export const WordCard = ({
             {finger && <span className="chip">{FINGER_LABEL[finger]}</span>}
           </div>
           <div className="row" style={{ gap: 'var(--s2)' }}>
-            <button type="button" className="btn btn-sm" onClick={() => setOpen(value => !value)}>
-              {open ? '收起详解' : '展开详解'}
-            </button>
+            {onKnown && (
+              <button
+                type="button"
+                className={`btn btn-sm ${knownState === 2 ? 'btn-primary' : ''}`}
+                onClick={onKnown}
+                aria-pressed={knownState === 2}
+              >
+                {knownState === 2 ? '取消掌握' : '标记掌握'}
+              </button>
+            )}
             {onStar && (
               <button
                 type="button"
@@ -382,12 +544,6 @@ export const WordCard = ({
               </button>
             )}
           </div>
-        </div>
-      )}
-
-      {word && open && detail && (
-        <div className="word-card__detail">
-          <WordDetail word={word} detail={detail} />
         </div>
       )}
     </div>

@@ -54,11 +54,12 @@
   border-radius: var(--r-xs);
 }
 
-/* Widen the pointer target so items react just before the cursor arrives */
+/* Widen the pointer target so items react just before the cursor arrives.
+   Horizontal bleed is clipped by the parent; only the vertical band extends. */
 .line-sidebar__item::before {
   content: '';
   position: absolute;
-  inset: -6px -48px;
+  inset: -6px 0;
 }
 
 .line-sidebar__label {

@@ -257,10 +257,14 @@ const Session = () => {
   /* ---------------- render ---------------- */
 
   const item = view.item;
+  /* Fallback accents mirror the CET-4 book colour and the Japanese track hue;
+     real values come from books.json so the palette stays data-driven. */
+  const FALLBACK_ACCENT = '#5b8def';
+  const JAPANESE_ACCENT = '#c0556f';
   const accent = useMemo(() => {
-    if (!item) return '#5b8def';
-    if (item.kind === 'japanese') return '#c0556f';
-    return books.find(book => book.id === item.book)?.accent ?? '#5b8def';
+    if (!item) return FALLBACK_ACCENT;
+    if (item.kind === 'japanese') return JAPANESE_ACCENT;
+    return books.find(book => book.id === item.book)?.accent ?? FALLBACK_ACCENT;
   }, [item, books]);
 
   if (loadError) {

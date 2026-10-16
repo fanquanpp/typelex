@@ -1,0 +1,54 @@
+/* Two-sided card. The rotor turns in 3D and each face is culled when it looks
+   away, which is what lets both faces stay mounted (see FlipCard.tsx).
+
+   Nothing that flattens a 3D context — filter, opacity, overflow — may live on
+   the rotor, or `preserve-3d` is dropped and the hidden face shows through
+   mirrored. The faces are free to clip and scroll: they are flat leaves. */
+
+.flip-card {
+  position: relative;
+  min-height: 0;
+  /* the axis the drag can claim; the other one stays the browser's (scrolling) */
+  touch-action: pan-y;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.flip-card[data-axis='x'] {
+  touch-action: pan-x;
+}
+
+.flip-card[data-dragging] {
+  cursor: grabbing;
+}
+
+.flip-card[data-disabled] {
+  cursor: default;
+}
+
+/* The rotor has to carry the radius too: `inherit` skips over it otherwise and
+   both faces come out square, whatever the caller set on `.flip-card`. */
+.flip-card__rotor {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.flip-card__face {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.flip-card__face--back {
+  transform: rotateY(180deg);
+}
+
+.flip-card[data-axis='x'] .flip-card__face--back {
+  transform: rotateX(180deg);
+}

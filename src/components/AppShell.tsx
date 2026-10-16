@@ -21,15 +21,70 @@ import { Counter } from './motion';
 import LineSidebar from './LineSidebar';
 import './AppShell.css';
 
-const NAV = [
-  { label: '总览', to: '/' },
-  { label: '练习', to: '/practice' },
-  { label: '记忆复习', to: '/study' },
-  { label: '词库浏览', to: '/wordbook' },
-  { label: '键盘实验室', to: '/keyboard' },
-  { label: '日语训练', to: '/japanese' },
-  { label: '学习数据', to: '/stats' },
-  { label: '偏好设置', to: '/settings' }
+/**
+ * The primary menu (top) and, per primary route, its secondary sub-pages
+ * (sidebar). A sub-page is a real child route — not an anchor — so new
+ * functionality lands as its own page under the owning feature, and the
+ * sidebar is the directory of those pages.
+ */
+export interface NavItem {
+  label: string;
+  to: string;
+  /** child routes of this feature; the first one is the feature's home */
+  subpages: { label: string; to: string }[];
+}
+
+const NAV: NavItem[] = [
+  {
+    label: '总览',
+    to: '/',
+    subpages: [{ label: '首页', to: '/' }]
+  },
+  {
+    label: '练习',
+    to: '/practice',
+    subpages: [
+      { label: '练习配置', to: '/practice' },
+      { label: '练习会话', to: '/practice/session' }
+    ]
+  },
+  {
+    label: '记忆复习',
+    to: '/study',
+    subpages: [{ label: '复习卡片', to: '/study' }]
+  },
+  {
+    label: '词库浏览',
+    to: '/wordbook',
+    subpages: [{ label: '词表检索', to: '/wordbook' }]
+  },
+  {
+    label: '键盘实验室',
+    to: '/keyboard',
+    subpages: [{ label: '键盘总览', to: '/keyboard' }]
+  },
+  {
+    label: '日语训练',
+    to: '/japanese',
+    subpages: [
+      { label: '日语训练', to: '/japanese' },
+      { label: '五十音图', to: '/japanese/kana' }
+    ]
+  },
+  {
+    label: '学习数据',
+    to: '/stats',
+    subpages: [
+      { label: '数据总览', to: '/stats' },
+      { label: '逐键分析', to: '/stats/keys' },
+      { label: '练习历史', to: '/stats/history' }
+    ]
+  },
+  {
+    label: '偏好设置',
+    to: '/settings',
+    subpages: [{ label: '全部设置', to: '/settings' }]
+  }
 ];
 
 /** A restrained glyph field: faint, slow, centre kept clear for content. */
@@ -77,16 +132,29 @@ export const AppShell = () => {
 
   const activeIndex = useMemo(() => Math.max(0, NAV.findIndex(item => location.pathname === item.to || (item.to !== '/' && location.pathname.startsWith(item.to)))), [location.pathname]);
 
-  const navigate = (index: number) => {
-    window.location.hash = `#${NAV[index].to}`;
+  /* The sidebar lists the current feature's sub-pages; clicking navigates. */
+  const current = NAV[activeIndex];
+  const subpages = current.subpages;
+  const activeSub = useMemo(() => {
+    const index = subpages.findIndex(page => location.pathname === page.to);
+    return index >= 0 ? index : 0;
+  }, [subpages, location.pathname]);
+
+  const navigateSubpage = (index: number) => {
+    window.location.hash = `#${subpages[index].to}`;
   };
+
+  /* The practice session skips the ambient layers — its own full-screen
+     surfaces already cover the stage, so two more canvases per frame are
+     pure waste. Every other route keeps the ambient field live. */
+  const ambientOff = location.pathname === '/practice/session';
 
   return (
     <div className="app" data-route={location.pathname}>
       <Backdrop />
 
       {/* ambient layers: above the colour field, below every glass panel */}
-      <div className="app__ambient" aria-hidden="true">
+      <div className="app__ambient" aria-hidden="true" hidden={ambientOff}>
         <CursorGrid
           cellSize={64}
           radius={170}
@@ -103,7 +171,7 @@ export const AppShell = () => {
       </div>
 
       <header className="app__header">
-        <div className="shell app__header-inner">
+        <div className="app__header-inner">
           <a href="#/" className="brand" aria-label="TypeLex 首页">
             <span className="brand__mark" aria-hidden="true">
               <svg viewBox="0 0 32 32" width="26" height="26" fill="none">
@@ -116,7 +184,6 @@ export const AppShell = () => {
             </span>
             <span className="brand__text">
               <strong>TypeLex</strong>
-              <em>打字 · 词汇</em>
             </span>
           </a>
 
@@ -134,15 +201,28 @@ export const AppShell = () => {
               logoAlt="TypeLex 首页"
               logoHref="#/"
               items={NAV.map(item => ({ label: item.label, href: `#${item.to}` }))}
-              activeHref={`#${location.pathname}`}
+              activeHref={`#${NAV[activeIndex].to}`}
               hoverEffect="fill"
               surface="glass"
-              size="sm"
+              size="md"
+              collapse="never"
               ariaLabel="顶部导航"
             />
           </div>
 
           <div className="app__actions">
+            <a
+              href="https://github.com/fanquanpp/typelex"
+              target="_blank"
+              rel="noreferrer"
+              className="btn btn-icon"
+              aria-label="GitHub 源仓库"
+              title="GitHub 源仓库"
+            >
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
+                <path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.72.5.1.68-.22.68-.49 0-.24-.01-.88-.01-1.73-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.11-1.5-1.11-1.5-.91-.63.07-.62.07-.62 1 .07 1.53 1.06 1.53 1.06.9 1.57 2.35 1.12 2.92.85.09-.67.35-1.12.63-1.38-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.7 0 0 .84-.28 2.75 1.05a9.36 9.36 0 0 1 5 0c1.91-1.33 2.75-1.05 2.75-1.05.55 1.4.2 2.44.1 2.7.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.8-4.57 5.06.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .27.18.6.69.49A10.02 10.02 0 0 0 22 12.25C22 6.58 17.52 2 12 2z" />
+              </svg>
+            </a>
             <div className="xp-chip" title={`等级 ${progress.level} · ${Math.round(progress.current)} / ${progress.need} XP`}>
               <span className="xp-chip__level">
                 LV <Counter value={progress.level} />
@@ -210,8 +290,21 @@ export const AppShell = () => {
       </header>
 
       <div className="app__body">
-        <aside className="app__sidebar" aria-label="主导航">
-          <LineSidebar items={NAV.map(item => item.label)} activeIndex={activeIndex} onItemClick={navigate} />
+        <aside className="app__sidebar" aria-label={`${NAV[activeIndex].label} 功能目录`}>
+          <div className="app__submenu">
+            <span className="app__submenu-title">{NAV[activeIndex].label}</span>
+            <LineSidebar
+              items={subpages.map(page => page.label)}
+              activeIndex={subpages.length ? activeSub : null}
+              itemGap={26}
+              fontSize={0.84}
+              proximityRadius={90}
+              maxShift={14}
+              markerLength={34}
+              tickScale={0.4}
+              onItemClick={navigateSubpage}
+            />
+          </div>
           <div className="app__sidebar-foot">
             <span className="app__sidebar-meta">已累计 {Math.round(Object.values(useApp.getState().daily).reduce((sum, entry) => sum + entry.seconds, 0) / 60)} 分钟</span>
           </div>

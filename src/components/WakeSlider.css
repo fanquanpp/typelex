@@ -1,0 +1,92 @@
+/* WakeSlider — converted from the react-bits Tailwind classes. */
+
+.wake-slider {
+  display: inline-flex;
+  width: 100%;
+  align-items: center;
+  gap: var(--s3);
+  color: inherit;
+}
+
+.wake-slider[aria-disabled='true'] {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.wake-slider__track {
+  position: relative;
+  display: flex;
+  height: var(--ws-height);
+  min-height: 44px;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: var(--ws-gap);
+  touch-action: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  cursor: grab;
+}
+.wake-slider__track:active {
+  cursor: grabbing;
+}
+
+.wake-slider__bar {
+  position: relative;
+  height: var(--ws-height);
+  min-width: 0;
+  flex: 1 1 0;
+  transform-origin: center;
+  border-radius: var(--r-full);
+  background: var(--ws-track);
+  transform: scaleY(var(--ws-rest));
+  transition: background-color 120ms ease;
+}
+.wake-slider__bar[data-on='true'] {
+  background: var(--ws-fill);
+}
+.wake-slider[data-instant='true'] .wake-slider__bar {
+  transition-duration: 0ms;
+}
+
+.wake-slider__crest {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--ws-crest);
+  opacity: 0;
+}
+
+.wake-slider__handle {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  cursor: inherit;
+  touch-action: none;
+  border-radius: var(--r-lg);
+  border: 0;
+  background: transparent;
+  padding: 0;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.wake-slider__handle:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+  border-radius: var(--r-sm);
+}
+
+.wake-slider__value {
+  min-width: 3ch;
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+  opacity: 0.6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wake-slider__bar {
+    transform: scaleY(var(--ws-rest)) !important;
+  }
+}

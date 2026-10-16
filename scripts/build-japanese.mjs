@@ -160,10 +160,10 @@ const main = () => {
 
   const curated = fs.existsSync(CURATED)
     ? JSON.parse(fs.readFileSync(CURATED, 'utf8'))
-    : { n5: {}, n4: {} };
+    : { n5: {}, n4: {}, n3: {}, n2: {}, n1: {} };
 
   const glosses = new Map();
-  for (const level of ['n5', 'n4']) {
+  for (const level of ['n5', 'n4', 'n3', 'n2', 'n1']) {
     for (const [key, value] of Object.entries(curated[level] ?? {})) {
       glosses.set(normalizeKey(key), value);
     }

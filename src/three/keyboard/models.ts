@@ -64,43 +64,11 @@ export interface KeyboardModel {
     oled?: boolean;
     /** brand wordmark on the deck */
     badge?: string;
-    /** the deck is a recessed tray, as on a laptop */
-    tray?: boolean;
-    /** laptop-style continuous F-row (no gaps between F-keys) */
-    flushFunctionRow?: boolean;
   };
   sound: SoundProfile;
 }
 
 export const MODELS: KeyboardModel[] = [
-  {
-    id: 'laptop',
-    name: '笔记本键盘',
-    brand: 'Generic',
-    desc: '最常见的笔记本巧克力键盘：深灰键帽、约 1.3mm 键程、无背光。手感的基准线。',
-    layoutId: 'laptop78',
-    profile: 'chiclet',
-    capHeight: 0.33,
-    dish: 0.028,
-    gap: 0.1,
-    case: {
-      material: 'plastic',
-      color: '#2a2d33',
-      deckColor: '#22252a',
-      height: 0.8,
-      radius: 0.38,
-      bezel: 0.7,
-      tilt: 4,
-      roughness: 0.66,
-      metalness: 0.08
-    },
-    caps: { color: '#34383f', accent: '#34383f', legend: '#dfe3e9' },
-    backlight: 'none',
-    rgbStyle: 'solid',
-    underglow: false,
-    features: { tray: true, flushFunctionRow: true },
-    sound: 'laptop'
-  },
   {
     id: 'office',
     name: '办公薄型键盘',

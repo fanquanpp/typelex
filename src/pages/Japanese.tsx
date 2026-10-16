@@ -1,17 +1,16 @@
 /**
  * Japanese — the rōmaji track.
  *
- * N5/N4 carry hand-written Chinese glosses; N3–N1 fall back to the source
- * dataset's English gloss, which is stated plainly on the page rather than
- * hidden. The kana chart is generated from the same converter the typing engine
- * grades against, so what you see is exactly what you have to type.
+ * Every JLPT level (N5–N1) carries a hand-written Chinese gloss; the English
+ * gloss from the source dataset stays alongside it in the data. The kana chart
+ * is generated from the same converter the typing engine grades against, so
+ * what you see is exactly what you have to type.
  */
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { Reveal, SpotlightCard } from '../components/effects';
 import { useApp } from '../lib/store';
-import { kanaToRomaji } from '../lib/romaji';
 import type { JapaneseWord } from '../lib/types';
 import { loadJapanese } from '../lib/vocab';
 import './Japanese.css';
@@ -24,34 +23,9 @@ const LEVELS = [
   { level: 1, name: 'N1', desc: '高级', note: '抽象与专业内容' }
 ];
 
-const SEION = [
-  ['あ', 'い', 'う', 'え', 'お'],
-  ['か', 'き', 'く', 'け', 'こ'],
-  ['さ', 'し', 'す', 'せ', 'そ'],
-  ['た', 'ち', 'つ', 'て', 'と'],
-  ['な', 'に', 'ぬ', 'ね', 'の'],
-  ['は', 'ひ', 'ふ', 'へ', 'ほ'],
-  ['ま', 'み', 'む', 'め', 'も'],
-  ['や', '', 'ゆ', '', 'よ'],
-  ['ら', 'り', 'る', 'れ', 'ろ'],
-  ['わ', '', '', '', 'を'],
-  ['ん', '', '', '', '']
-];
-
-const DAKUON = [
-  ['が', 'ぎ', 'ぐ', 'げ', 'ご'],
-  ['ざ', 'じ', 'ず', 'ぜ', 'ぞ'],
-  ['だ', 'ぢ', 'づ', 'で', 'ど'],
-  ['ば', 'び', 'ぶ', 'べ', 'ぼ'],
-  ['ぱ', 'ぴ', 'ぷ', 'ぺ', 'ぽ']
-];
-
-const YOON = ['きゃ', 'きゅ', 'きょ', 'しゃ', 'しゅ', 'しょ', 'ちゃ', 'ちゅ', 'ちょ', 'にゃ', 'にゅ', 'にょ', 'りゃ', 'りゅ', 'りょ', 'じゃ', 'じゅ', 'じょ'];
-
 const Japanese = () => {
   const config = useApp(state => state.config);
   const setConfig = useApp(state => state.setConfig);
-  const romajiStyle = useApp(state => state.settings.romajiStyle);
 
   const [words, setWords] = useState<JapaneseWord[]>([]);
   const [level, setLevel] = useState(5);
@@ -108,13 +82,13 @@ const Japanese = () => {
         </p>
       </header>
 
-      <Reveal as="section" className="stack-5">
+      <Reveal as="section" id="sec-jp-start" className="stack-5">
         <div className="jp-hero panel panel-pad-lg">
           <div className="stack-3">
             <h2 className="section-title">开始日语练习</h2>
             <p className="muted" style={{ fontSize: 'var(--text-sm)', maxWidth: '56ch' }}>
-              共 {words.length.toLocaleString()} 个词条。N5 与 N4 提供中文释义（当前级别覆盖
-              {' '}{chineseCoverage.toFixed(0)}%），N3–N1 使用英文释义。
+              共 {words.length.toLocaleString()} 个词条，全部带人工整理的中文释义
+              （当前级别覆盖 {chineseCoverage.toFixed(0)}%）。
             </p>
           </div>
           <div className="row wrap" style={{ gap: 'var(--s3)' }}>
@@ -136,6 +110,7 @@ const Japanese = () => {
               key={entry.level}
               className="stat-tile jp-level"
               style={{ cursor: 'pointer' }}
+              data-on={level === entry.level || undefined}
             >
               <button
                 type="button"
@@ -144,7 +119,6 @@ const Japanese = () => {
                   setLimit(100);
                 }}
                 style={{ all: 'unset', display: 'block', cursor: 'pointer', width: '100%' }}
-                data-active={level === entry.level}
               >
                 <div className="row-between">
                   <span className="stat-value">{entry.name}</span>
@@ -160,66 +134,8 @@ const Japanese = () => {
         </div>
       </Reveal>
 
-      {/* ---------------- kana chart ---------------- */}
-      <Reveal as="section" className="stack-6">
-        <div className="section-head">
-          <div>
-            <span className="eyebrow">Reference</span>
-            <h2 className="section-title">五十音与罗马音对照</h2>
-            <p className="muted" style={{ fontSize: 'var(--text-sm)' }}>
-              当前使用 {romajiStyle === 'hepburn' ? '平文式（Hepburn）' : '训令式（Kunrei）'}。
-              打字时两种写法都算对，例如 <code className="mono">shi</code> 与 <code className="mono">si</code> 都可以。
-            </p>
-          </div>
-        </div>
-
-        <div className="jp-charts">
-          <div className="panel panel-pad stack-3">
-            <p className="eyebrow">清音</p>
-            <div className="kana-grid">
-              {SEION.flat().map((kana, index) =>
-                kana ? (
-                  <div className="kana-cell" key={`${kana}-${index}`}>
-                    <span className="kana-cell__kana jp">{kana}</span>
-                    <span className="kana-cell__romaji">{kanaToRomaji(kana, romajiStyle)}</span>
-                  </div>
-                ) : (
-                  <div className="kana-cell kana-cell--empty" key={`empty-${index}`} />
-                )
-              )}
-            </div>
-          </div>
-
-          <div className="stack-5">
-            <div className="panel panel-pad stack-3">
-              <p className="eyebrow">浊音 · 半浊音</p>
-              <div className="kana-grid">
-                {DAKUON.flat().map(kana => (
-                  <div className="kana-cell" key={kana}>
-                    <span className="kana-cell__kana jp">{kana}</span>
-                    <span className="kana-cell__romaji">{kanaToRomaji(kana, romajiStyle)}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="panel panel-pad stack-3">
-              <p className="eyebrow">拗音</p>
-              <div className="kana-grid kana-grid--yoon">
-                {YOON.map(kana => (
-                  <div className="kana-cell" key={kana}>
-                    <span className="kana-cell__kana jp">{kana}</span>
-                    <span className="kana-cell__romaji">{kanaToRomaji(kana, romajiStyle)}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </Reveal>
-
       {/* ---------------- word list ---------------- */}
-      <Reveal as="section" className="stack-5">
+      <Reveal as="section" id="sec-jp-words" className="stack-5">
         <div className="section-head">
           <div>
             <h2 className="section-title">

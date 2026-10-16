@@ -103,12 +103,18 @@
   position: relative;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: var(--s5);
-  padding: var(--s8) var(--s6);
+  padding: var(--s6) var(--s8);
   border-radius: var(--r-xl);
   border: 1px solid var(--border);
   background: var(--bg-raised);
   overflow: hidden;
+  /* The drill input is the primary view: it claims all the height the session
+     main column can give it and scales its type with the viewport. */
+  flex: 1 1 auto;
+  min-height: 220px;
+  font-size: clamp(1.35rem, 2.6vw, 2.1rem);
 }
 
 .typing-stage::before {
@@ -198,6 +204,12 @@
   font-size: var(--text-sm);
   color: var(--ink-muted);
   z-index: 1;
+}
+
+/* The hint rows live inside the enlarged stage; keep them at reading size
+   regardless of the stage's viewport-scaled font. */
+.typing-stage .typing-hint {
+  font-size: var(--text-sm);
 }
 
 /* ---- live stat strip ---- */
@@ -415,13 +427,3 @@
   z-index: 2;
 }
 
-@media (max-width: 720px) {
-  .typing-stage {
-    padding: var(--s5) var(--s4);
-  }
-  .keyboard-overlay--tl,
-  .keyboard-overlay--tr {
-    position: static;
-    margin-bottom: var(--s2);
-  }
-}

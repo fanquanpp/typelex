@@ -571,7 +571,7 @@ samp {
 .segmented button:hover {
   color: var(--ink);
 }
-.segmented button[data-active] {
+.segmented button[data-active='true'] {
   background: var(--ink);
   color: var(--bg);
   box-shadow: 0 6px 14px -10px rgba(0, 0, 0, 0.5);

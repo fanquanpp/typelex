@@ -3,19 +3,21 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "TypeLex — 3D 拟真键盘英语/日语打字练习与词汇记忆平台",
+  "description": "TypeLex — 拟真键盘英语/日语打字练习与词汇记忆平台",
   "license": "MIT",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "typecheck": "tsc -b",
-    "data": "node scripts/build-data.mjs"
+    "data": "node scripts/build-data.mjs",
+    "data:jp": "node scripts/build-japanese.mjs"
   },
   "dependencies": {
     "@fontsource-variable/jetbrains-mono": "^5.3.0",
     "@fontsource-variable/manrope": "^5.3.0",
     "@fontsource-variable/sora": "^5.3.0",
+    "motion": "^14.3.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "react-router-dom": "^7.18.4",

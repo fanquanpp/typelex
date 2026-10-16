@@ -115,15 +115,3 @@
   line-height: 1.45;
 }
 
-@media (max-width: 640px) {
-  .heat-row .heat-key {
-    width: 28px;
-    height: 28px;
-  }
-  .heat-row {
-    margin-left: 0 !important;
-  }
-  .daily-bar__label {
-    display: none;
-  }
-}

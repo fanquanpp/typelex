@@ -10,6 +10,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { Reveal, SpotlightCard } from '../components/effects';
+import RubberSegment from '../components/RubberSegment';
 import { TypingLine } from '../components/TypingLine';
 import { WordCard } from '../components/WordCard';
 import { useApp } from '../lib/store';
@@ -202,41 +203,30 @@ const Study = () => {
         </p>
       </header>
 
-      <Reveal as="section" className="stack-5">
+      <Reveal as="section" id="sec-decks" className="stack-5">
         <div className="row-between wrap">
-          <div className="pill-row">
-            <button type="button" className="pill" data-active={deck === 'due'} onClick={() => setDeck('due')}>
-              待复习 {dueTotal > 0 && `· ${dueTotal}`}
-            </button>
-            <button
-              type="button"
-              className="pill"
-              data-active={deck === 'starred'}
-              onClick={() => setDeck('starred')}
-            >
-              已收藏 {stars.length > 0 && `· ${stars.length}`}
-            </button>
-            {books.map(book => (
-              <button
-                type="button"
-                key={book.id}
-                className="pill"
-                data-active={deck === book.id}
-                onClick={() => setDeck(book.id)}
-              >
-                {book.name}
-              </button>
-            ))}
-          </div>
+          <RubberSegment
+            size="sm"
+            aria-label="选择牌组"
+            items={[
+              { value: 'due', label: <>待复习 {dueTotal > 0 && `· ${dueTotal}`}</> },
+              { value: 'starred', label: <>已收藏 {stars.length > 0 && `· ${stars.length}`}</> },
+              ...books.map(book => ({ value: book.id, label: book.name }))
+            ]}
+            value={deck}
+            onChange={value => setDeck(value as typeof deck)}
+          />
 
-          <div className="segmented">
-            <button type="button" data-active={mode === 'recall'} onClick={() => setMode('recall')}>
-              回想模式
-            </button>
-            <button type="button" data-active={mode === 'type'} onClick={() => setMode('type')}>
-              打字模式
-            </button>
-          </div>
+          <RubberSegment
+            size="sm"
+            aria-label="复习模式"
+            items={[
+              { value: 'recall', label: '回想模式' },
+              { value: 'type', label: '打字模式' }
+            ]}
+            value={mode}
+            onChange={value => setMode(value as typeof mode)}
+          />
         </div>
 
         <div className="meter">

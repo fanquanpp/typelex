@@ -1,4 +1,5 @@
-/* Vocabulary card + detail panel. */
+/* Vocabulary card — the flat glass variant's two faces, and the detail record
+   both variants share. */
 
 .word-card {
   display: flex;
@@ -41,11 +42,6 @@
   justify-content: space-between;
   gap: var(--s3);
   flex-wrap: wrap;
-}
-
-.word-card__detail {
-  border-top: 1px solid var(--border);
-  padding-top: var(--s5);
 }
 
 .word-detail__defs {
@@ -149,18 +145,49 @@
   letter-spacing: normal;
 }
 
-/* Flat glass word card — the session-side variant (no 3D badge). */
-.word-card__panel {
-  display: flex;
-  flex-direction: column;
-  gap: var(--s3);
-  padding: var(--s5);
+/* Flat glass word card — the session-side variant (no 3D badge). Two faces:
+   the front carries the headline record, the back the full detail; a click or
+   the bar's button turns it over. */
+.word-card__flip {
+  flex: 1 1 auto;
+  min-height: 300px;
   border-radius: var(--r-lg);
+}
+
+.word-card--fill .word-card__flip {
+  min-height: 280px;
+}
+
+/* The glass lives on the scroller, so the frame stays put while the record
+   scrolls under it. The padding sits on the body rather than on the scroller:
+   a scroll container drops its own bottom padding from the scrollable area. */
+.word-card__face {
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-radius: inherit;
   background: var(--glass-tint);
   border: 1px solid var(--glass-edge-soft);
   box-shadow: var(--glass-shadow);
   -webkit-backdrop-filter: blur(16px) saturate(1.6);
   backdrop-filter: blur(16px) saturate(1.6);
+}
+
+.word-card__face-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+  min-height: 100%;
+  padding: var(--s5);
+}
+
+.word-card__flip-hint {
+  margin-top: auto;
+  align-self: flex-end;
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-widest);
+  color: var(--ink-faint);
 }
 
 .word-card__panel-head {

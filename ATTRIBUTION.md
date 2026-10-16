@@ -50,11 +50,10 @@ are distributed under **CC-BY**. Attribution to Jonathan Waller / tanos.co.uk is
 required when redistributing that portion.
 
 **What we add.** Hepburn rōmaji derived from the kana readings, and hand-written
-Chinese glosses for N5 (650 entries) and N4 (597 entries) in
-`scripts/curated/jp-zh.json`. That curated file is original work for this
-project and is covered by the MIT license above. N3–N1 carry the upstream
-English gloss only — the app states this on the Japanese page rather than
-hiding it.
+Chinese glosses for **all 7,032 words across N5–N1** (662 / 605 / 1,680 / 1,581 /
+2,504 entries by level) in `scripts/curated/jp-zh.json`. That curated file is
+original work for this project and is covered by the MIT license above; the
+upstream English gloss is kept alongside every entry in the built data.
 
 ---
 
@@ -67,17 +66,30 @@ past participle and Chinese gloss) is original work for this project, MIT.
 
 ## 4. Interface components adapted from react-bits
 
-Three components are adapted from [react-bits](https://github.com/DavidHDev/react-bits)
-by **David Haz**, licensed **MIT + Commons Clause**. The Commons Clause permits
-using them inside an application but not selling or redistributing them as a
-component library. They are used here inside an application, and the source
-files carry the original attribution in their headers.
+The components below are adapted from [react-bits](https://github.com/DavidHDev/react-bits)
+by **David Haz** (and contributors where noted), licensed **MIT + Commons Clause**. The
+Commons Clause permits using them inside an application but not selling or redistributing
+them as a component library. They are used here inside an application, and every source
+file carries the original attribution in its header.
 
 | File | Original | Notes |
 | --- | --- | --- |
-| `src/components/GooeyNav.tsx`, `GooeyNav.css` | `GooeyNav` by David Haz | Ported to TypeScript, wired to React Router, colours moved to design tokens |
-| `src/components/OrbitCards.tsx`, `OrbitCards.css` | `OrbitImages` by **Dominik Koch** ([@dominikkoch](https://x.com/dominikkoch)), curated by David Haz | Extended so items render arbitrary card content instead of only `<img>` |
-| `src/components/Lanyard/Lanyard.tsx`, `Lanyard.css` | `Lanyard` by David Haz | Ported to TypeScript and extended with canvas painter callbacks so the badge faces can be drawn from live word data |
+| `src/components/AnimatedList.tsx`, `.css` | `AnimatedList` | Ported to TypeScript; virtualised scrolling and selection wired to this app's data |
+| `src/components/Crosshair.tsx` | `Crosshair` | Full-screen canvas cursor lines with target lock |
+| `src/components/CursorGrid.tsx` | `CursorGrid` | Interactive grid spotlight; simulation rewritten for this project |
+| `src/components/LetterGlitch.tsx` | `LetterGlitch` | Canvas2D glyph field; lite configuration used as an ambient layer |
+| `src/components/LineSidebar.tsx`, `.css` | `LineSidebar` | Proximity-reactive vertical nav in the app sidebar |
+| `src/components/PillNav.tsx`, `.css` | `PillNav` | Top navigation capsule; Tailwind replaced with design-token CSS, wired to React Router |
+| `src/components/RubberSegment.tsx`, `.css` | `RubberSegment` | String-follow segmented control; Tailwind replaced with plain CSS |
+| `src/components/WakeSlider.tsx`, `.css` | `WakeSlider` | Velocity-reactive bar slider; Tailwind replaced with plain CSS |
+| `src/components/TypingSlots.tsx`, `.css` | `CodeSlots` | Slot technique reused for the typed-character line |
+| `src/components/FlipCard.tsx`, `.css` | `FlipCard` by David Haz | Card flip micro-interaction |
+| `src/components/OrbitCards.tsx`, `.css` | `OrbitImages` by **Dominik Koch** ([@dominikkoch](https://x.com/dominikkoch)), curated by David Haz | Extended so items render arbitrary card content instead of only `<img>` |
+| `src/components/Lanyard/Lanyard.tsx`, `.css` | `Lanyard` by David Haz | Ported to TypeScript and extended with canvas painter callbacks so the badge faces can be drawn from live word data |
+
+`src/components/effects.tsx` and `src/components/motion.tsx` are hand-written
+implementations of effect techniques we wanted from react-bits; they contain no
+ported code but follow the same ideas.
 
 react-bits license text: MIT + Commons Clause License Condition v1.0,
 Copyright (c) David Haz. Free for personal and commercial use as part of an
@@ -87,11 +99,15 @@ application, website or product.
 
 ## 5. Typefaces
 
-Loaded from Google Fonts under the **SIL Open Font License 1.1**:
+Bundled from npm via `@fontsource-variable` under the **SIL Open Font License 1.1**:
 
-- **Inter** — Rasmus Andersson
-- **JetBrains Mono** — JetBrains
-- **Noto Sans JP** — Google / Adobe
+- **Sora Variable** — Jonathan Barnbrook, Neil Panchal (display face)
+- **Manrope Variable** — Mikhail Sharanda (UI face)
+- **JetBrains Mono Variable** — JetBrains (monospace face)
+
+Chinese text uses the **system CJK stack** (PingFang SC / Microsoft YaHei / Noto Sans CJK …) —
+no webfont is downloaded for it. Earlier revisions listed Google-Fonts-hosted Inter and
+Noto Sans JP; those are no longer used.
 
 ---
 

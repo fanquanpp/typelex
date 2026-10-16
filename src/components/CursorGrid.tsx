@@ -241,12 +241,18 @@ export const CursorGrid = ({
   style,
   children
 }: CursorGridProps) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const hostRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const container = containerRef.current;
-    const canvas = canvasRef.current;
+    const host = hostRef.current;
+    /* The canvas is created per effect run, never shared through a ref: under
+       StrictMode the effect runs, cleans up (which calls loseContext), and runs
+       again on the SAME element — a second getContext then returns the already-
+       lost context, every draw silently fails, and the lost canvas composites
+       as an opaque white sheet over the whole page. */
+    const canvas = document.createElement('canvas');
+    canvas.className = 'cursor-grid__canvas';
+    canvas.setAttribute('aria-hidden', 'true');
     const gl = canvas?.getContext('webgl2', {
       alpha: true,
       premultipliedAlpha: true,
@@ -254,7 +260,8 @@ export const CursorGrid = ({
       depth: false,
       stencil: false
     });
-    if (!container || !canvas || !gl) return undefined;
+    if (!host || !gl) return undefined;
+    host.appendChild(canvas);
     const shader = link(gl);
     if (!shader) return undefined;
     const u = shader.uniforms;
@@ -294,8 +301,8 @@ export const CursorGrid = ({
 
     const rebuild = () => {
       const size = cellSize;
-      view.width = Math.max(1, container.clientWidth);
-      view.height = Math.max(1, container.clientHeight);
+      view.width = Math.max(1, host.clientWidth);
+      view.height = Math.max(1, host.clientHeight);
       view.ratio = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = Math.max(1, Math.round(view.width * view.ratio));
       canvas.height = Math.max(1, Math.round(view.height * view.ratio));
@@ -479,7 +486,7 @@ export const CursorGrid = ({
     };
 
     const locate = (event: PointerEvent) => {
-      const rect = container.getBoundingClientRect();
+      const rect = host.getBoundingClientRect();
       const x = event.clientX - rect.left;
       const y = event.clientY - rect.top;
       return { x, y, inside: x >= 0 && y >= 0 && x <= rect.width && y <= rect.height };
@@ -522,12 +529,12 @@ export const CursorGrid = ({
       draw();
       wake();
     });
-    resizeObserver.observe(container);
+    resizeObserver.observe(host);
     const intersection = new IntersectionObserver(entries => {
       visible = entries.some(entry => entry.isIntersecting);
       if (visible) wake();
     });
-    intersection.observe(container);
+    intersection.observe(host);
     /* Follow the page theme: re-resolve the ink uniform when `data-theme`
        flips, then wake so the next frame already paints the new colour. */
     const themeObserver = new MutationObserver(() => wake());
@@ -555,12 +562,14 @@ export const CursorGrid = ({
       gl.deleteVertexArray(vao);
       gl.deleteProgram(shader.program);
       gl.getExtension('WEBGL_lose_context')?.loseContext();
+      /* Drop the canvas with the context: the next effect run must not reuse
+         an element whose context is already lost. */
+      canvas.remove();
     };
   }, [cellSize, color, gridColor, radius, falloff, highlight, holdTime, fadeDuration, lineWidth, maxOpacity, fillOpacity, gridOpacity, gridStyle, spotlight, clickPulse, pulseSpeed, ambient, edgeFade, intro]);
 
   return (
-    <div ref={containerRef} className={`cursor-grid ${className}`.trim()} style={style}>
-      <canvas ref={canvasRef} className="cursor-grid__canvas" aria-hidden="true" />
+    <div ref={hostRef} className={`cursor-grid ${className}`.trim()} style={style}>
       {children ? <div className="cursor-grid__content">{children}</div> : null}
     </div>
   );

@@ -8,11 +8,17 @@
  * error. Springs here are the same hand-rolled semi-implicit integrator used
  * across the app (stiffness/omega follow the original's parameters).
  *
+ * On top of the raw slots the component groups characters into pronunciation
+ * chunks (English syllables / Japanese kana) so the reading is visible while
+ * typing: chunk boundaries get a subtle divider, the chunk under the cursor is
+ * lifted, and completed chunks fade slightly into the background.
+ *
  * The keyboard event handling stays in the typing engine — this component is a
  * pure view over (text, typed) with animation state derived from the diff.
  */
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 
+import { chunkEnglishWord, chunkSentence, type TextChunk } from '../lib/typing/syllables';
 import './TypingSlots.css';
 
 interface SlotBody {
@@ -28,17 +34,42 @@ export interface TypingSlotsProps {
   /** brief window after an error, used for the shake + tint */
   errorAt?: number;
   sentence?: boolean;
+  /** show pronunciation chunk boundaries (syllables / kana segments) */
+  showChunks?: boolean;
   className?: string;
 }
 
 const OMEGA = (2 * Math.PI) / 0.34;
 const ZETA = 1 - 0.22;
 
-export const TypingSlots = ({ text, typed, errorAt = 0, sentence = false, className = '' }: TypingSlotsProps) => {
+/** Chunk a drill text into pronunciation groups; falls back to no chunks. */
+const chunkFor = (text: string, sentence: boolean): TextChunk[] => {
+  try {
+    if (sentence) return chunkSentence(text);
+    if (/^[\p{Script=Latin}]+$/u.test(text)) return chunkEnglishWord(text);
+    return [{ start: 0, length: Array.from(text).length }];
+  } catch {
+    return [{ start: 0, length: Array.from(text).length }];
+  }
+};
+
+export const TypingSlots = ({
+  text,
+  typed,
+  errorAt = 0,
+  sentence = false,
+  showChunks = true,
+  className = ''
+}: TypingSlotsProps) => {
   const chars = useMemo(() => Array.from(text), [text]);
   const input = useMemo(() => Array.from(typed), [typed]);
   const extras = input.slice(chars.length);
   const cursorIndex = Math.min(input.length, chars.length);
+
+  const chunks = useMemo(
+    () => (showChunks ? chunkFor(text, sentence) : []),
+    [text, sentence, showChunks]
+  );
 
   const bodies = useRef<SlotBody[]>([]);
   const refs = useRef<(HTMLSpanElement | null)[]>([]);
@@ -141,6 +172,45 @@ export const TypingSlots = ({ text, typed, errorAt = 0, sentence = false, classN
     return () => window.clearTimeout(timer);
   }, [errorAt]);
 
+  /* ---- pronunciation chunks: index → chunk lookups ---- */
+  const chunkOfChar = useMemo(() => {
+    const map = new Map<number, { index: number; first: boolean; last: boolean }>();
+    chunks.forEach((chunk, index) => {
+      for (let i = chunk.start; i < chunk.start + chunk.length; i++) {
+        map.set(i, { index, first: i === chunk.start, last: i === chunk.start + chunk.length - 1 });
+      }
+    });
+    return map;
+  }, [chunks]);
+
+  const activeChunk = useMemo(() => {
+    const entry = chunkOfChar.get(Math.max(0, cursorIndex - 1));
+    return entry ? entry.index : cursorIndex === 0 && chunks.length ? 0 : -1;
+  }, [chunkOfChar, cursorIndex, chunks.length]);
+
+  const renderSlot = (char: string, index: number, extra = false) => {
+    const inputChar = extra ? extras[index] : input[index];
+    const state = extra ? 'extra' : inputChar === undefined ? 'pending' : inputChar === char ? 'correct' : 'incorrect';
+    const group = chunkOfChar.get(index);
+    return (
+      <span
+        key={`${extra ? 'extra' : 'slot'}-${index}-${char}`}
+        ref={node => {
+          if (!extra) refs.current[index] = node;
+        }}
+        className="typing-slots__slot"
+        data-state={state}
+        data-cursor={index === cursorIndex ? 'true' : undefined}
+        data-chunk-first={group?.first ? 'true' : undefined}
+        data-chunk-last={group?.last ? 'true' : undefined}
+        data-chunk-active={group && group.index === activeChunk && chunks.length > 1 ? 'true' : undefined}
+        aria-hidden="true"
+      >
+        <span className="typing-slots__glyph">{char === ' ' ? '\u00a0' : char}</span>
+      </span>
+    );
+  };
+
   return (
     <div
       ref={rowRef}
@@ -148,30 +218,9 @@ export const TypingSlots = ({ text, typed, errorAt = 0, sentence = false, classN
       style={{ '--slot-count': chars.length } as CSSProperties}
       aria-label={text}
     >
-      {chars.map((char, index) => {
-        const inputChar = input[index];
-        const state = inputChar === undefined ? 'pending' : inputChar === char ? 'correct' : 'incorrect';
-        return (
-          <span
-            key={`${index}-${char}`}
-            ref={node => {
-              refs.current[index] = node;
-            }}
-            className="typing-slots__slot"
-            data-state={state}
-            data-cursor={index === cursorIndex ? 'true' : undefined}
-            aria-hidden="true"
-          >
-            <span className="typing-slots__glyph">{char === ' ' ? '\u00a0' : char}</span>
-          </span>
-        );
-      })}
+      {chars.map((char, index) => renderSlot(char, index))}
       {/* characters typed past the end */}
-      {extras.map((char, index) => (
-        <span key={`extra-${index}`} className="typing-slots__slot typing-slots__slot--extra" aria-hidden="true">
-          <span className="typing-slots__glyph">{char === ' ' ? '\u00a0' : char}</span>
-        </span>
-      ))}
+      {extras.map((char, index) => renderSlot(char, index, true))}
       <span ref={caretRef} className="typing-slots__caret" data-show="false" aria-hidden="true">
         <i />
       </span>

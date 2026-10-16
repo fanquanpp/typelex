@@ -6,26 +6,19 @@
  * error rate, and a per-key table for the keys that are actually holding you back.
  */
 import { useMemo } from 'react';
-import { Link } from 'react-router-dom';
 
 import { CountUp, Odometer, Reveal, SpotlightCard } from '../components/effects';
 import { useApp } from '../lib/store';
-import { MODE_LABEL } from '../lib/typing/session';
 import { levelProgress } from '../lib/typing/metrics';
 import './Stats.css';
-
-const ROWS = ['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'];
 
 const Stats = () => {
   const history = useApp(state => state.history);
   const daily = useApp(state => state.daily);
-  const keyStats = useApp(state => state.keyStats);
   const xp = useApp(state => state.xp);
   const streak = useApp(state => state.streak);
   const srs = useApp(state => state.srs);
   const stars = useApp(state => state.stars);
-  const known = useApp(state => state.known);
-  const resetProgress = useApp(state => state.resetProgress);
 
   const progress = useMemo(() => levelProgress(xp), [xp]);
 
@@ -74,29 +67,6 @@ const Stats = () => {
 
   const maxDaily = Math.max(60, ...dailySeries.map(entry => entry.seconds));
 
-  const keyHeat = useMemo(() => {
-    const map = new Map<string, { hits: number; misses: number; time: number }>();
-    for (const [char, stat] of Object.entries(keyStats)) {
-      map.set(char.toLowerCase(), { hits: stat.hits, misses: stat.misses, time: stat.time });
-    }
-    return map;
-  }, [keyStats]);
-
-  const weakest = useMemo(() => {
-    return Object.entries(keyStats)
-      .filter(([, stat]) => stat.hits >= 5)
-      .map(([char, stat]) => ({
-        char,
-        accuracy: stat.hits ? 1 - stat.misses / stat.hits : 1,
-        time: stat.time,
-        hits: stat.hits
-      }))
-      .sort((a, b) => a.accuracy - b.accuracy || b.time - a.time)
-      .slice(0, 12);
-  }, [keyStats]);
-
-  const dueCount = Object.values(srs).filter(card => card.due <= Date.now()).length;
-
   const achievements = useMemo(
     () => [
       { id: 'first', label: '第一次练习', done: history.length >= 1, hint: '完成任意一次练习' },
@@ -117,16 +87,6 @@ const Stats = () => {
 
   const unlocked = achievements.filter(entry => entry.done).length;
 
-  const heatColor = (accuracy: number, hits: number) => {
-    if (hits < 3) return 'var(--surface)';
-    const bad = 1 - accuracy;
-    if (bad < 0.02) return 'hsl(158 55% 40% / 0.55)';
-    if (bad < 0.05) return 'hsl(90 55% 45% / 0.5)';
-    if (bad < 0.1) return 'hsl(45 80% 50% / 0.5)';
-    if (bad < 0.2) return 'hsl(24 85% 55% / 0.55)';
-    return 'hsl(354 72% 55% / 0.6)';
-  };
-
   return (
     <div className="shell page">
       <header className="page-head">
@@ -137,7 +97,7 @@ const Stats = () => {
         </p>
       </header>
 
-      <Reveal as="section" className="stack-6">
+      <Reveal as="section" id="sec-overview" className="stack-6">
         <div className="stat-grid">
           <div className="stat-tile">
             <div className="stat">
@@ -220,7 +180,7 @@ const Stats = () => {
       </Reveal>
 
       {trend && (
-        <Reveal as="section" className="stack-5">
+        <Reveal as="section" id="sec-trend" className="stack-5">
           <div className="section-head">
             <div>
               <h2 className="section-title">速度趋势</h2>
@@ -272,85 +232,7 @@ const Stats = () => {
         </div>
       </Reveal>
 
-      <Reveal as="section" className="stack-5">
-        <div className="section-head">
-          <div>
-            <h2 className="section-title">键盘热力图</h2>
-            <p className="muted" style={{ fontSize: 'var(--text-sm)' }}>
-              按错误率着色：绿色几乎不出错，红色是最需要练的键。浅灰表示样本还不够。
-            </p>
-          </div>
-        </div>
-
-        <div className="panel panel-pad">
-          <div className="heat-keyboard">
-            {ROWS.map((row, rowIndex) => (
-              <div className="heat-row" key={row} style={{ marginLeft: `${rowIndex * 16}px` }}>
-                {row.split('').map(char => {
-                  const stat = keyHeat.get(char.toLowerCase());
-                  const accuracy = stat && stat.hits ? 1 - stat.misses / stat.hits : 1;
-                  return (
-                    <span
-                      className="heat-key"
-                      key={char}
-                      style={{ background: heatColor(accuracy, stat?.hits ?? 0) }}
-                      title={
-                        stat
-                          ? `${char.toUpperCase()} · 命中 ${stat.hits} · 错误 ${stat.misses} · 平均 ${Math.round(stat.time)}ms`
-                          : `${char.toUpperCase()} · 暂无数据`
-                      }
-                    >
-                      {char}
-                    </span>
-                  );
-                })}
-              </div>
-            ))}
-          </div>
-        </div>
-      </Reveal>
-
-      {weakest.length > 0 && (
-        <Reveal as="section" className="stack-5">
-          <div className="section-head">
-            <div>
-              <h2 className="section-title">最需要练的键</h2>
-              <p className="muted" style={{ fontSize: 'var(--text-sm)' }}>
-                按准确率排序，只统计敲过 5 次以上的键。弱键特训模式会用它们组词。
-              </p>
-            </div>
-            <Link to="/practice" className="btn btn-sm">
-              去练弱键
-            </Link>
-          </div>
-          <div className="panel panel-pad">
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>按键</th>
-                  <th>准确率</th>
-                  <th>平均用时</th>
-                  <th>敲击次数</th>
-                </tr>
-              </thead>
-              <tbody>
-                {weakest.map(entry => (
-                  <tr key={entry.char}>
-                    <td>
-                      <span className="kbd">{entry.char === ' ' ? 'Space' : entry.char.toUpperCase()}</span>
-                    </td>
-                    <td className="mono">{(entry.accuracy * 100).toFixed(1)}%</td>
-                    <td className="mono">{Math.round(entry.time)}ms</td>
-                    <td className="mono">{entry.hits}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Reveal>
-      )}
-
-      <Reveal as="section" className="stack-5">
+      <Reveal as="section" id="sec-achievements" className="stack-5">
         <div className="section-head">
           <div>
             <h2 className="section-title">成就</h2>
@@ -385,88 +267,6 @@ const Stats = () => {
         </div>
       </Reveal>
 
-      <Reveal as="section" className="stack-5">
-        <div className="section-head">
-          <div>
-            <h2 className="section-title">练习历史</h2>
-            <p className="muted" style={{ fontSize: 'var(--text-sm)' }}>
-              最近 {Math.min(history.length, 40)} 次记录。共 {history.length} 次。
-            </p>
-          </div>
-          <span className="chip">
-            记忆卡 {Object.keys(srs).length} · 待复习 {dueCount} · 收藏 {stars.length} · 已掌握{' '}
-            {Object.values(known).filter(state => state === 2).length}
-          </span>
-        </div>
-
-        {history.length === 0 ? (
-          <div className="empty">
-            <strong>还没有练习记录</strong>
-            <p className="muted">完成第一次练习后，这里会显示每一次的速度、准确率与稳定性。</p>
-            <Link to="/practice" className="btn btn-primary">
-              开始第一次练习
-            </Link>
-          </div>
-        ) : (
-          <div className="panel panel-pad">
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>时间</th>
-                  <th>模式</th>
-                  <th>WPM</th>
-                  <th>原始</th>
-                  <th>准确率</th>
-                  <th>稳定性</th>
-                  <th>词条</th>
-                  <th>时长</th>
-                </tr>
-              </thead>
-              <tbody>
-                {history.slice(0, 40).map(entry => (
-                  <tr key={entry.id}>
-                    <td className="mono" style={{ whiteSpace: 'nowrap' }}>
-                      {new Date(entry.at).toLocaleString('zh-CN', {
-                        month: '2-digit',
-                        day: '2-digit',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
-                    </td>
-                    <td>{MODE_LABEL[entry.mode]}</td>
-                    <td className="mono">{entry.wpm.toFixed(1)}</td>
-                    <td className="mono">{entry.raw.toFixed(1)}</td>
-                    <td className="mono">{entry.accuracy.toFixed(1)}%</td>
-                    <td className="mono">{entry.consistency.toFixed(0)}%</td>
-                    <td className="mono">{entry.items}</td>
-                    <td className="mono">{Math.round(entry.duration)}s</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </Reveal>
-
-      <Reveal as="section">
-        <div className="panel panel-pad row-between wrap" style={{ gap: 'var(--s5)' }}>
-          <div className="stack-2">
-            <strong>清空所有数据</strong>
-            <span className="muted" style={{ fontSize: 'var(--text-sm)' }}>
-              会删除进度、按键统计、记忆卡片与全部历史。这个操作无法撤销。
-            </span>
-          </div>
-          <button
-            type="button"
-            className="btn btn-danger"
-            onClick={() => {
-              if (window.confirm('确定要清空所有本地数据吗？这个操作无法撤销。')) resetProgress();
-            }}
-          >
-            清空数据
-          </button>
-        </div>
-      </Reveal>
     </div>
   );
 };

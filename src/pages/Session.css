@@ -60,10 +60,3 @@
   min-height: 0;
 }
 
-@media (max-width: 1080px) {
-  .session-side {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
-    gap: var(--s5);
-  }
-}

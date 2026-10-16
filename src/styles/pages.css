@@ -11,6 +11,8 @@
   display: flex;
   flex-direction: column;
   gap: var(--s8);
+  /* The page itself is the single scroll container of the app; min-height lets
+     short pages still fill the stage. */
   min-height: 100%;
 }
 
@@ -397,9 +399,10 @@
 .category-stage {
   position: relative;
   padding-block: 0;
-  /* Cap the orbit's height: the SVG-path aspect ratio would otherwise claim
-     300px+ of vertical space. The cards scale to fit whatever box they get. */
-  height: clamp(185px, 23vw, 260px);
+  /* The hero heading row was removed, so the orbit claims that space, sized so
+     hero + orbit read as one balanced first screen rather than the cards
+     sinking to the fold. */
+  height: clamp(280px, 34vw, 420px);
   display: flex;
   align-items: center;
 }
@@ -412,15 +415,15 @@
 .category-stage__center {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--s2);
-  text-align: center;
+  text-align: left;
   max-width: 230px;
 }
 
 .category-stage__center strong {
   font-family: var(--font-display);
-  font-size: var(--text-lg);
+  font-size: var(--text-2xl);
   font-weight: 600;
   letter-spacing: var(--tracking-tight);
 }
@@ -538,7 +541,8 @@
 
 .setting-row__control--wide {
   flex: 1 1 260px;
-  max-width: 320px;
+  max-width: 480px;
+  min-width: 0;
 }
 
 .divider {
@@ -598,22 +602,3 @@
   box-shadow: 0 6px 16px -10px rgba(0, 0, 0, 0.5);
 }
 
-@media (max-width: 1080px) {
-  .hero {
-    grid-template-columns: 1fr;
-  }
-  .hero__stage {
-    height: clamp(280px, 46vw, 400px);
-  }
-  .practice-layout,
-  .session-layout {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 640px) {
-  .page {
-    padding-top: var(--s8);
-    gap: var(--s8);
-  }
-}

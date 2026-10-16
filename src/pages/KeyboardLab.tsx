@@ -16,6 +16,7 @@ import type { CssKeyboardScene } from '../three/keyboard/CssKeyboardScene';
 import type { ViewPreset } from '../three/keyboard/view';
 import { getLayout } from '../three/keyboard/layouts';
 import { MODELS } from '../three/keyboard/models';
+import RubberSegment from '../components/RubberSegment';
 import type { RgbStyle } from '../three/keyboard/models';
 import './KeyboardLab.css';
 
@@ -110,12 +111,12 @@ const KeyboardLab = () => {
         <span className="eyebrow">Keyboard lab</span>
         <h1 className="page-title">键盘实验室</h1>
         <p className="page-sub">
-          四种键盘手感，从笔记本巧克力键到 60% 客制化机械键盘。换一把键盘，键位布局与键帽高度
+          三种键盘手感，从办公薄型剪刀脚到 60% 客制化机械键盘。换一把键盘，键位布局与键帽高度
           会跟着变；练习页用的是同一套模型。
         </p>
       </header>
 
-      <Reveal as="section" className="stack-5">
+      <Reveal as="section" id="sec-lab-stage" className="stack-5">
         <div className="keyboard-frame lab-stage">
           <KeyboardStage
             modelId={settings.keyboardModel}
@@ -138,13 +139,14 @@ const KeyboardLab = () => {
           </div>
 
           <div className="keyboard-overlay keyboard-overlay--tr">
-            <div className="segmented" style={{ background: 'var(--glass)' }}>
-              {VIEWS.map(entry => (
-                <button type="button" key={entry.id} data-active={view === entry.id} onClick={() => setView(entry.id)}>
-                  {entry.label}
-                </button>
-              ))}
-            </div>
+            <RubberSegment
+              size="sm"
+              trackColor="var(--glass)"
+              aria-label="键盘视角"
+              items={VIEWS.map(entry => ({ value: entry.id, label: entry.label }))}
+              value={view}
+              onChange={value => setView(value as typeof view)}
+            />
           </div>
 
           <div className="keyboard-overlay keyboard-overlay--bl">
@@ -189,21 +191,14 @@ const KeyboardLab = () => {
 
           <TypingLine text={testWord} typed={typed} />
 
-          <div className="pill-row">
-            {RGB_STYLES.map(entry => (
-              <button
-                type="button"
-                key={entry.id}
-                className="pill"
-                data-active={settings.rgbStyle === entry.id}
-                onClick={() => setSetting('rgbStyle', entry.id)}
-                disabled={model.backlight === 'none'}
-                title={model.backlight === 'none' ? '这把键盘没有背光' : undefined}
-              >
-                {entry.label}
-              </button>
-            ))}
-          </div>
+          <RubberSegment
+            size="sm"
+            aria-label="背光效果"
+            disabled={model.backlight === 'none'}
+            items={RGB_STYLES.map(entry => ({ value: entry.id, label: entry.label }))}
+            value={settings.rgbStyle}
+            onChange={value => setSetting('rgbStyle', value as typeof settings.rgbStyle)}
+          />
 
           {model.backlight === 'none' && (
             <p className="faint" style={{ fontSize: 'var(--text-xs)' }}>
@@ -214,7 +209,7 @@ const KeyboardLab = () => {
       </Reveal>
 
       {/* ---------------- model picker ---------------- */}
-      <Reveal as="section" className="stack-6">
+      <Reveal as="section" id="sec-lab-models" className="stack-6">
         <div className="section-head">
           <div>
             <span className="eyebrow">Models</span>

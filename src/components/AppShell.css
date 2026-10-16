@@ -49,6 +49,11 @@
   align-items: center;
   gap: var(--s5);
   height: 100%;
+  /* The header spans the full viewport — the nav capsule needs the whole
+     top row, and capping it at --shell-max squeezed the last items under
+     the action buttons. Side padding keeps the edges aligned. */
+  max-width: none;
+  padding-inline: var(--shell-pad);
 }
 
 /* Breadcrumb label where the old pill nav sat — the real nav is the sidebar. */
@@ -57,6 +62,13 @@
   display: flex;
   justify-content: center;
   min-width: 0;
+  /* Tablet landscape (≈1024) has no room to spare: the nav may scroll
+     horizontally within its capsule instead of overlapping the actions. */
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.app__crumb::-webkit-scrollbar {
+  display: none;
 }
 
 .app__crumb-label {
@@ -93,7 +105,28 @@
   border-right: 1px solid var(--glass-edge-soft);
   -webkit-backdrop-filter: blur(10px) saturate(1.35);
   backdrop-filter: blur(10px) saturate(1.35);
+  /* Vertical overflow only: the negative-offset markers and hover shift must
+     never widen the box, or a horizontal scrollbar appears at the bottom. */
   overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Secondary table of contents under the current primary route. */
+.app__submenu {
+  min-width: 0;
+}
+
+.app__submenu-title {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  font-weight: 700;
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  padding-left: calc(34px + 2px);
+  margin-bottom: var(--s5);
+  white-space: nowrap;
 }
 
 .app__sidebar-foot {
@@ -139,7 +172,7 @@
 
 .brand__text {
   display: flex;
-  flex-direction: column;
+  align-items: center;
   line-height: 1.1;
 }
 
@@ -148,15 +181,6 @@
   font-size: var(--text-md);
   font-weight: 600;
   letter-spacing: var(--tracking-tight);
-}
-
-.brand__text em {
-  font-style: normal;
-  font-family: var(--font-mono);
-  font-size: 9px;
-  letter-spacing: var(--tracking-widest);
-  color: var(--ink-faint);
-  text-transform: uppercase;
 }
 
 .app__nav {
@@ -240,11 +264,37 @@
 .app__view {
   position: absolute;
   inset: 0;
+  display: flex;
+  flex-direction: column;
+  /* The shell never scrolls: the page inside owns the one and only scroll
+     container. Scrollbar sits flush at the content edge and stays invisible
+     until needed, so the stage reads as a single fixed pane. */
+  overflow: hidden;
+}
+.app__view > .page {
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
-  scroll-behavior: smooth;
+  scrollbar-gutter: stable;
   padding-bottom: var(--s12);
-  /* fade content out at the very bottom edge instead of a hard cut */
+}
+.app__view > .page::-webkit-scrollbar {
+  width: 8px;
+}
+.app__view > .page::-webkit-scrollbar-thumb {
+  background: transparent;
+  border: none;
+}
+.app__view > .page:hover::-webkit-scrollbar-thumb,
+.app__view > .page:focus-within::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  background-clip: content-box;
+  border: 2px solid transparent;
+  border-radius: var(--r-full);
+}
+/* fade content out at the very bottom edge instead of a hard cut */
+.app__view > .page {
   mask-image: linear-gradient(to bottom, #000 0, #000 calc(100% - 44px), transparent 100%);
   -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 calc(100% - 44px), transparent 100%);
   scrollbar-width: thin;
@@ -252,10 +302,8 @@
 
 /* Compact per-view adjustment: the practice session should be as dense as
    possible so everything fits without scrolling on a laptop. */
-.app[data-route='/practice/session'] .app__view {
+.app[data-route='/practice/session'] .app__view > .page {
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
   padding-bottom: 0;
   mask-image: none;
   -webkit-mask-image: none;
@@ -301,47 +349,3 @@
   line-height: 1.6;
 }
 
-@media (max-width: 1080px) {
-  .app__nav {
-    justify-content: flex-start;
-  }
-  .brand__text {
-    display: none;
-  }
-}
-
-@media (max-width: 860px) {
-  .app__sidebar {
-    position: fixed;
-    inset: var(--header-h) auto 0 0;
-    z-index: 70;
-    transform: translateX(-100%);
-    transition: transform var(--t-slow) var(--ease-out);
-    box-shadow: var(--shadow-lg);
-  }
-  .app[data-menu-open] .app__sidebar {
-    transform: none;
-  }
-  .app__header {
-    height: auto;
-    padding-block: var(--s3);
-  }
-  .app__header-inner {
-    flex-wrap: wrap;
-    height: auto;
-    gap: var(--s3);
-  }
-  .app__nav {
-    order: 3;
-    flex-basis: 100%;
-    justify-content: flex-start;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-  .app__nav::-webkit-scrollbar {
-    display: none;
-  }
-  .xp-chip {
-    display: none;
-  }
-}
