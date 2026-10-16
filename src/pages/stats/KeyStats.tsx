@@ -51,7 +51,7 @@ const KeyStats = () => {
   const hasData = keyHeat.size > 0;
 
   return (
-    <div className="shell page">
+    <div className="shell page page--child">
       <header className="page-head">
         <span className="eyebrow">Statistics · Keys</span>
         <h1 className="page-title">逐键分析</h1>
@@ -60,7 +60,7 @@ const KeyStats = () => {
         </p>
       </header>
 
-      <Reveal as="section" className="stack-5">
+      <Reveal as="section" className="stack-6">
         <div className="section-head">
           <div>
             <h2 className="section-title">键盘热力图</h2>
@@ -109,7 +109,7 @@ const KeyStats = () => {
       </Reveal>
 
       {weakest.length > 0 && (
-        <Reveal as="section" className="stack-5">
+        <Reveal as="section" className="stack-6">
           <div className="section-head">
             <div>
               <h2 className="section-title">最需要练的键</h2>

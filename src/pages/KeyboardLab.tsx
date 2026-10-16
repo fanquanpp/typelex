@@ -115,7 +115,7 @@ const KeyboardLab = () => {
         </p>
       </header>
 
-      <Reveal as="section" id="sec-lab-stage" className="stack-5">
+      <Reveal as="section" id="sec-lab-stage" className="stack-6">
         <div className="keyboard-frame lab-stage">
           <KeyboardStage
             modelId={settings.keyboardModel}
@@ -333,7 +333,7 @@ const KeyboardLab = () => {
       </Reveal>
 
       {/* ---------------- why it matters ---------------- */}
-      <Reveal as="section" className="stack-5">
+      <Reveal as="section" className="stack-6">
         <div className="feature-grid">
           {[
             {

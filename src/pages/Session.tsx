@@ -269,7 +269,7 @@ const Session = () => {
 
   if (loadError) {
     return (
-      <div className="shell page">
+      <div className="shell page page--child">
         <div className="empty">
           <strong>无法开始练习</strong>
           <p className="muted">{loadError}</p>
@@ -283,7 +283,7 @@ const Session = () => {
 
   if (!queue) {
     return (
-      <div className="shell page">
+      <div className="shell page page--child">
         <div className="empty">
           <div className="shimmer" style={{ width: 220, height: 20 }} />
           <p className="muted">正在准备题目…</p>
@@ -305,7 +305,7 @@ const Session = () => {
       : '0,100 100,100';
 
     return (
-      <div className="shell page">
+      <div className="shell page page--child">
         <Reveal as="section" className="stack-6">
           <div className="page-head">
             <span className="eyebrow">Result</span>
@@ -388,7 +388,7 @@ const Session = () => {
   const remainingSeconds = config.length === 'time' ? Math.max(0, config.amount - view.elapsed) : null;
 
   return (
-    <div className="shell page session-page">
+    <div className="shell page session-page page--child">
       <div className="session-bar">
         <div className="row" style={{ gap: 'var(--s3)' }}>
           <Link to="/practice" className="btn btn-sm btn-ghost">

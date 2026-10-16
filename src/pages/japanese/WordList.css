@@ -1,27 +1,23 @@
 /* Word list sub-page (/japanese/words).
-
-   Single-screen like the wordbook: the head and the level bar hold still and
-   the table pane owns the scroll, so a 662-row list never drags the page
-   chrome off the top. */
+ *
+ * A third-level page: its title is one step down from the feature pages (see
+ * `.page--child` in pages.css). Single-screen like the wordbook: the head and
+ * the level bar hold still and the table pane owns the scroll, so a 662-row
+ * list never drags the page chrome off the top. */
 .shell.jp-words-page {
   height: 100%;
   gap: var(--s5);
   padding-top: var(--s5);
 }
 
-/* Single-screen trim, same as the wordbook: a smaller title and a full-width
-   head keep the sub on one line, so the chrome costs ~90px instead of ~140
-   and that difference goes to the word pane. */
+/* Full-width head keeps the sub on one line, so the chrome costs ~90px instead
+   of ~140 and that difference goes to the word pane. */
 .jp-words-page > .page-head {
   max-width: none;
 }
 
 .jp-words-page .page-sub {
   max-width: none;
-}
-
-.jp-words-page .page-title {
-  font-size: var(--text-2xl);
 }
 
 /* Nothing scrolls at page level here, so the global bottom pad and the

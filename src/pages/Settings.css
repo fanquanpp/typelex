@@ -1,7 +1,0 @@
-/* Settings page. */
-
-.settings-grid {
-  display: grid;
-  gap: var(--s5);
-}
-

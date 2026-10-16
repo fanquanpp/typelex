@@ -202,7 +202,7 @@ const Study = () => {
         </p>
       </header>
 
-      <Reveal as="section" id="sec-decks" className="stack-5">
+      <Reveal as="section" id="sec-decks" className="stack-6">
         <div className="row-between wrap">
           <RubberSegment
             size="sm"

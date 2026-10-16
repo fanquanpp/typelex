@@ -1,5 +1,31 @@
 /* Stats page. */
 
+/* Odometer digit roll (the streak counter). The reel is one column of 0–9 per
+   digit, shifted up by `-digit × 1.06em` inline; without a fixed digit box and
+   a clip, the whole 0–9 column shows at once — the counter read "0123456789".
+   The 1.06em here must match the em step the component writes inline. */
+.odometer {
+  display: inline-flex;
+  font-variant-numeric: tabular-nums;
+}
+
+.odometer-digit {
+  display: block;
+  height: 1.06em;
+  overflow: hidden;
+}
+
+.odometer-reel {
+  display: block;
+  line-height: 1.06;
+  transition: transform var(--t-slower) var(--ease-out);
+}
+
+.odometer-reel > span {
+  display: block;
+  height: 1.06em;
+}
+
 .stats-level {
   display: flex;
   align-items: center;

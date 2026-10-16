@@ -21,14 +21,14 @@ const SessionHistory = () => {
   const dueCount = Object.values(srs).filter(card => card.due <= Date.now()).length;
 
   return (
-    <div className="shell page">
+    <div className="shell page page--child">
       <header className="page-head">
         <span className="eyebrow">Statistics · History</span>
         <h1 className="page-title">练习历史</h1>
         <p className="page-sub">每一次练习的速度、准确率与稳定性，以及本地数据的管理。</p>
       </header>
 
-      <Reveal as="section" className="stack-5">
+      <Reveal as="section" className="stack-6">
         <div className="section-head">
           <div>
             <h2 className="section-title">记录</h2>

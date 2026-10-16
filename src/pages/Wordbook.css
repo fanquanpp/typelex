@@ -51,10 +51,6 @@
   min-width: min(240px, 100%);
 }
 
-.wordbook-page .page-title {
-  font-size: var(--text-2xl);
-}
-
 .wordbook-toolbar {
   display: flex;
   flex-direction: column;

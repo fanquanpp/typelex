@@ -149,9 +149,6 @@ const Home = () => {
                 <strong>
                   <CountUp to={totalWords || 16514} /> 词
                 </strong>
-                <span className="faint" style={{ fontSize: 'var(--text-xs)' }}>
-                  拖动旋转 · 点击进入
-                </span>
               </div>
             }
           />

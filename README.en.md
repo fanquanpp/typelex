@@ -176,6 +176,11 @@ The type scale starts at **12px** (`--text-2xs`) because this is a Chinese-first
 in the token file — components no longer hard-code pixels:
 
 - Scale: 12 / 13 / 14 / 15 / 17 / 19 / 24 / 32px, with display sizes scaled by `clamp()`
+- **Two page-title sizes, and no more**: feature pages are all 32px (matching the wordbook), and
+  third-level pages (session / kana chart / word list / per-key analysis / history) step down to
+  24px. The home headline is a hero, not a page title
+- **Spacing**: 40px between page sections, 32px between the cards inside one, 24px from a heading
+  to its content
 - Large Chinese headings use a shallow negative tracking (`-0.02em`): square CJK glyphs crowd into
   each other well before Latin letters do
 - Micro labels (eyebrows, table headers, stat labels) are one size — 12px, weight 600–650,

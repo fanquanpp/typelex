@@ -97,7 +97,7 @@ const Stats = () => {
         </p>
       </header>
 
-      <Reveal as="section" id="sec-overview" className="stack-6">
+      <Reveal as="section" id="sec-overview" className="stack-8">
         <div className="stat-grid">
           <div className="stat-tile">
             <div className="stat">
@@ -180,7 +180,7 @@ const Stats = () => {
       </Reveal>
 
       {trend && (
-        <Reveal as="section" id="sec-trend" className="stack-5">
+        <Reveal as="section" id="sec-trend" className="stack-6">
           <div className="section-head">
             <div>
               <h2 className="section-title">速度趋势</h2>
@@ -207,7 +207,7 @@ const Stats = () => {
         </Reveal>
       )}
 
-      <Reveal as="section" className="stack-5">
+      <Reveal as="section" className="stack-6">
         <div className="section-head">
           <div>
             <h2 className="section-title">近 14 天</h2>
@@ -232,7 +232,7 @@ const Stats = () => {
         </div>
       </Reveal>
 
-      <Reveal as="section" id="sec-achievements" className="stack-5">
+      <Reveal as="section" id="sec-achievements" className="stack-6">
         <div className="section-head">
           <div>
             <h2 className="section-title">成就</h2>

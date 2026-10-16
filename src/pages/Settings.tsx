@@ -15,7 +15,6 @@ import { playKey, playSuccess, setVolume } from '../lib/audio';
 import { useApp } from '../lib/store';
 import { MODELS } from '../three/keyboard/models';
 import type { RgbStyle } from '../three/keyboard/models';
-import './Settings.css';
 
 const SOUNDS = [
   { id: 'laptop', label: '笔记本剪刀脚', hint: '短促、安静' },
@@ -63,7 +62,7 @@ const Settings = () => {
         </p>
       </header>
 
-      <Reveal as="section" id="sec-appearance" className="stack-5">
+      <Reveal as="section" id="sec-appearance" className="stack-6">
         <h2 className="section-title">外观</h2>
         <div className="panel panel-pad-lg">
           <div className="setting-row">
@@ -138,7 +137,7 @@ const Settings = () => {
         </div>
       </Reveal>
 
-      <Reveal as="section" id="sec-kb" className="stack-5">
+      <Reveal as="section" id="sec-kb" className="stack-6">
         <h2 className="section-title">键盘</h2>
         <div className="panel panel-pad-lg">
           <div className="setting-row">
@@ -214,7 +213,7 @@ const Settings = () => {
         </div>
       </Reveal>
 
-      <Reveal as="section" id="sec-sound" className="stack-5">
+      <Reveal as="section" id="sec-sound" className="stack-6">
         <h2 className="section-title">声音</h2>
         <div className="panel panel-pad-lg">
           <div className="setting-row">
@@ -308,7 +307,7 @@ const Settings = () => {
         </div>
       </Reveal>
 
-      <Reveal as="section" id="sec-typing" className="stack-5">
+      <Reveal as="section" id="sec-typing" className="stack-6">
         <h2 className="section-title">练习</h2>
         <div className="panel panel-pad-lg">
           <div className="setting-row">
@@ -369,7 +368,7 @@ const Settings = () => {
         </div>
       </Reveal>
 
-      <Reveal as="section" id="sec-data" className="stack-5">
+      <Reveal as="section" id="sec-data" className="stack-6">
         <h2 className="section-title">数据</h2>
         <div className="panel panel-pad-lg">
           <div className="setting-row">

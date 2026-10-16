@@ -63,7 +63,7 @@ const Japanese = () => {
         <h1 className="page-title">日语 · 罗马音输入</h1>
       </header>
 
-      <Reveal as="section" id="sec-jp-start" className="stack-5">
+      <Reveal as="section" id="sec-jp-start" className="stack-8">
         <div className="jp-start panel panel-pad-lg">
           <div className="jp-start__note">
             <h2 className="section-title">把这一级练一遍</h2>
@@ -78,6 +78,8 @@ const Japanese = () => {
             </span>
           </div>
 
+          {/* the picker and its button stack: six level slots plus a 120px
+              button never fit on one line without the button looking detached */}
           <div className="jp-start__controls">
             <RubberSegment
               size="sm"
@@ -104,9 +106,7 @@ const Japanese = () => {
                   <span className="chip chip-rose">{counts.get(entry.level) ?? 0} 词</span>
                 </div>
                 <span className="stat-label">{entry.desc}</span>
-                <p className="faint" style={{ fontSize: 'var(--text-xs)', marginTop: 6 }}>
-                  {entry.note}
-                </p>
+                <p className="faint jp-level__note">{entry.note}</p>
                 <span className="jp-level__go">查看词表</span>
               </Link>
             </SpotlightCard>

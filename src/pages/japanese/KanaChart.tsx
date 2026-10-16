@@ -17,7 +17,7 @@ const KanaChart = () => {
   const setSetting = useApp(state => state.setSetting);
 
   return (
-    <div className="shell page">
+    <div className="shell page page--child">
       <header className="page-head">
         <span className="eyebrow">Reference</span>
         <h1 className="page-title">五十音与罗马音对照</h1>
@@ -47,7 +47,7 @@ const KanaChart = () => {
         </p>
       </header>
 
-      <Reveal as="section" className="stack-6">
+      <Reveal as="section" className="stack-8">
         <div className="jp-charts">
           <div className="panel panel-pad stack-3">
             <p className="eyebrow">清音</p>
@@ -65,7 +65,7 @@ const KanaChart = () => {
             </div>
           </div>
 
-          <div className="stack-5">
+          <div className="stack-6">
             <div className="panel panel-pad stack-3">
               <p className="eyebrow">浊音 · 半浊音</p>
               <div className="kana-grid">

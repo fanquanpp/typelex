@@ -10,9 +10,10 @@
   padding-top: var(--s6);
   display: flex;
   flex-direction: column;
-  gap: var(--s8);
+  gap: var(--s10);
   /* The page itself is the single scroll container of the app; min-height lets
-     short pages still fill the stage. */
+     short pages still fill the stage. Single-screen pages (wordbook, word list,
+     session) override the gap — they trade air for fitting the stage. */
   min-height: 100%;
 }
 
@@ -23,12 +24,25 @@
   max-width: 74ch;
 }
 
+/**
+ * One title size per level of the hierarchy, and only two of them:
+ *   - feature pages (练习 / 记忆复习 / 词库 / 键盘实验室 / 日语训练 / 学习数据 / 设置)
+ *     all match the wordbook's 32px, so switching pages never rescales the page;
+ *   - sub-pages under a feature (.page--child: 练习会话 / 五十音图 / 词表 /
+ *     逐键分析 / 练习历史) step down to 24px — three quarters, still three times
+ *     the body size, so the level reads immediately.
+ * The home page is the exception: its headline is the hero, not a page title.
+ */
 .page-title {
   font-family: var(--font-display);
-  font-size: var(--text-3xl);
+  font-size: var(--text-2xl);
   font-weight: 600;
   letter-spacing: var(--tracking-tighter);
   line-height: 1.06;
+}
+
+.page--child .page-title {
+  font-size: var(--text-xl);
 }
 
 .page-sub {
@@ -471,7 +485,9 @@
 
 .stat-grid {
   display: grid;
-  gap: var(--s4);
+  /* card-to-card air, matching .grid: at 16px the tiles of a row read as one
+     block once they wrap onto a second line */
+  gap: var(--s5);
   grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr));
 }
 

@@ -64,7 +64,7 @@ const WordList = () => {
   };
 
   return (
-    <div className="shell page jp-words-page">
+    <div className="shell page jp-words-page page--child">
       <header className="page-head">
         <span className="eyebrow">Reference</span>
         <h1 className="page-title">日语词表</h1>

@@ -1,12 +1,12 @@
 /* Japanese page. */
 
-/* Practice launcher: the level picker and its start button sit together on the
-   right, the corpus count and the live config readout on the left. */
+/* Practice launcher: the corpus count and the live config readout on the left,
+   the picker and its button stacked on the right. */
 .jp-start {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--s6);
+  gap: var(--s8);
   flex-wrap: wrap;
   background:
     radial-gradient(90% 140% at 6% 0%, hsl(var(--hue-rose) 70% 60% / 0.14), transparent 58%),
@@ -16,7 +16,7 @@
 .jp-start__note {
   display: flex;
   flex-direction: column;
-  gap: var(--s2);
+  gap: var(--s3);
   min-width: 0;
   max-width: 62ch;
 }
@@ -26,11 +26,13 @@
   font-size: var(--text-sm);
 }
 
+/* Stacked, not side by side: six level slots next to a 120px button read as
+   two unrelated controls fighting for the same line. */
 .jp-start__controls {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-end;
   gap: var(--s4);
-  flex-wrap: wrap;
 }
 
 /* The level picker hugs its labels instead of stretching across the panel. */
@@ -56,6 +58,9 @@
 .jp-level__link {
   display: flex;
   flex-direction: column;
+  /* the level badge, its tier, the reading note and the link label need real
+     separation: at a 0 gap the four lines read as one paragraph */
+  gap: var(--s2);
   flex: 1 1 auto;
   width: 100%;
   color: inherit;
@@ -69,10 +74,16 @@
   border-radius: var(--r-lg);
 }
 
+/* the reading note is the smallest line and the only one that wraps */
+.jp-level__note {
+  font-size: var(--text-xs);
+  line-height: 1.5;
+}
+
 .jp-level__go {
   /* pushed to the tile foot whatever the note above wraps to */
   margin-top: auto;
-  padding-top: var(--s4);
+  padding-top: var(--s5);
   font-size: var(--text-xs);
   color: var(--ink-muted);
   transition: color var(--t-fast) var(--ease-out);
@@ -87,7 +98,7 @@
 .jp-charts {
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-  gap: var(--s5);
+  gap: var(--s6);
   align-items: start;
 }
 
