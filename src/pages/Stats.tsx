@@ -25,6 +25,7 @@ const Stats = () => {
   const srs = useApp(state => state.srs);
   const stars = useApp(state => state.stars);
   const known = useApp(state => state.known);
+  const resetProgress = useApp(state => state.resetProgress);
 
   const progress = useMemo(() => levelProgress(xp), [xp]);
 
@@ -445,6 +446,26 @@ const Stats = () => {
             </table>
           </div>
         )}
+      </Reveal>
+
+      <Reveal as="section">
+        <div className="panel panel-pad row-between wrap" style={{ gap: 'var(--s5)' }}>
+          <div className="stack-2">
+            <strong>清空所有数据</strong>
+            <span className="muted" style={{ fontSize: 'var(--text-sm)' }}>
+              会删除进度、按键统计、记忆卡片与全部历史。这个操作无法撤销。
+            </span>
+          </div>
+          <button
+            type="button"
+            className="btn btn-danger"
+            onClick={() => {
+              if (window.confirm('确定要清空所有本地数据吗？这个操作无法撤销。')) resetProgress();
+            }}
+          >
+            清空数据
+          </button>
+        </div>
       </Reveal>
     </div>
   );

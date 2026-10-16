@@ -121,6 +121,36 @@
   backdrop-filter: blur(18px) saturate(1.6);
 }
 
+.hero__badge {
+  position: absolute;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  padding: 6px 11px;
+  border-radius: var(--r-sm);
+  background: var(--glass-tint);
+  border: 1px solid var(--glass-edge-soft);
+  -webkit-backdrop-filter: blur(14px) saturate(1.7);
+  backdrop-filter: blur(14px) saturate(1.7);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  font-weight: 600;
+  color: var(--ink-muted);
+  animation: float-soft 6s var(--ease-in-out) infinite alternate;
+}
+
+.hero__badge--a {
+  top: 14%;
+  left: 5%;
+}
+
+.hero__badge--b {
+  bottom: 18%;
+  right: 6%;
+  animation-delay: -2.4s;
+}
+
 @keyframes float-soft {
   from {
     transform: translateY(-5px);

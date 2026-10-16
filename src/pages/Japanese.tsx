@@ -118,8 +118,14 @@ const Japanese = () => {
             </p>
           </div>
           <div className="row wrap" style={{ gap: 'var(--s3)' }}>
-            <Link to="/practice/session" className="btn btn-primary btn-lg" onClick={() => startPractice([5, 4])}>
+            <Link to="/practice/session" className="btn btn-primary btn-lg" onClick={() => startPractice([5])}>
+              练 N5
+            </Link>
+            <Link to="/practice/session" className="btn btn-lg" onClick={() => startPractice([5, 4])}>
               练 N5 + N4
+            </Link>
+            <Link to="/practice/session" className="btn btn-lg btn-ghost" onClick={() => startPractice([3])}>
+              练 N3
             </Link>
           </div>
         </div>

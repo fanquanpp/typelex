@@ -64,8 +64,8 @@ export const useFrontPainter = ({ word, detail, level, accent = '#5b8def', theme
       }
 
       const pad = width * 0.085;
-      const ink = theme === 'dark' ? '#101216' : '#1b1e24';
-      const muted = theme === 'dark' ? 'rgba(16,18,22,0.62)' : 'rgba(27,30,36,0.6)';
+      const ink = theme === 'dark' ? '#e8eaf0' : '#1b1e24';
+      const muted = theme === 'dark' ? 'rgba(232,234,240,0.62)' : 'rgba(27,30,36,0.6)';
 
       /* top accent rule + level tag */
       ctx.fillStyle = accent;
@@ -136,8 +136,8 @@ export const useBackPainter = ({ word, detail, level, accent = '#5b8def', theme 
     (ctx, width, height) => {
       if (!word) return;
       const pad = width * 0.085;
-      const ink = theme === 'dark' ? '#101216' : '#1b1e24';
-      const muted = theme === 'dark' ? 'rgba(16,18,22,0.6)' : 'rgba(27,30,36,0.58)';
+      const ink = theme === 'dark' ? '#e8eaf0' : '#1b1e24';
+      const muted = theme === 'dark' ? 'rgba(232,234,240,0.6)' : 'rgba(27,30,36,0.58)';
 
       ctx.fillStyle = accent;
       ctx.fillRect(pad, pad * 0.85, width * 0.16, height * 0.008);
@@ -336,13 +336,13 @@ export const WordCard = ({
           <Lanyard
             frontPainter={frontPainter}
             backPainter={backPainter}
-            cardColor={theme === 'dark' ? '#f4f5f7' : '#ffffff'}
+            cardColor={theme === 'dark' ? '#23262e' : '#ffffff'}
             orientation="portrait"
             finish="glossy"
             cornerRadius={0.34}
-            size={0.62}
+            size={0.8}
             anchor="center"
-            strapLength={0.42}
+            strapLength={0.15}
             strapColor="#3a4050"
             strapWidth={0.62}
             metal="silver"
