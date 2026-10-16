@@ -5,7 +5,6 @@
  * Full detail is only requested for the word you open.
  */
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
 
 import AnimatedList from '../components/AnimatedList';
 import RubberSegment from '../components/RubberSegment';
@@ -32,7 +31,6 @@ const Wordbook = () => {
   const known = useApp(state => state.known);
   const toggleStar = useApp(state => state.toggleStar);
   const setKnown = useApp(state => state.setKnown);
-  const setConfig = useApp(state => state.setConfig);
 
   const [books, setBooks] = useState<BookMeta[]>([]);
   const [bookId, setBookId] = useState('highschool');
@@ -119,7 +117,6 @@ const Wordbook = () => {
   }, [words, query, posFilter, onlyStarred, stars, sort]);
 
   const visible = filtered.slice(0, limit);
-  const book = books.find(entry => entry.id === bookId);
 
   return (
     <div className="shell page wordbook-page">
@@ -201,23 +198,6 @@ const Wordbook = () => {
             value={sort}
             onChange={value => setSort(value as SortId)}
           />
-        </div>
-
-        <div className="row-between wrap">
-          <span className="faint" style={{ fontSize: 'var(--text-xs)' }}>
-            共 <strong className="tnum">{filtered.length}</strong> 个词条
-            {book && ` · ${book.short}`}
-            {query && ` · 匹配「${query}」`}
-          </span>
-          <div className="row" style={{ gap: 'var(--s2)' }}>
-            <Link
-              to="/practice"
-              className="btn btn-sm"
-              onClick={() => setConfig({ mode: 'random', books: [bookId] })}
-            >
-              用这个词表练习
-            </Link>
-          </div>
         </div>
 
         <div className="wordbook-layout">
