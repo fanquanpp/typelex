@@ -332,6 +332,25 @@ const Settings = () => {
 
           <div className="setting-row">
             <div className="setting-row__label">
+              <strong>打完后切换</strong>
+              <span>「自动」打完立刻进入下一个词；「回车」停在原地，看清刚打的词再按 Enter 继续</span>
+            </div>
+            <div className="setting-row__control">
+              <RubberSegment
+                size="sm"
+                aria-label="打完后切换方式"
+                items={[
+                  { value: 'auto', label: '自动' },
+                  { value: 'enter', label: '回车' }
+                ]}
+                value={settings.advanceMode}
+                onChange={value => setSetting('advanceMode', value as typeof settings.advanceMode)}
+              />
+            </div>
+          </div>
+
+          <div className="setting-row">
+            <div className="setting-row__label">
               <strong>日语罗马音体系</strong>
               <span>平文式是主流教材用法；训令式更贴近五十音表的拼写</span>
             </div>

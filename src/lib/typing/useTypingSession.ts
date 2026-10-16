@@ -18,7 +18,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { playError, playKey, playKeyUp, type SoundProfile } from '../audio';
 import { updateKeyStat, wpm as wpmOf, consistencyOf, type KeyAccumulator } from './metrics';
-import type { KeystrokeEvent, SessionConfig, SessionResult, SessionSample } from '../types';
+import type { KeystrokeEvent, SessionConfig, SessionResult, SessionSample, AdvanceMode } from '../types';
 import type { PracticeItem } from './session';
 
 export interface TypingCallbacks {
@@ -35,6 +35,8 @@ export interface TypingOptions {
   soundEnabled: boolean;
   soundProfile: SoundProfile;
   volume: number;
+  /** 'auto' moves on by itself, 'enter' waits for the user to confirm */
+  advanceMode?: AdvanceMode;
   callbacks?: TypingCallbacks;
   /** start from a restored position */
   initialIndex?: number;
@@ -64,6 +66,8 @@ export interface TypingView {
   totalErrors: number;
   /** true for ~200ms after a wrong key so the UI can shake */
   missedAt: number;
+  /** the item is finished and the run is waiting for Enter (advanceMode 'enter') */
+  awaitingEnter: boolean;
 }
 
 const SENTENCE_PAUSE = 260;
@@ -75,6 +79,7 @@ export const useTypingSession = (options: TypingOptions) => {
     soundEnabled,
     soundProfile,
     volume,
+    advanceMode = 'auto',
     callbacks,
     initialIndex = 0,
     initialElapsed = 0,
@@ -106,7 +111,8 @@ export const useTypingSession = (options: TypingOptions) => {
     paused: false,
     wordBuffer: [] as string[],
     lastSampleSecond: -1,
-    advanceAt: 0
+    advanceAt: 0,
+    awaitingEnter: false
   });
 
   const [view, setView] = useState<TypingView>(() => ({
@@ -127,7 +133,8 @@ export const useTypingSession = (options: TypingOptions) => {
     samples: [],
     itemErrors: 0,
     totalErrors: 0,
-    missedAt: 0
+    missedAt: 0,
+    awaitingEnter: false
   }));
 
   const optionsRef = useRef(options);
@@ -165,7 +172,8 @@ export const useTypingSession = (options: TypingOptions) => {
       samples: state.samples,
       itemErrors: state.itemErrors,
       totalErrors: state.incorrect,
-      missedAt: missedAt ?? previous.missedAt
+      missedAt: missedAt ?? previous.missedAt,
+      awaitingEnter: state.awaitingEnter
     }));
   }, [queue]);
 
@@ -224,6 +232,8 @@ export const useTypingSession = (options: TypingOptions) => {
     state.itemErrors = 0;
     state.itemHadError = false;
     state.itemStartedAt = now;
+    state.awaitingEnter = false;
+    state.advanceAt = 0;
 
     if (state.index >= queue.length) {
       finish();
@@ -236,6 +246,9 @@ export const useTypingSession = (options: TypingOptions) => {
     (char: string, code: string) => {
       const state = engine.current;
       if (state.finished || state.paused) return;
+      /* the item is done and the user asked to confirm before moving on: further
+         characters are not part of any word any more */
+      if (state.awaitingEnter) return;
       const item = queue[state.index];
       if (!item) return;
 
@@ -291,6 +304,14 @@ export const useTypingSession = (options: TypingOptions) => {
       callbacksRef.current?.onKeyDown?.(code, char, correct);
 
       if (state.typed === target) {
+        /* the item is complete: hand over to the next one, or hold here until
+           Enter — `advanceMode: 'enter'` is for people who want to look at what
+           they just typed (the letters stay lit) before moving on */
+        if (advanceMode === 'enter') {
+          state.awaitingEnter = true;
+          syncView();
+          return;
+        }
         /* hold briefly on sentences so the completion is visible */
         if (item.kind === 'sentence') {
           state.advanceAt = now + SENTENCE_PAUSE;
@@ -301,13 +322,23 @@ export const useTypingSession = (options: TypingOptions) => {
       }
       syncView(correct ? undefined : performance.now());
     },
-    [queue, config.strict, soundEnabled, advance, syncView]
+    [queue, config.strict, soundEnabled, advance, advanceMode, syncView]
   );
+
+  /** Enter confirms a finished item in 'enter' mode. */
+  const confirm = useCallback(() => {
+    const state = engine.current;
+    if (state.finished || state.paused || !state.awaitingEnter) return;
+    advance();
+  }, [advance]);
 
   const handleBackspace = useCallback(
     (word: boolean) => {
       const state = engine.current;
       if (state.finished || state.paused) return;
+      /* un-typing a confirmed word would leave the run in limbo: the next item is
+         already paid for by the Enter press */
+      if (state.awaitingEnter) return;
       if (!state.typed) return;
       if (word) {
         state.typed = state.typed.replace(/\s*\S+\s*$/, '');
@@ -336,6 +367,15 @@ export const useTypingSession = (options: TypingOptions) => {
         /* let search fields and settings inputs work normally */
         const target = document.activeElement as HTMLElement;
         if (target.dataset?.typelexCapture !== 'true') return;
+      }
+
+      if (event.key === 'Enter') {
+        /* only meaningful in 'enter' mode, where it confirms a finished item */
+        if (state.awaitingEnter) {
+          event.preventDefault();
+          confirm();
+        }
+        return;
       }
 
       if (event.key === 'Backspace') {
@@ -377,7 +417,7 @@ export const useTypingSession = (options: TypingOptions) => {
       window.removeEventListener('keyup', onKeyUp);
       window.removeEventListener('blur', onBlur);
     };
-  }, [active, handleChar, handleBackspace, syncView]);
+  }, [active, handleChar, handleBackspace, confirm, syncView]);
 
   /* ---- clock: elapsed time, per-second samples, sentence advance ---- */
   useEffect(() => {
@@ -463,6 +503,8 @@ export const useTypingSession = (options: TypingOptions) => {
     state.itemHadError = false;
     state.itemStartedAt = performance.now();
     state.lastSampleSecond = -1;
+    state.awaitingEnter = false;
+    state.advanceAt = 0;
     syncView();
   }, [syncView]);
 
@@ -485,6 +527,7 @@ export const useTypingSession = (options: TypingOptions) => {
     togglePause,
     skip,
     finish,
+    confirm,
     keyStats: keyStatsSnapshot
   };
 };

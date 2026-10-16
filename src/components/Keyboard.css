@@ -275,6 +275,22 @@
   font-weight: 650;
 }
 
+/* "Enter to continue": the run is parked on a finished item, so the card says
+   so on its border — the one place the accent is allowed. */
+.typing-stage[data-awaiting='true'] {
+  border-color: color-mix(in srgb, var(--primary) 48%, var(--border));
+}
+
+.next-key--confirm .kbd--next {
+  border-color: color-mix(in srgb, var(--primary) 55%, var(--border-strong));
+  color: var(--ink);
+}
+
+.next-key__next {
+  font-size: var(--text-xs);
+  color: var(--ink);
+}
+
 /* The cheat sheet is a footnote: it reads once and is never the thing you
    look for mid-word. */
 .typing-hint__cheat {

@@ -172,6 +172,7 @@ const Session = () => {
     soundEnabled: settings.soundEnabled,
     soundProfile: settings.soundProfile,
     volume: settings.volume,
+    advanceMode: settings.advanceMode,
     callbacks,
     initialIndex,
     initialElapsed,
@@ -425,7 +426,7 @@ const Session = () => {
 
       <div className="session-layout">
         <div className="session-main">
-          <div className="typing-stage">
+          <div className="typing-stage" data-awaiting={view.awaitingEnter ? 'true' : undefined}>
             {item ? (
               <>
                 <TypingSlots
@@ -455,9 +456,17 @@ const Session = () => {
 
                 {/* The keyboard hint: the next key and the finger that owns it
                     on the left, the cheat sheet parked at the far right as a
-                    footnote instead of a third item in the same sentence. */}
+                    footnote instead of a third item in the same sentence.
+                    In "Enter to continue" mode the left slot turns into the
+                    confirmation the run is waiting for. */}
                 <div className="typing-hint">
-                  {nextChar && nextCode && (
+                  {view.awaitingEnter ? (
+                    <span className="next-key next-key--confirm">
+                      <span className="eyebrow">已完成</span>
+                      <span className="kbd kbd--next">Enter</span>
+                      <span className="next-key__next">进入下一个</span>
+                    </span>
+                  ) : nextChar && nextCode ? (
                     <span className="next-key">
                       <span className="eyebrow">下一个键</span>
                       <span className="kbd kbd--next">{nextChar === ' ' ? 'Space' : nextChar.toUpperCase()}</span>
@@ -468,7 +477,7 @@ const Session = () => {
                         </span>
                       )}
                     </span>
-                  )}
+                  ) : null}
                   <span className="typing-hint__cheat">按 Esc 退出 · Backspace 删除 · 直接开始打字即可</span>
                 </div>
               </>

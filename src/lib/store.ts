@@ -13,6 +13,7 @@ import type { RgbStyle } from '../three/keyboard/models';
 import type { SoundProfile } from './audio';
 import { createCard, reviewCard, type Grade } from './srs';
 import type {
+  AdvanceMode,
   DailyStat,
   KeyStat,
   RomajiStyle,
@@ -53,6 +54,8 @@ export interface Settings {
   volume: number;
   fingerHints: boolean;
   showNextKey: boolean;
+  /** what a finished item does: hand over to the next one, or wait for Enter */
+  advanceMode: AdvanceMode;
   rgbStyle: RgbStyle;
   romajiStyle: RomajiStyle;
   keyboardVisible: boolean;
@@ -115,6 +118,7 @@ const DEFAULT_SETTINGS: Settings = {
   volume: 0.6,
   fingerHints: false,
   showNextKey: true,
+  advanceMode: 'auto',
   rgbStyle: 'solid',
   romajiStyle: 'hepburn',
   keyboardVisible: true,
@@ -131,8 +135,7 @@ const DEFAULT_CONFIG: SessionConfig = {
   strict: false
 };
 
-const initialSettings = (): Settings => {
-  if (typeof document === 'undefined') return DEFAULT_SETTINGS;
+const initialSettings = (): Settings => {  if (typeof document === 'undefined') return DEFAULT_SETTINGS;
   const theme = document.documentElement.dataset.theme;
   return theme === 'light' || theme === 'dark' ? { ...DEFAULT_SETTINGS, theme } : DEFAULT_SETTINGS;
 };

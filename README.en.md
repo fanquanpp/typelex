@@ -70,6 +70,8 @@ Japanese cards show kana, kanji, rōmaji and the Chinese gloss.
 - **Per-key data**: dwell time and error rate per key drive the heatmap and the weak-key drill
 - **Finger colouring**: keycaps coloured by the finger that owns them, standard touch-typing zoning
 - **Live feedback**: the next key pulses, misses flash red, hits sink
+- **Whole word visible as ghosts**: every letter still to come sits in its slot in a faint tone and lights up as you hit it
+- **Advance mode**: choose "auto" or "Enter" in settings — auto moves straight on, Enter parks on the finished word so you can read it back first
 - **Backlight modes**: off / reactive / weak-key highlighting, previewable in the keyboard lab
 - **Dark & light themes**, initialised from your system preference
 - **Persistent progress**: reload and you are back where you were, including an unfinished queue

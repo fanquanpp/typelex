@@ -3,6 +3,8 @@
 export type Orientation = 'portrait' | 'landscape';
 export type Theme = 'dark' | 'light';
 export type RomajiStyle = 'hepburn' | 'kunrei';
+/** What finishing an item does: jump straight on, or wait for Enter. */
+export type AdvanceMode = 'auto' | 'enter';
 
 /** A compact row from `<book>.index.json`. */
 export type WordRow = [string, string, string, string, string, number, 0 | 1, number];

@@ -13,10 +13,26 @@ import type { Detail, Word } from '../lib/types';
 import { FINGER_LABEL, fingerForChar } from '../lib/typing/fingers';
 import FlipCard from './FlipCard';
 import Lanyard, { type FacePainter } from './Lanyard/Lanyard';
+import WarmTooltip, { WarmTooltipGroup } from './WarmTooltip';
 import { DecryptText, Reveal } from './effects';
 import './WordCard.css';
 
 const LEVEL_NAME: Record<number, string> = { 1: '高中', 2: 'CET-4', 3: 'CET-6' };
+
+/**
+ * The source lists repeat themselves: a word shows up in more than one 同根词
+ * group (4,831 of 9,482 words), and 易混词 lists each pair twice (4,232). One
+ * chip per distinct word is what the card means to show; the repeats were also
+ * what React was warning about with duplicate `key`s.
+ */
+const uniqByWord = <T extends [string, ...unknown[]]>(list: T[]): T[] => {
+  const seen = new Set<string>();
+  return list.filter(entry => {
+    if (seen.has(entry[0])) return false;
+    seen.add(entry[0]);
+    return true;
+  });
+};
 
 /** Lay `text` into at most `maxLines` lines that fit `maxWidth`. Tokens wider
  *  than the line are hard-broken per character — CJK definitions and compounds
@@ -297,7 +313,7 @@ export const useBackPainter = ({ word, detail, level, accent = '#5b8def', theme 
         ry += unit * 0.1;
         for (const [, words] of rels.slice(0, 2)) {
           if (ry > height - pad * 2) break;
-          const text = words.map(entry => entry[0]).join(' · ');
+          const text = [...new Set(words.map(entry => entry[0]))].join(' · ');
           ctx.font = `500 ${unit * 0.058}px ${MONO}`;
           ctx.fillStyle = ink;
           ctx.fillText(fitLine(ctx, text, rightW), colX, ry);
@@ -312,7 +328,7 @@ export const useBackPainter = ({ word, detail, level, accent = '#5b8def', theme 
         ry += unit * 0.1;
         ctx.font = `500 ${unit * 0.058}px ${MONO}`;
         ctx.fillStyle = ink;
-        ctx.fillText(fitLine(ctx, confusables.map(([other]) => other).join(' · '), rightW), colX, ry);
+        ctx.fillText(fitLine(ctx, [...new Set(confusables.map(([other]) => other))].join(' · '), rightW), colX, ry);
         ry += unit * 0.085;
       }
 
@@ -393,7 +409,7 @@ export const WordCard = ({
   useEffect(() => setOpen(false), [wordKey]);
 
   if (flat) {
-    const related = detail?.r?.flatMap(group => group[1]).slice(0, 5) ?? [];
+    const related = uniqByWord(detail?.r?.flatMap(group => group[1]) ?? []).slice(0, 5);
     const example = detail?.s?.[0];
 
     return (
@@ -414,13 +430,15 @@ export const WordCard = ({
                     </div>
                     <p className="word-card__meaning">{word.cn}</p>
                     {related.length > 0 && (
-                      <div className="row wrap" style={{ gap: 6, marginTop: 'var(--s3)' }}>
-                        {related.map(([w, cn]) => (
-                          <span className="chip" key={w} title={cn}>
-                            {w}
-                          </span>
-                        ))}
-                      </div>
+                      <WarmTooltipGroup delay={280} warmWindow={220}>
+                        <div className="row wrap" style={{ gap: 6, marginTop: 'var(--s3)' }}>
+                          {related.map(([w, cn], index) => (
+                            <WarmTooltip key={`${w}-${index}`} content={cn} side="top" size="sm">
+                              <span className="chip">{w}</span>
+                            </WarmTooltip>
+                          ))}
+                        </div>
+                      </WarmTooltipGroup>
                     )}
                     {example && (
                       <div className="word-card__example">
@@ -551,6 +569,7 @@ export const WordCard = ({
 };
 
 export const WordDetail = ({ word, detail }: { word: Word; detail: Detail }) => (
+  <WarmTooltipGroup delay={280} warmWindow={220}>
   <div className="word-detail stack-6">
     <Reveal>
       <div>
@@ -574,10 +593,10 @@ export const WordDetail = ({ word, detail }: { word: Word; detail: Detail }) => 
         <div>
           <p className="eyebrow">易混词</p>
           <div className="row wrap" style={{ gap: 'var(--s2)' }}>
-            {detail.k.map(([other, cn]) => (
-              <span className="chip" key={other} title={cn}>
-                {other}
-              </span>
+            {uniqByWord(detail.k).map(([other, cn], index) => (
+              <WarmTooltip key={`${other}-${index}`} content={cn} side="top" size="sm">
+                <span className="chip">{other}</span>
+              </WarmTooltip>
             ))}
           </div>
         </div>
@@ -621,14 +640,14 @@ export const WordDetail = ({ word, detail }: { word: Word; detail: Detail }) => 
         <div>
           <p className="eyebrow">同根词家族</p>
           <div className="word-detail__family">
-            {detail.r.map(([pos, words]) => (
-              <div key={pos || 'rel'}>
+            {detail.r.map(([pos, words], groupIndex) => (
+              <div key={`${pos || 'rel'}-${groupIndex}`}>
                 {pos && <span className="tag-pos">{pos}</span>}
                 <div className="row wrap" style={{ gap: 'var(--s2)' }}>
-                  {words.map(([w, cn]) => (
-                    <span className="chip" key={w} title={cn}>
-                      {w}
-                    </span>
+                  {uniqByWord(words).map(([w, cn], index) => (
+                    <WarmTooltip key={`${w}-${index}`} content={cn} side="top" size="sm">
+                      <span className="chip">{w}</span>
+                    </WarmTooltip>
                   ))}
                 </div>
               </div>
@@ -648,8 +667,8 @@ export const WordDetail = ({ word, detail }: { word: Word; detail: Detail }) => 
                 <span className="tag-pos">{pos}</span>
                 <div>
                   <div className="row wrap" style={{ gap: 'var(--s2)' }}>
-                    {words.map(w => (
-                      <span className="chip" key={w}>
+                    {uniqByWord(words.map(w => [w, tran] as [string, string])).map(([w], wordIndex) => (
+                      <span className="chip" key={`${w}-${wordIndex}`}>
                         {w}
                       </span>
                     ))}
@@ -699,6 +718,7 @@ export const WordDetail = ({ word, detail }: { word: Word; detail: Detail }) => 
       <span>{word.book === 'highschool' ? '高中词表' : word.book === 'cet4' ? '四级词表' : '六级词表'}</span>
     </div>
   </div>
+  </WarmTooltipGroup>
 );
 
 export default WordCard;
