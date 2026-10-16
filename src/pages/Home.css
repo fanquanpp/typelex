@@ -4,64 +4,6 @@
   gap: var(--s16);
 }
 
-.loop-grid {
-  display: grid;
-  gap: var(--s4);
-  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
-}
-
-.loop-card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: var(--s3);
-  padding: var(--s6);
-  border-radius: var(--r-lg);
-  border: 1px solid var(--border);
-  background: var(--surface);
-  overflow: hidden;
-  transition: border-color var(--t-base) var(--ease-out), transform var(--t-base) var(--ease-out);
-}
-
-.loop-card:hover {
-  border-color: var(--border-strong);
-  transform: translateY(-3px);
-}
-
-.loop-card__index {
-  display: none;
-}
-
-.loop-card__icon {
-  display: none;
-}
-
-.loop-card__title {
-  font-size: var(--text-lg);
-  letter-spacing: var(--tracking-tight);
-}
-
-.loop-card__body {
-  font-size: var(--text-sm);
-  color: var(--ink-muted);
-  line-height: 1.65;
-}
-
-.loop-card__meta {
-  margin-top: auto;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-  color: var(--ink-faint);
-}
-
-.feature-card {
-  display: flex;
-  flex-direction: column;
-  gap: var(--s2);
-}
-
 .home-cta {
   display: flex;
   align-items: center;
@@ -84,42 +26,4 @@
   border-radius: var(--r-md);
   border: 1px solid var(--glass-edge-soft);
   background: color-mix(in srgb, var(--glass-tint) 60%, transparent);
-}
-
-/* Compact single-screen variants. */
-.loop-grid--compact {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--s3);
-}
-
-.loop-card--compact {
-  padding: var(--s4) var(--s5);
-  gap: var(--s2);
-}
-
-.loop-card--compact .loop-card__icon {
-  width: 28px;
-  height: 28px;
-  border-radius: var(--r-xs);
-}
-
-.loop-card--compact .loop-card__title {
-  font-size: var(--text-sm);
-}
-
-.loop-card--compact .loop-card__body {
-  font-size: var(--text-xs);
-  line-height: 1.5;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.loop-card--compact .loop-card__meta {
-  display: none;
-}
-
-.loop-card--compact .loop-card__index {
-  font-size: var(--text-lg);
 }

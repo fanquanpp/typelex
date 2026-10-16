@@ -1,11 +1,14 @@
 # TypeLex
 
-**用拟真 3D 键盘把英语和日语单词打进肌肉记忆。**
+**用模拟键盘把英语和日语单词打进肌肉记忆。**
 
-TypeLex 把「打字练习」和「背单词」合成同一件事：你在一个用 Three.js 实时构建的 3D 键盘上敲出单词，
+TypeLex 把「打字练习」和「背单词」合成同一件事：你在一个按真实布局渲染的模拟键盘上敲出单词，
 旁边的卡片同时告诉你它的词性、释义、例句、同根词和易混词。打错的词会被排进更早的复习队列。
 
 纯前端、无后端、无账号 —— 所有进度都存在浏览器本地。
+
+**在线使用：** https://fanquanpp.github.io/typelex/
+**源仓库：** https://github.com/fanquanpp/typelex
 
 ---
 
@@ -120,13 +123,14 @@ TypeLex 的做法是：**想记住一个词，就把它完整打出来**。于�
 ## 技术栈
 
 - **React 19** + **TypeScript** + **Vite 8**
-- **Three.js** —— 3D 键盘、Lanyard 徽章卡片
+- **Three.js** —— Lanyard 徽章卡片、动态背景色场
 - **Zustand** —— 状态与 localStorage 持久化
 - **React Router** —— HashRouter，保证任意路由刷新后都能恢复
 - 无 UI 组件库、无动画库、无 CSS 框架：设计系统是手写的 CSS 自定义属性
 
-3D 键盘整块板只有一个绘制批次：所有键帽合并进一个 BufferGeometry，图例烘焙进一张图集纹理，
-按键动画只重写受影响的那段顶点，背光通过一张「每键一个像素」的状态纹理驱动。
+键盘渲染采用 DOM/CSS 实现：同一套按 ANSI 单位定义的布局数据渲染成绝对定位的键帽，
+以浅倾角透视（`preserve-3d`）加指针视差呈现层次；按键动画直接写内联样式，不经过 React 状态，
+一次敲击零重渲染。
 
 ## 快速开始
 
@@ -144,6 +148,8 @@ npm run preview    # 预览构建产物
 
 > 构建产物是纯静态文件，可直接部署到 GitHub Pages / Netlify / 任意静态托管。
 > 路由使用 hash，因此不需要服务端重写规则。
+> 推送到 `main` 会触发 `.github/workflows/deploy.yml` 自动构建并发布到
+> https://fanquanpp.github.io/typelex/ 。
 
 ## 重新生成词库数据
 
@@ -189,10 +195,9 @@ src/
   three/keyboard/
     layouts.ts              7 套键位布局（单位制）
     models.ts               15 种键盘模型
-    geometry.ts             键帽与机身程序化几何
-    legends.ts              图例图集 + 着色器注入
-    KeyboardScene.ts        3D 键盘场景
-  components/               GooeyNav、OrbitCards、Lanyard、特效组件
+    CssKeyboardScene.ts     CSS/DOM 键盘场景（浅倾角 + 指针视差）
+    KeyboardScene.ts        旧 Three.js 键盘场景（已被 CSS 版替代）
+  components/               PillNav、AnimatedList、OrbitCards、Lanyard、特效组件
   pages/                    9 个路由页面
 ```
 

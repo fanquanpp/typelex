@@ -243,8 +243,17 @@
 }
 
 .mode-card[data-active='true'] {
-  border-color: var(--primary);
-  background: var(--primary-soft);
+  border-color: transparent;
+  background: var(--ink);
+}
+
+.mode-card[data-active='true'] .mode-card__name,
+.mode-card[data-active='true'] .mode-card__meta {
+  color: var(--bg);
+}
+
+.mode-card[data-active='true'] .mode-card__desc {
+  color: color-mix(in srgb, var(--bg) 72%, transparent);
 }
 
 .mode-card__head {
@@ -338,8 +347,19 @@
 }
 
 .book-row[data-active='true'] {
-  border-color: var(--primary);
-  background: var(--primary-soft);
+  border-color: transparent;
+  background: var(--ink);
+}
+
+.book-row[data-active='true'] .book-row__name,
+.book-row[data-active='true'] .book-row__count {
+  color: var(--bg);
+}
+
+.book-row[data-active='true'] .chip {
+  background: color-mix(in srgb, var(--bg) 14%, transparent);
+  border-color: transparent;
+  color: color-mix(in srgb, var(--bg) 86%, transparent);
 }
 
 .book-row__dot {
@@ -442,73 +462,6 @@
 
 .data-table .mono {
   font-weight: 600;
-}
-
-/* ============================  word rows  ============================ */
-
-.word-rows {
-  display: flex;
-  flex-direction: column;
-}
-
-.word-row {
-  display: flex;
-  align-items: center;
-  gap: var(--s4);
-  padding: var(--s3) var(--s4);
-  border-radius: var(--r-sm);
-  border-bottom: 1px solid var(--border-faint);
-  cursor: pointer;
-  text-align: left;
-  width: 100%;
-  transition: background var(--t-fast) var(--ease-out);
-}
-
-.word-row:hover {
-  background: var(--surface-strong);
-}
-
-.word-row[data-active='true'] {
-  background: var(--primary-soft);
-}
-
-.word-row__word {
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  font-weight: 650;
-  min-width: 8.5em;
-  color: var(--ink);
-}
-
-.word-row__phonetic {
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  color: var(--ink-faint);
-  min-width: 9em;
-}
-
-.word-row__meaning {
-  flex: 1 1 auto;
-  min-width: 0;
-  font-size: var(--text-xs);
-  color: var(--ink-muted);
-}
-
-.word-row__flags {
-  display: flex;
-  gap: 5px;
-  flex: none;
-}
-
-.word-row__flag {
-  width: 6px;
-  height: 6px;
-  border-radius: 2px;
-  background: var(--border-strong);
-}
-
-.word-row__flag[data-on='true'] {
-  background: var(--primary);
 }
 
 /* ============================  misc  ================================= */
@@ -636,10 +589,13 @@
   background: var(--surface-strong);
 }
 
+/* Selected state: inverted ink, matching .btn-primary. A 14% tint on glass is
+   invisible at a glance — selection has to read instantly. */
 .pill[data-active='true'] {
-  border-color: var(--primary);
-  background: var(--primary-soft);
-  color: var(--primary);
+  border-color: transparent;
+  background: var(--ink);
+  color: var(--bg);
+  box-shadow: 0 6px 16px -10px rgba(0, 0, 0, 0.5);
 }
 
 @media (max-width: 1080px) {
@@ -659,8 +615,5 @@
   .page {
     padding-top: var(--s8);
     gap: var(--s8);
-  }
-  .word-row__phonetic {
-    display: none;
   }
 }

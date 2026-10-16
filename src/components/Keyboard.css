@@ -265,8 +265,27 @@
 }
 
 .model-card[data-active='true'] {
-  border-color: var(--primary);
-  background: var(--primary-soft);
+  border-color: transparent;
+  background: var(--ink);
+}
+
+.model-card[data-active='true'] .model-card__name,
+.model-card[data-active='true'] .model-card__meta {
+  color: var(--bg);
+}
+
+.model-card[data-active='true'] .model-card__brand {
+  color: color-mix(in srgb, var(--bg) 62%, transparent);
+}
+
+.model-card[data-active='true'] .model-card__desc {
+  color: color-mix(in srgb, var(--bg) 72%, transparent);
+}
+
+.model-card[data-active='true'] .chip {
+  background: color-mix(in srgb, var(--bg) 14%, transparent);
+  border-color: transparent;
+  color: color-mix(in srgb, var(--bg) 86%, transparent);
 }
 
 .model-card__brand {

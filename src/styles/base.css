@@ -487,6 +487,7 @@ samp {
 }
 
 .chip-primary { background: var(--primary-soft); color: var(--primary); border-color: transparent; }
+.chip[data-selected] { background: var(--ink); border-color: transparent; color: var(--bg); cursor: pointer; }
 .chip-violet { background: var(--surface-strong); color: var(--ink-muted); border-color: var(--border-faint); }
 .chip-amber { background: var(--surface-strong); color: var(--ink-muted); border-color: var(--border-faint); }
 .chip-rose { background: var(--surface-strong); color: var(--ink-muted); border-color: var(--border-faint); }
@@ -571,9 +572,9 @@ samp {
   color: var(--ink);
 }
 .segmented button[data-active] {
-  background: var(--surface-solid);
-  color: var(--ink);
-  box-shadow: var(--shadow-sm);
+  background: var(--ink);
+  color: var(--bg);
+  box-shadow: 0 6px 14px -10px rgba(0, 0, 0, 0.5);
 }
 
 /* switch — one of the few genuinely round affordances */

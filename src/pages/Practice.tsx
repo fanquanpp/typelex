@@ -258,24 +258,23 @@ const Practice = () => {
                 用罗马音输入日语单词：N5–N4 提供中文释义，N3–N1 提供英文释义。假名、汉字与罗马音同步显示。
               </span>
               <span className="row wrap" style={{ gap: 6, marginTop: 6 }}>
-                {JLPT.map(entry => (
-                  <span
-                    key={entry.level}
-                    className="chip"
-                    style={
-                      (config.jlpt ?? []).includes(entry.level) && config.mode === 'japanese'
-                        ? { borderColor: '#c0556f', color: '#c0556f' }
-                        : undefined
-                    }
-                    onClick={event => {
-                      event.stopPropagation();
-                      patch({ mode: 'japanese' });
-                      toggleJlpt(entry.level);
-                    }}
-                  >
-                    {entry.name} · {entry.desc}
-                  </span>
-                ))}
+                {JLPT.map(entry => {
+                  const jpSelected = (config.jlpt ?? []).includes(entry.level) && config.mode === 'japanese';
+                  return (
+                    <span
+                      key={entry.level}
+                      className="chip"
+                      data-selected={jpSelected}
+                      onClick={event => {
+                        event.stopPropagation();
+                        patch({ mode: 'japanese' });
+                        toggleJlpt(entry.level);
+                      }}
+                    >
+                      {entry.name} · {entry.desc}
+                    </span>
+                  );
+                })}
               </span>
             </span>
             <span className="book-row__count">日语</span>

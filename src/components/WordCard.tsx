@@ -69,19 +69,19 @@ export const useFrontPainter = ({ word, detail, level, accent = '#5b8def', theme
 
       /* top accent rule + level tag */
       ctx.fillStyle = accent;
-      ctx.fillRect(pad, pad * 0.85, width * 0.16, height * 0.008);
-      ctx.font = `700 ${width * 0.03}px ${MONO}`;
+      ctx.fillRect(pad, pad * 0.85, width * 0.18, height * 0.009);
+      ctx.font = `700 ${width * 0.036}px ${MONO}`;
       ctx.textAlign = 'left';
       ctx.fillStyle = accent;
       ctx.fillText(`LEVEL ${level} · ${LEVEL_NAME[level] ?? ''}`, pad, pad * 1.5);
 
       /* headword */
-      const size = word.word.length > 14 ? width * 0.1 : word.word.length > 9 ? width * 0.125 : width * 0.15;
+      const size = word.word.length > 14 ? width * 0.115 : word.word.length > 9 ? width * 0.15 : width * 0.19;
       ctx.font = `700 ${size}px ${MONO}`;
       ctx.fillStyle = ink;
       ctx.textAlign = 'left';
       const wordLines = wrapText(ctx, word.word, width - pad * 2, 2);
-      let y = height * 0.3;
+      let y = height * 0.32;
       for (const line of wordLines) {
         ctx.fillText(line, pad, y);
         y += size * 1.12;
@@ -90,37 +90,37 @@ export const useFrontPainter = ({ word, detail, level, accent = '#5b8def', theme
       /* phonetic */
       const phonetic = word.us || word.uk;
       if (phonetic) {
-        ctx.font = `500 ${width * 0.042}px ${MONO}`;
+        ctx.font = `500 ${width * 0.05}px ${MONO}`;
         ctx.fillStyle = muted;
-        ctx.fillText(`/${phonetic}/`, pad, y + width * 0.03);
-        y += width * 0.075;
+        ctx.fillText(`/${phonetic}/`, pad, y + width * 0.035);
+        y += width * 0.09;
       } else {
-        y += width * 0.04;
+        y += width * 0.045;
       }
 
       /* meanings */
       const defs = detail?.d ?? [];
-      ctx.font = `600 ${width * 0.045}px ${FONT}`;
-      let lineY = y + width * 0.05;
+      ctx.font = `600 ${width * 0.052}px ${FONT}`;
+      let lineY = y + width * 0.055;
       const maxY = height - pad * 1.6;
       for (const [pos, cn] of defs.slice(0, 3)) {
-        ctx.font = `700 ${width * 0.042}px ${MONO}`;
+        ctx.font = `700 ${width * 0.048}px ${MONO}`;
         ctx.fillStyle = accent;
-        const posWidth = pos ? ctx.measureText(pos).width + width * 0.014 : 0;
+        const posWidth = pos ? ctx.measureText(pos).width + width * 0.018 : 0;
         if (pos) ctx.fillText(pos, pad, lineY);
-        ctx.font = `600 ${width * 0.045}px ${FONT}`;
+        ctx.font = `600 ${width * 0.052}px ${FONT}`;
         ctx.fillStyle = ink;
         const cnLines = wrapText(ctx, cn, width - pad * 2 - posWidth, 2);
         cnLines.forEach((line, index) => {
           if (lineY > maxY) return;
-          ctx.fillText(line, pad + posWidth, lineY + index * width * 0.055);
+          ctx.fillText(line, pad + posWidth, lineY + index * width * 0.064);
         });
-        lineY += width * 0.055 * cnLines.length + width * 0.035;
+        lineY += width * 0.064 * cnLines.length + width * 0.04;
         if (lineY > maxY) break;
       }
 
       /* footer */
-      ctx.font = `600 ${width * 0.028}px ${MONO}`;
+      ctx.font = `600 ${width * 0.032}px ${MONO}`;
       ctx.fillStyle = muted;
       ctx.fillText('TypeLex', pad, height - pad * 0.9);
       ctx.textAlign = 'right';
@@ -140,41 +140,41 @@ export const useBackPainter = ({ word, detail, level, accent = '#5b8def', theme 
       const muted = theme === 'dark' ? 'rgba(232,234,240,0.6)' : 'rgba(27,30,36,0.58)';
 
       ctx.fillStyle = accent;
-      ctx.fillRect(pad, pad * 0.85, width * 0.16, height * 0.008);
-      ctx.font = `700 ${width * 0.03}px ${MONO}`;
+      ctx.fillRect(pad, pad * 0.85, width * 0.18, height * 0.009);
+      ctx.font = `700 ${width * 0.036}px ${MONO}`;
       ctx.textAlign = 'left';
       ctx.fillStyle = accent;
       ctx.fillText('USAGE', pad, pad * 1.5);
 
-      let y = height * 0.15;
+      let y = height * 0.16;
       const maxY = height - pad * 1.5;
       const section = (title: string) => {
         if (y > maxY) return;
-        ctx.font = `700 ${width * 0.032}px ${MONO}`;
+        ctx.font = `700 ${width * 0.036}px ${MONO}`;
         ctx.fillStyle = accent;
         ctx.fillText(title, pad, y);
-        y += width * 0.05;
+        y += width * 0.056;
       };
 
       /* example sentence */
       const example = detail?.s?.[0];
       if (example) {
         section('EXAMPLE');
-        ctx.font = `500 ${width * 0.04}px ${FONT}`;
+        ctx.font = `500 ${width * 0.046}px ${FONT}`;
         ctx.fillStyle = ink;
         const lines = wrapText(ctx, example[0], width - pad * 2, 3);
         for (const line of lines) {
           ctx.fillText(line, pad, y);
-          y += width * 0.052;
+          y += width * 0.06;
         }
-        ctx.font = `500 ${width * 0.036}px ${FONT}`;
+        ctx.font = `500 ${width * 0.041}px ${FONT}`;
         ctx.fillStyle = muted;
         const cnLines = wrapText(ctx, example[1], width - pad * 2, 2);
         for (const line of cnLines) {
           ctx.fillText(line, pad, y);
-          y += width * 0.046;
+          y += width * 0.053;
         }
-        y += width * 0.03;
+        y += width * 0.035;
       }
 
       /* related words */
@@ -183,11 +183,11 @@ export const useBackPainter = ({ word, detail, level, accent = '#5b8def', theme 
         section('WORD FAMILY');
         for (const [pos, words] of rels.slice(0, 2)) {
           if (y > maxY) break;
-          ctx.font = `500 ${width * 0.038}px ${MONO}`;
+          ctx.font = `500 ${width * 0.044}px ${MONO}`;
           ctx.fillStyle = ink;
           const text = words.map(entry => entry[0]).join(' · ');
           ctx.fillText(text.slice(0, 44), pad, y);
-          y += width * 0.048;
+          y += width * 0.055;
           void pos;
         }
         y += width * 0.02;
@@ -196,23 +196,23 @@ export const useBackPainter = ({ word, detail, level, accent = '#5b8def', theme 
       /* mnemonic */
       if (detail?.m && y < maxY) {
         section('MEMORY');
-        ctx.font = `500 ${width * 0.036}px ${FONT}`;
+        ctx.font = `500 ${width * 0.041}px ${FONT}`;
         ctx.fillStyle = muted;
         const lines = wrapText(ctx, detail.m, width - pad * 2, 3);
         for (const line of lines) {
           if (y > maxY) break;
           ctx.fillText(line, pad, y);
-          y += width * 0.046;
+          y += width * 0.053;
         }
       }
 
       if (!example && !rels.length && !detail?.m) {
-        ctx.font = `500 ${width * 0.04}px ${FONT}`;
+        ctx.font = `500 ${width * 0.046}px ${FONT}`;
         ctx.fillStyle = muted;
         ctx.fillText('这个词暂无更多用法数据', pad, y + width * 0.02);
       }
 
-      ctx.font = `600 ${width * 0.028}px ${MONO}`;
+      ctx.font = `600 ${width * 0.032}px ${MONO}`;
       ctx.fillStyle = muted;
       ctx.textAlign = 'right';
       ctx.fillText(LEVEL_NAME[level] ?? '', width - pad, height - pad * 0.9);

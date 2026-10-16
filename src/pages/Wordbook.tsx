@@ -191,7 +191,6 @@ const Wordbook = () => {
               className="btn btn-sm"
               data-active={onlyStarred}
               onClick={() => setOnlyStarred(value => !value)}
-              style={onlyStarred ? { borderColor: 'var(--primary)', color: 'var(--primary)' } : undefined}
             >
               只看收藏 {stars.length > 0 && `· ${stars.length}`}
             </button>
@@ -230,7 +229,6 @@ const Wordbook = () => {
               showGradients
               fadeSize={48}
               gap={5}
-              maxHeight="100%"
               className="wordbook-animated-list"
               onItemSelect={item => {
                 const word = visible.find(entry => `${entry.book}:${entry.word}` === (item as { id?: string }).id);
