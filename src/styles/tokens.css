@@ -30,11 +30,16 @@
     'Noto Sans CJK SC', 'Source Han Sans SC', system-ui, sans-serif;
   --font-jp: 'Hiragino Sans', 'Yu Gothic UI', 'Meiryo', 'Noto Sans JP', var(--font-cjk);
 
-  --text-2xs: 0.6875rem; /* 11px — micro labels */
-  --text-xs: 0.75rem; /* 12px — chips, meta */
-  --text-sm: 0.8125rem; /* 13px — dense UI */
-  --text-base: 0.875rem; /* 14px — body default */
-  --text-md: 1rem; /* 16px — emphasis body */
+  /* The ladder starts at 12px on purpose: this UI is Chinese-first, and CJK
+     glyphs below 12px lose their counters on Windows (Microsoft YaHei) and
+     macOS alike. 12px is the floor for anything the user has to read; the
+     previous 11/12/13px steps made the whole lower half of the interface look
+     smudged next to the 19px display type. */
+  --text-2xs: 0.75rem; /* 12px — micro labels, the smallest text in the app */
+  --text-xs: 0.8125rem; /* 13px — chips, meta */
+  --text-sm: 0.875rem; /* 14px — dense UI, tables */
+  --text-base: 0.9375rem; /* 15px — body default */
+  --text-md: 1.0625rem; /* 17px — emphasis body */
   --text-lg: 1.1875rem; /* 19px — card titles */
   --text-xl: 1.5rem; /* 24px — section titles */
   --text-2xl: 2rem; /* 32px — page titles */
@@ -47,9 +52,11 @@
   --leading-normal: 1.58;
   --leading-relaxed: 1.72;
 
-  /* Display type wants tighter tracking; small caps-ish labels want wider. */
-  --tracking-tighter: -0.03em;
-  --tracking-tight: -0.018em;
+  /* Display type wants tighter tracking; small caps-ish labels want wider.
+     Kept shallow: CJK glyphs sit on a square em, so the -0.03em that flatters
+     a Latin headline visibly crowds Chinese characters together. */
+  --tracking-tighter: -0.02em;
+  --tracking-tight: -0.012em;
   --tracking-snug: -0.008em;
   --tracking-normal: 0;
   --tracking-wide: 0.04em;
@@ -96,7 +103,9 @@
 
   /* -------------------------------------------------------------- layout */
 
-  --shell-max: 1320px;
+  /* One width for every page: the stage itself. A narrower prose cap only
+     bought dead margins, and readable line length is handled where it belongs
+     — by max-width in `ch` on the text blocks (.page-head, .page-sub, .lede). */
   --shell-pad: clamp(16px, 3vw, 44px);
   --header-h: 68px;
 
@@ -166,7 +175,10 @@
   --ink: #f4f6fa;
   --ink-muted: #b3bac9;
   --ink-faint: #7d8598;
-  --ink-ghost: #5e6678;
+  /* The faintest tier still has to be readable: at 4.7:1 on --scene-base it
+     clears AA for the 12px text that uses it, where the previous #5e6678 sat
+     at 3.4:1 and read as a smudge. */
+  --ink-ghost: #737c8e;
 
   --primary: hsl(var(--hue-primary) 34% 68%);
   --primary-soft: hsl(var(--hue-primary) 34% 68% / 0.14);
@@ -246,7 +258,7 @@
   --ink: #12141f;
   --ink-muted: #454c5f;
   --ink-faint: #5d6478;
-  --ink-ghost: #949bad;
+  --ink-ghost: #6b7387;
 
   --primary: hsl(var(--hue-primary) 34% 30%);
   --primary-soft: hsl(var(--hue-primary) 34% 30% / 0.1);

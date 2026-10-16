@@ -68,7 +68,8 @@ const NAV: NavItem[] = [
     to: '/japanese',
     subpages: [
       { label: '日语训练', to: '/japanese' },
-      { label: '五十音图', to: '/japanese/kana' }
+      { label: '五十音图', to: '/japanese/kana' },
+      { label: '词表', to: '/japanese/words' }
     ]
   },
   {
@@ -297,7 +298,7 @@ export const AppShell = () => {
               items={subpages.map(page => page.label)}
               activeIndex={subpages.length ? activeSub : null}
               itemGap={26}
-              fontSize={0.84}
+              fontSize={0.9}
               proximityRadius={90}
               maxShift={14}
               markerLength={34}

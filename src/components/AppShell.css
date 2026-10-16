@@ -49,9 +49,9 @@
   align-items: center;
   gap: var(--s5);
   height: 100%;
-  /* The header spans the full viewport — the nav capsule needs the whole
-     top row, and capping it at --shell-max squeezed the last items under
-     the action buttons. Side padding keeps the edges aligned. */
+  /* The header spans the full viewport, like every page below it: the nav
+     capsule needs the whole top row, and any column cap squeezed the last
+     items under the action buttons. Side padding keeps the edges aligned. */
   max-width: none;
   padding-inline: var(--shell-pad);
 }
@@ -120,10 +120,10 @@
   display: block;
   font-family: var(--font-mono);
   font-size: var(--text-2xs);
-  font-weight: 700;
-  letter-spacing: var(--tracking-widest);
+  font-weight: 650;
+  letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
-  color: var(--ink-faint);
+  color: var(--ink-muted);
   padding-left: calc(34px + 2px);
   margin-bottom: var(--s5);
   white-space: nowrap;

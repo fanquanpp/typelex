@@ -1,14 +1,42 @@
 /* Japanese page. */
 
-.jp-hero {
+/* Practice launcher: the level picker and its start button sit together on the
+   right, the corpus count and the live config readout on the left. */
+.jp-start {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--s8);
+  gap: var(--s6);
   flex-wrap: wrap;
   background:
     radial-gradient(90% 140% at 6% 0%, hsl(var(--hue-rose) 70% 60% / 0.14), transparent 58%),
     var(--surface);
+}
+
+.jp-start__note {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+  min-width: 0;
+  max-width: 62ch;
+}
+
+.jp-start__count,
+.jp-start__config {
+  font-size: var(--text-sm);
+}
+
+.jp-start__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--s4);
+  flex-wrap: wrap;
+}
+
+/* The level picker hugs its labels instead of stretching across the panel. */
+.jp-start__levels {
+  width: fit-content;
+  max-width: 100%;
 }
 
 /* Level tiles on the Japanese home: each one leads into the word list. */
@@ -46,7 +74,7 @@
   margin-top: auto;
   padding-top: var(--s4);
   font-size: var(--text-xs);
-  color: var(--ink-ghost);
+  color: var(--ink-muted);
   transition: color var(--t-fast) var(--ease-out);
 }
 
@@ -54,26 +82,7 @@
   color: var(--rose);
 }
 
-/* Word list sub-page: level switcher next to the search box. */
-.jp-word-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--s4);
-  flex-wrap: wrap;
-  max-width: 100%;
-}
-
-.jp-word-bar > :first-child {
-  width: fit-content;
-  max-width: 100%;
-}
-
-.jp-word-search {
-  flex: 1 1 260px;
-  min-width: min(240px, 100%);
-  max-width: 380px;
-}
+/* The word list sub-page carries its own stylesheet: WordList.css. */
 
 .jp-charts {
   display: grid;

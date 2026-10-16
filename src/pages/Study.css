@@ -129,8 +129,8 @@
 }
 
 .study-grade__hint {
-  font-size: 10px;
-  color: var(--ink-faint);
+  font-size: var(--text-2xs);
+  color: var(--ink-muted);
 }
 
 .study-grade--again:hover {

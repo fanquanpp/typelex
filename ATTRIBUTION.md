@@ -55,6 +55,12 @@ Chinese glosses for **all 7,032 words across N5–N1** (662 / 605 / 1,680 / 1,58
 original work for this project and is covered by the MIT license above; the
 upstream English gloss is kept alongside every entry in the built data.
 
+The upstream decks hold 8,131 rows; entries whose reading is empty, is a grammar
+pattern or contains Latin letters, repeats a reading already used at another
+level, or does not reduce to ASCII rōmaji are dropped during the build. Known
+data corner cases (multi-reading entries, kana-only words, the lenient rōmaji
+grader) are documented in [ERRATA.md](ERRATA.md).
+
 ---
 
 ## 3. Curated tables

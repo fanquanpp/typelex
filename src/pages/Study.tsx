@@ -198,8 +198,7 @@ const Study = () => {
         <span className="eyebrow">Study</span>
         <h1 className="page-title">记忆复习</h1>
         <p className="page-sub">
-          看到单词先自己回想，再翻开答案。觉得记得就按 3，忘了就按 1 —— 间隔会自动调整。
-          也可以用「打字模式」把拼写一起练。
+          看到单词先自己回想，再翻开答案。觉得记得就按 3，忘了就按 1 —— 间隔会自动调整。也可以用「打字模式」把拼写一起练。
         </p>
       </header>
 

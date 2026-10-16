@@ -439,12 +439,10 @@ const Settings = () => {
         <div className="panel panel-pad stack-4">
           <h2 className="section-title">关于</h2>
           <p className="muted" style={{ fontSize: 'var(--text-sm)', lineHeight: 1.7 }}>
-            TypeLex 是一个纯前端的打字练习与词汇记忆项目：模拟键盘用 CSS/DOM 构建，
-            词库（英语 9,482 词 + 日语 JLPT 7,032 词，全部带中文释义）来自公开数据集，
-            并在构建期整理成可增量加载的静态文件；没有后端、没有账号，所有进度都保存在你自己的浏览器里。
+            TypeLex 是一个纯前端的打字练习与词汇记忆项目：模拟键盘用 CSS/DOM 构建，词库（英语 9,482 词 + 日语 JLPT 7,032 词，全部带中文释义）来自公开数据集，并在构建期整理成可增量加载的静态文件；没有后端、没有账号，所有进度都保存在你自己的浏览器里。
           </p>
           <p className="faint" style={{ fontSize: 'var(--text-xs)', lineHeight: 1.7 }}>
-            数据来源与授权说明见仓库中的 ATTRIBUTION.md —— 代码以 MIT 授权，词表另有权属。
+            数据来源与授权说明见仓库中的 ATTRIBUTION.md —— 代码以 MIT 授权，词表另有权属；已知的数据边角（双语读音词条、假名词条、罗马音判定规则等）见 ERRATA.md。
           </p>
           <div className="row wrap" style={{ gap: 'var(--s3)' }}>
             <Link to="/practice" className="btn btn-primary">

@@ -77,7 +77,7 @@ Japanese cards show kana, kanji, rōmaji and the Chinese gloss.
 
 ## Pages
 
-Eleven routes, all inside a single-screen app shell (HashRouter, so any route survives a reload):
+Thirteen routes, all inside a single-screen app shell (HashRouter, so any route survives a reload):
 
 | Route | Page |
 | --- | --- |
@@ -87,11 +87,20 @@ Eleven routes, all inside a single-screen app shell (HashRouter, so any route su
 | `/study` | Spaced-repetition review cards |
 | `/wordbook` | Browse and search the corpus; lanyard badge detail on the right |
 | `/keyboard` | Keyboard lab: presets, layouts, views, backlight, test typing |
-| `/japanese` | Japanese track: JLPT N5–N1 word lists, rōmaji input |
+| `/japanese` | Japanese track: the practice launcher (level picker + live config) over the N5–N1 level directory |
 | `/japanese/kana` | Kana chart generated from the same converter the engine grades against |
+| `/japanese/words` | JLPT word list: browse and search by level — a pure reference page |
 | `/stats` | Study stats overview |
 | `/stats/keys` | Per-key analysis: speed and error heatmaps |
 | `/stats/history` | Practice history |
+| `/settings` | Preferences |
+
+Practice entry points live on the feature pages only: every Japanese session starts from `/japanese`,
+and the word list and kana chart are pure lookups with no "start practising" button attached.
+
+Every page is the full width of the stage, matching the wordbook; readable line length is handled by
+`ch` caps on the text blocks themselves (`.page-head` 74ch, `.page-sub` 66ch, `.lede` 62ch) rather
+than by a 1320px column cap on the container.
 
 ## Vocabulary data
 
@@ -128,6 +137,8 @@ families, words with mnemonics.
 > Sources, curation and licensing are documented in [ATTRIBUTION.md](ATTRIBUTION.md).
 > The upstream word lists are **not** MIT-licensed along with the app code — read that file before
 > redistributing a build.
+> Known data corner cases and the correction log (including upstream word-list issues) are in
+> [ERRATA.md](ERRATA.md).
 
 ## The keyboard
 
@@ -157,6 +168,22 @@ Key animations write inline styles directly, bypassing React state, so a keystro
 - No UI kit, no CSS framework: the design system is hand-written CSS custom properties
 - Self-hosted fonts (`@fontsource-variable`: Sora / Manrope / JetBrains Mono); Chinese falls back to
   the system font stack
+
+### Type and legibility
+
+The type scale starts at **12px** (`--text-2xs`) because this is a Chinese-first interface: below
+12px, CJK glyphs lose their counters on Microsoft YaHei and on macOS alike. Sizes are defined once,
+in the token file — components no longer hard-code pixels:
+
+- Scale: 12 / 13 / 14 / 15 / 17 / 19 / 24 / 32px, with display sizes scaled by `clamp()`
+- Large Chinese headings use a shallow negative tracking (`-0.02em`): square CJK glyphs crowd into
+  each other well before Latin letters do
+- Micro labels (eyebrows, table headers, stat labels) are one size — 12px, weight 600–650,
+  letter-spacing 0.04em. When the Latin face has no glyph, Chinese falls through to the system CJK
+  face, and the wider tracking used to break a label apart into loose characters
+- The faintest ink tier (`--ink-ghost`) clears 4.7:1 against the dark background (4.3:1 in light) —
+  no more grey that reads as a smudge
+- Keycap legends scale with the cap (`clamp(8px, --kb-unit × 0.23, 11px)`) instead of a fixed 9px
 
 ## Getting started
 
@@ -230,7 +257,7 @@ src/
     CssKeyboardScene.ts     CSS/DOM keyboard scene (shallow tilt + pointer parallax)
   components/               PillNav, AnimatedList, OrbitCards, Lanyard,
                             RubberSegment, WakeSlider, ambient effect layers, …
-  pages/                    11 routes (incl. japanese/ and stats/ subpages)
+  pages/                    13 routes (incl. japanese/ and stats/ subpages)
 ```
 
 ## How the typing engine scores

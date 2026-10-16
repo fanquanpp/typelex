@@ -1,0 +1,100 @@
+/* Word list sub-page (/japanese/words).
+
+   Single-screen like the wordbook: the head and the level bar hold still and
+   the table pane owns the scroll, so a 662-row list never drags the page
+   chrome off the top. */
+.shell.jp-words-page {
+  height: 100%;
+  gap: var(--s5);
+  padding-top: var(--s5);
+}
+
+/* Single-screen trim, same as the wordbook: a smaller title and a full-width
+   head keep the sub on one line, so the chrome costs ~90px instead of ~140
+   and that difference goes to the word pane. */
+.jp-words-page > .page-head {
+  max-width: none;
+}
+
+.jp-words-page .page-sub {
+  max-width: none;
+}
+
+.jp-words-page .page-title {
+  font-size: var(--text-2xl);
+}
+
+/* Nothing scrolls at page level here, so the global bottom pad and the
+   scroll fade — which would dim the pane's last row — come off. */
+.app[data-route='/japanese/words'] .app__view > .page {
+  padding-bottom: 0;
+  scrollbar-gutter: auto;
+  mask-image: none;
+  -webkit-mask-image: none;
+}
+
+/* The section takes every pixel the head leaves behind. `stack-5` only sets a
+   gap, so the flex column is spelled out here — without it the panel below
+   grows to its full 5000px content height and the page scrolls instead. */
+.jp-words-page > #sec-jp-words {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Level switcher + search: one row above the pane, never scrolled away. */
+.jp-word-bar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s4);
+  flex-wrap: wrap;
+  max-width: 100%;
+}
+
+.jp-word-bar > :first-child {
+  width: fit-content;
+  max-width: 100%;
+}
+
+.jp-word-search {
+  flex: 1 1 260px;
+  min-width: min(240px, 100%);
+  max-width: 380px;
+}
+
+/* The panel keeps its frame; the rows move inside it. Basis 0, not auto —
+   the table is thousands of pixels tall and would otherwise crush the row. */
+.jp-word-panel {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.jp-word-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+/* Padding belongs to the content, not the pane: were it on the pane, the
+   pinned header would stick 20px below the pane's top and rows would scroll
+   through the gap above it. */
+.jp-word-inner {
+  padding: var(--s5);
+}
+
+/* Column labels ride along: in a pane this long they are the only way to
+   read a row. Opaque — a translucent band lets the rows show through it. */
+.jp-word-scroll .data-table th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--surface-solid);
+}

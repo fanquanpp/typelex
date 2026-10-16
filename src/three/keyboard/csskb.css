@@ -80,7 +80,10 @@
 
 .csskb__legend {
   font-family: var(--font-mono);
-  font-size: 9px;
+  /* follows the cap: keys span roughly 20–60px depending on the stage and the
+     layout, and one flat 9px legend was both a smudge up close and too wide
+     for a 60% board. */
+  font-size: clamp(8px, calc(var(--kb-unit, 40px) * 0.23), 11px);
   font-weight: 650;
   line-height: 1;
   letter-spacing: 0.02em;

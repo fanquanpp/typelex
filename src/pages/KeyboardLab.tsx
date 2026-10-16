@@ -111,8 +111,7 @@ const KeyboardLab = () => {
         <span className="eyebrow">Keyboard lab</span>
         <h1 className="page-title">键盘实验室</h1>
         <p className="page-sub">
-          三种键盘手感，从办公薄型剪刀脚到 60% 客制化机械键盘。换一把键盘，键位布局与键帽高度
-          会跟着变；练习页用的是同一套模型。
+          三种键盘手感，从办公薄型剪刀脚到 60% 客制化机械键盘。换一把键盘，键位布局与键帽高度会跟着变；练习页用的是同一套模型。
         </p>
       </header>
 

@@ -102,33 +102,36 @@
   gap: 8px;
 }
 
+/* Card type is inside the readable ramp even though the ring scales the cards
+   down: the front card is the one being read, and 8.5px type on it was pure
+   texture. */
 .orbit-card__tag {
   font-family: var(--font-mono);
-  font-size: 8.5px;
+  font-size: var(--text-2xs);
   font-weight: 600;
-  letter-spacing: var(--tracking-widest);
-  color: var(--ink-faint);
+  letter-spacing: var(--tracking-wide);
+  color: var(--ink-muted);
 }
 
 .orbit-card__count {
   font-family: var(--font-mono);
-  font-size: 8.5px;
-  font-weight: 600;
-  color: var(--ink-faint);
+  font-size: var(--text-2xs);
+  font-weight: 650;
+  color: var(--ink-muted);
   font-variant-numeric: tabular-nums;
 }
 
 .orbit-card__name {
-  font-size: 12.5px;
+  font-size: var(--text-sm);
   font-weight: 650;
   letter-spacing: var(--tracking-tight);
   color: var(--ink);
-  line-height: 1.2;
+  line-height: 1.25;
 }
 
 .orbit-card__sub {
-  font-size: 9.5px;
-  color: var(--ink-faint);
+  font-size: var(--text-xs);
+  color: var(--ink-muted);
   line-height: 1.35;
 }
 

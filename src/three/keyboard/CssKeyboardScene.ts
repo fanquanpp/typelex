@@ -144,6 +144,9 @@ export class CssKeyboardScene {
     const width = this.plate.clientWidth;
     if (!width) return;
     const unitPx = width / this.layout.width;
+    /* Exposed so the legend size can follow the cap instead of being fixed:
+       a 9px legend is a smudge on a 46px key and overflows a 22px one. */
+    this.plate.style.setProperty('--kb-unit', `${unitPx}px`);
     for (const record of this.records) {
       const { def } = record;
       record.el.style.left = `${def.x * unitPx}px`;

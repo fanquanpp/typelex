@@ -331,7 +331,7 @@ const Session = () => {
                     <CountUp to={entry.value} decimals={entry.decimals} suffix={entry.suffix ?? ''} />
                   </span>
                   <span className="stat-label">{entry.label}</span>
-                  {entry.hint && <span className="faint" style={{ fontSize: 10 }}>{entry.hint}</span>}
+                  {entry.hint && <span className="faint result-card__hint">{entry.hint}</span>}
                 </div>
               </SpotlightCard>
             ))}

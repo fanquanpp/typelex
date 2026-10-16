@@ -132,9 +132,11 @@ samp {
 
 /* ============================  layout  ================================== */
 
+/* One width across the app: every page fills the stage, matching the wordbook.
+   Line length is capped on the text blocks instead (see .page-head/.page-sub),
+   so the shell never needs a column cap of its own. */
 .shell {
   width: 100%;
-  max-width: var(--shell-max);
   margin-inline: auto;
   padding-inline: var(--shell-pad);
 }
@@ -192,13 +194,17 @@ samp {
 
 /* ============================  typography  ============================== */
 
+/* Micro label. The mono face keeps the technical look for the Latin ones
+   (REFERENCE, STATISTICS); Chinese labels fall through to the system CJK face,
+   which is why the tracking stays restrained — 0.16em on 12px Chinese opened
+   the characters so far apart that the label stopped reading as one word. */
 .eyebrow {
   font-family: var(--font-mono);
   font-size: var(--text-2xs);
-  font-weight: 600;
-  letter-spacing: var(--tracking-widest);
+  font-weight: 650;
+  letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
-  color: var(--ink-faint);
+  color: var(--ink-muted);
 }
 
 .display {
