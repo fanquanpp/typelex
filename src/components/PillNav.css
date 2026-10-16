@@ -1,0 +1,400 @@
+/* PillNav — plain-CSS port of the react-bits Tailwind classes.
+   Surfaces and ink derive from the app tokens, so `data-theme` drives it. */
+
+.pill-nav {
+  --pn-surface: color-mix(in srgb, var(--glass-tint) 78%, transparent);
+  --pn-edge: var(--glass-edge-soft);
+  --pn-rim: var(--glass-edge-soft);
+  --pn-shadow: 0 10px 30px -22px rgba(0, 0, 0, 0.7);
+  --pn-text: var(--ink-muted);
+  --pn-strong: var(--ink);
+  --pn-pill: var(--ink);
+  --pn-pill-ink: var(--bg);
+  --pn-pill-shadow: 0 6px 16px -6px rgba(0, 0, 0, 0.45);
+  --pn-dot: var(--ink);
+  --pn-ring: var(--primary);
+  --pn-row-hover: var(--surface-strong);
+  --pn-blur: blur(20px) saturate(1.6);
+
+  position: relative;
+  display: inline-flex;
+  max-width: 100%;
+  align-items: center;
+  gap: var(--pn-gap);
+  font-size: var(--pn-font);
+  line-height: 1;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pill-nav__logo {
+  position: relative;
+  z-index: 2;
+  display: inline-grid;
+  flex: none;
+  width: var(--pn-h);
+  height: var(--pn-h);
+  place-items: center;
+  border-radius: 999px;
+  background: var(--pn-surface);
+  box-shadow: var(--pn-shadow);
+  -webkit-backdrop-filter: var(--pn-blur);
+  backdrop-filter: var(--pn-blur);
+}
+
+.pill-nav__logo-link {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border-radius: inherit;
+  color: var(--pn-strong);
+  text-decoration: none;
+  outline: none;
+}
+
+.pill-nav__logo-link:focus-visible {
+  outline: 2px solid var(--pn-ring);
+  outline-offset: 2px;
+}
+
+.pill-nav__mark {
+  display: grid;
+  width: var(--pn-mark);
+  height: var(--pn-mark);
+  place-items: center;
+}
+
+.pill-nav__mark svg,
+.pill-nav__mark img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.pill-nav__bar {
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  display: flex;
+  min-width: 0;
+  height: var(--pn-h);
+  align-items: center;
+  border-radius: 999px;
+  padding: var(--pn-pad);
+  background: var(--pn-surface);
+  box-shadow: var(--pn-shadow);
+  -webkit-backdrop-filter: var(--pn-blur);
+  backdrop-filter: var(--pn-blur);
+}
+
+.pill-nav__track {
+  position: relative;
+  height: 100%;
+}
+
+.pill-nav__list {
+  display: flex;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  gap: 2px;
+  align-items: stretch;
+  list-style: none;
+}
+
+.pill-nav__slot {
+  display: flex;
+}
+
+.pill-nav__item {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  height: 100%;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  white-space: nowrap;
+  border-radius: 999px;
+  border: 0;
+  padding: 0 var(--pn-x);
+  background: none;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  color: var(--pn-text);
+  text-decoration: none;
+  outline: none;
+  transition: color 250ms ease;
+}
+
+.pill-nav__item:focus-visible {
+  outline: 2px solid var(--pn-ring);
+  outline-offset: -2px;
+}
+
+.pill-nav__item[aria-current='page'] {
+  color: var(--pn-strong);
+}
+
+.pill-nav__slot[data-lit] .pill-nav__item {
+  color: var(--pn-strong);
+}
+
+/* fill hover: a circle rises through the pill while the label rolls over */
+
+.pill-nav__face {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  transition: transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.pill-nav__face svg {
+  width: 1.15em;
+  height: 1.15em;
+  flex: none;
+}
+
+.pill-nav__face-alt {
+  position: absolute;
+  inset: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45em;
+  color: var(--pn-pill-ink);
+  transform: translateY(calc(var(--pn-inner) / 2 + 0.7em));
+  transition: transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.pill-nav__slot[data-hover] .pill-nav__face,
+.pill-nav__slot[data-on] .pill-nav__face {
+  transform: translateY(calc(calc(var(--pn-inner) / 2 + 0.7em) * -1));
+  transition-duration: 500ms;
+}
+
+.pill-nav__slot[data-hover] .pill-nav__face-alt,
+.pill-nav__slot[data-on] .pill-nav__face-alt {
+  transform: translateY(0);
+  transition-duration: 500ms;
+}
+
+.pill-nav__fill {
+  pointer-events: none;
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  z-index: -1;
+  width: var(--pn-fill, 200%);
+  height: var(--pn-fill, 200%);
+  border-radius: 999px;
+  background: var(--pn-pill);
+  margin: calc(var(--pn-fill, 200%) / -2) 0 0 calc(var(--pn-fill, 200%) / -2);
+  transform: scale(0);
+  transition: transform 360ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pill-nav__slot[data-hover] .pill-nav__fill {
+  transform: scale(1);
+  transition-duration: 550ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* glide highlight (used when hoverEffect='glide' or a pill indicator) */
+
+.pill-nav__glide {
+  pointer-events: none;
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: 0;
+  border-radius: 999px;
+  opacity: 0;
+  background: var(--pn-pill);
+  box-shadow: var(--pn-pill-shadow);
+  will-change: transform, width, opacity;
+}
+
+.pill-nav__ink {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: stretch;
+  gap: 2px;
+  color: var(--pn-pill-ink);
+  clip-path: inset(0 100% 0 0);
+}
+
+.pill-nav__ink-item {
+  display: inline-flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45em;
+  white-space: nowrap;
+  padding: 0 var(--pn-x);
+  font-weight: 500;
+  letter-spacing: -0.005em;
+}
+
+.pill-nav__dot {
+  pointer-events: none;
+  position: absolute;
+  bottom: calc((var(--pn-inner) - var(--pn-font)) / 4 - 2px);
+  left: 0;
+  width: 4px;
+  height: 4px;
+  margin-left: -2px;
+  border-radius: 999px;
+  opacity: 0;
+  background: var(--pn-dot);
+  transition: background-color 300ms ease;
+  will-change: transform, opacity;
+}
+
+/* collapsed: burger + drop panel */
+
+.pill-nav__toggle {
+  position: relative;
+  z-index: 3;
+  display: inline-grid;
+  flex: none;
+  width: var(--pn-h);
+  height: var(--pn-h);
+  cursor: pointer;
+  place-items: center;
+  border-radius: 999px;
+  border: 0;
+  padding: 0;
+  color: var(--pn-strong);
+  background: var(--pn-surface);
+  box-shadow: var(--pn-shadow);
+  -webkit-backdrop-filter: var(--pn-blur);
+  backdrop-filter: var(--pn-blur);
+  outline: none;
+}
+
+.pill-nav__toggle:focus-visible {
+  outline: 2px solid var(--pn-ring);
+  outline-offset: 2px;
+}
+
+.pill-nav__burger {
+  position: relative;
+  width: 16px;
+  height: 10px;
+}
+
+.pill-nav__line-top,
+.pill-nav__line-bottom {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 1.5px;
+  border-radius: 2px;
+  background: currentColor;
+  transition: top 450ms cubic-bezier(0.22, 1, 0.36, 1), rotate 450ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.pill-nav__line-top {
+  top: 1.5px;
+}
+
+.pill-nav__line-bottom {
+  top: 7px;
+}
+
+.pill-nav[data-open] .pill-nav__line-top {
+  top: 4.25px;
+  rotate: 45deg;
+}
+
+.pill-nav[data-open] .pill-nav__line-bottom {
+  top: 4.25px;
+  rotate: -45deg;
+}
+
+.pill-nav__panel {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  z-index: 1;
+  box-sizing: border-box;
+  border-radius: 20px;
+  padding: calc(var(--pn-h) + 10px) 6px 6px;
+  background: var(--pn-surface);
+  box-shadow: var(--pn-shadow), 0 30px 60px -30px rgba(0, 0, 0, 0.5);
+  -webkit-backdrop-filter: var(--pn-blur);
+  backdrop-filter: var(--pn-blur);
+}
+
+.pill-nav__menu {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pill-nav__row {
+  box-sizing: border-box;
+  display: flex;
+  width: 100%;
+  height: calc(var(--pn-h) + 2px);
+  cursor: pointer;
+  align-items: center;
+  gap: 10px;
+  border-radius: 16px;
+  border: 0;
+  padding: 0 16px;
+  background: none;
+  font-family: inherit;
+  font-size: calc(var(--pn-font) + 1px);
+  line-height: 1;
+  font-weight: 500;
+  color: var(--pn-strong);
+  text-align: left;
+  text-decoration: none;
+  outline: none;
+  transition: background-color 200ms ease;
+}
+
+.pill-nav__row:hover {
+  background: var(--pn-row-hover);
+}
+
+.pill-nav__row[aria-current='page'] {
+  background: var(--pn-pill);
+  color: var(--pn-pill-ink);
+  box-shadow: var(--pn-pill-shadow);
+}
+
+.pill-nav__row:focus-visible {
+  outline: 2px solid var(--pn-ring);
+  outline-offset: -2px;
+}
+
+.pill-nav__measure {
+  pointer-events: none;
+  visibility: hidden;
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  gap: 2px;
+}
+
+/* rim: hairline inner edge shared by logo, bar, toggle and panel */
+.pill-nav__rim {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px var(--pn-edge), inset 0 1px 0 var(--pn-rim);
+}

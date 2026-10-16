@@ -7,6 +7,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import AnimatedList from '../components/AnimatedList';
 import { Reveal } from '../components/effects';
 import { WordCard } from '../components/WordCard';
 import { useApp } from '../lib/store';
@@ -28,7 +29,6 @@ const Wordbook = () => {
   const settings = useApp(state => state.settings);
   const stars = useApp(state => state.stars);
   const known = useApp(state => state.known);
-  const srs = useApp(state => state.srs);
   const toggleStar = useApp(state => state.toggleStar);
   const setKnown = useApp(state => state.setKnown);
   const setConfig = useApp(state => state.setConfig);
@@ -121,7 +121,7 @@ const Wordbook = () => {
   const book = books.find(entry => entry.id === bookId);
 
   return (
-    <div className="shell page">
+    <div className="shell page wordbook-page">
       <header className="page-head">
         <span className="eyebrow">Wordbook</span>
         <h1 className="page-title">词库</h1>
@@ -216,35 +216,33 @@ const Wordbook = () => {
         </div>
 
         <div className="wordbook-layout">
-          <div className="panel scroll-panel wordbook-list">
+          <div className="wordbook-list">
+            <AnimatedList
+              items={visible.map(word => ({
+                id: `${word.book}:${word.word}`,
+                title: word.word,
+                description: `${word.us || word.uk} · ${word.cn}`
+              }))}
+              initialSelectedIndex={active ? visible.findIndex(word => word.word === active.word) : -1}
+              animation="pop"
+              animateOnce
+              stagger={0.03}
+              showGradients
+              fadeSize={48}
+              gap={5}
+              maxHeight="100%"
+              className="wordbook-animated-list"
+              onItemSelect={item => {
+                const word = visible.find(entry => `${entry.book}:${entry.word}` === (item as { id?: string }).id);
+                if (word) setActive(word);
+              }}
+            />
             {loading && <div className="shimmer" style={{ height: 320, margin: 'var(--s4)' }} />}
             {!loading && !visible.length && (
               <p className="muted" style={{ padding: 'var(--s6)' }}>
                 没有匹配的词条。
               </p>
             )}
-            {visible.map(word => {
-              const key = `${word.book}:${word.word}`;
-              const state = known[key] ?? 0;
-              return (
-                <button
-                  type="button"
-                  key={word.word}
-                  className="word-row"
-                  data-active={active?.word === word.word}
-                  onClick={() => setActive(word)}
-                >
-                  <span className="word-row__word">{word.word}</span>
-                  <span className="word-row__phonetic">{word.us || word.uk}</span>
-                  <span className="word-row__meaning clamp-1">{word.cn}</span>
-                  <span className="word-row__flags" aria-hidden="true">
-                    <i className="word-row__flag" data-on={state === 2} title="已掌握" />
-                    <i className="word-row__flag" data-on={Boolean(srs[key])} title="在记忆队列" />
-                    <i className="word-row__flag" data-on={stars.includes(key)} title="已收藏" />
-                  </span>
-                </button>
-              );
-            })}
             {visible.length < filtered.length && (
               <div style={{ padding: 'var(--s4)' }}>
                 <button type="button" className="btn btn-block" onClick={() => setLimit(value => value + PAGE)}>
@@ -257,27 +255,25 @@ const Wordbook = () => {
           <aside className="wordbook-detail">
             {active ? (
               <>
-                <div className="panel panel-pad stack-3">
-                  <div className="row-between wrap">
-                    <div className="row" style={{ gap: 'var(--s3)' }}>
-                      <button
-                        type="button"
-                        className={`btn btn-sm ${stars.includes(`${active.book}:${active.word}`) ? 'btn-primary' : ''}`}
-                        onClick={() => toggleStar(`${active.book}:${active.word}`)}
-                      >
-                        {stars.includes(`${active.book}:${active.word}`) ? '已收藏' : '收藏'}
-                      </button>
-                      <button
-                        type="button"
-                        className="btn btn-sm"
-                        onClick={() => setKnown(`${active.book}:${active.word}`, known[`${active.book}:${active.word}`] === 2 ? 0 : 2)}
-                      >
-                        {known[`${active.book}:${active.word}`] === 2 ? '取消掌握' : '标记掌握'}
-                      </button>
-                    </div>
-                    <span className="faint mono" style={{ fontSize: 'var(--text-xs)' }}>
-                      {active.uk && `英 /${active.uk}/`} {active.us && `美 /${active.us}/`}
-                    </span>
+                <div className="wordbook-detail__actions">
+                  <span className="faint mono" style={{ fontSize: 'var(--text-xs)' }}>
+                    {active.uk && `英 /${active.uk}/`} {active.us && `美 /${active.us}/`}
+                  </span>
+                  <div className="row" style={{ gap: 'var(--s2)' }}>
+                    <button
+                      type="button"
+                      className={`btn btn-sm ${stars.includes(`${active.book}:${active.word}`) ? 'btn-primary' : ''}`}
+                      onClick={() => toggleStar(`${active.book}:${active.word}`)}
+                    >
+                      {stars.includes(`${active.book}:${active.word}`) ? '已收藏' : '收藏'}
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-sm"
+                      onClick={() => setKnown(`${active.book}:${active.word}`, known[`${active.book}:${active.word}`] === 2 ? 0 : 2)}
+                    >
+                      {known[`${active.book}:${active.word}`] === 2 ? '取消掌握' : '标记掌握'}
+                    </button>
                   </div>
                 </div>
                 <WordCard word={active} detail={detail} theme={settings.theme} fill />

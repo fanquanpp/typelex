@@ -1,32 +1,87 @@
 /* Wordbook page. */
 
+/* Single-screen feel: compress page head/gaps so the two-column body gets the
+   vertical space it needs without a long scroll. */
+.wordbook-page {
+  height: 100%;
+  gap: var(--s5);
+  padding-top: var(--s5);
+}
+
+.wordbook-page > .page-head {
+  gap: var(--s2);
+}
+
+.wordbook-page .page-title {
+  font-size: var(--text-2xl);
+}
+
 .wordbook-toolbar {
   display: flex;
   flex-direction: column;
   gap: var(--s4);
 }
 
+/* Full-height two-column view: the left list and the right badge column both
+   run from below the toolbar to the bottom of the stage, so the lanyard owns
+   the entire right region instead of hanging under a toolbar. */
 .wordbook-layout {
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
   gap: var(--s6);
   align-items: stretch;
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 .wordbook-list {
   padding: var(--s2);
   border-radius: var(--r-lg);
-  max-height: calc(100dvh - var(--header-h) - 220px);
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
 }
 
-/* The badge column stretches with the list; the lanyard fills the height. */
+/* the list body stretches with the column; AnimatedList scrolls inside it */
+.wordbook-animated-list {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.wordbook-animated-list > .animated-list__viewport {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none;
+}
+
+/* The badge column stretches the full column; the lanyard fills the height. */
 .wordbook-detail {
   display: flex;
   flex-direction: column;
-  gap: var(--s5);
-  position: sticky;
-  top: calc(var(--header-h) + var(--s4));
-  max-height: calc(100dvh - var(--header-h) - var(--s8));
+  gap: var(--s4);
+  position: relative;
+  min-height: 0;
+}
+
+/* Star/known actions float over the stage top so the canvas claims the column. */
+.wordbook-detail__actions {
+  position: absolute;
+  top: var(--s4);
+  left: var(--s4);
+  right: var(--s4);
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+  pointer-events: none;
+}
+
+.wordbook-detail__actions > * {
+  pointer-events: auto;
 }
 
 @media (max-width: 1080px) {
@@ -34,8 +89,7 @@
     grid-template-columns: 1fr;
   }
   .wordbook-detail {
-    position: static;
-    max-height: none;
+    min-height: 560px;
   }
   .wordbook-list {
     max-height: 420px;

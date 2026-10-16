@@ -16,6 +16,7 @@ import Backdrop from './Backdrop';
 import Crosshair from './Crosshair';
 import CursorGrid from './CursorGrid';
 import LetterGlitch from './LetterGlitch';
+import PillNav from './PillNav';
 import { Counter } from './motion';
 import LineSidebar from './LineSidebar';
 import './AppShell.css';
@@ -74,10 +75,6 @@ export const AppShell = () => {
     };
   }, []);
 
-  const crumbLabel = useMemo(() => {
-    const entry = [...NAV].sort((a, b) => b.to.length - a.to.length).find(item => location.pathname === item.to || (item.to !== '/' && location.pathname.startsWith(item.to)));
-    return entry?.label ?? '总览';
-  }, [location.pathname]);
   const activeIndex = useMemo(() => Math.max(0, NAV.findIndex(item => location.pathname === item.to || (item.to !== '/' && location.pathname.startsWith(item.to)))), [location.pathname]);
 
   const navigate = (index: number) => {
@@ -124,7 +121,25 @@ export const AppShell = () => {
           </a>
 
           <div className="app__crumb">
-            <span className="app__crumb-label">{crumbLabel}</span>
+            <PillNav
+              logo={
+                <svg viewBox="0 0 32 32" width="18" height="18" fill="none" aria-hidden="true">
+                  <rect x="2.5" y="9" width="27" height="14" rx="4" stroke="currentColor" strokeWidth="2.4" />
+                  <rect x="7" y="13" width="4" height="4" rx="1.2" fill="currentColor" />
+                  <rect x="13.5" y="13" width="4" height="4" rx="1.2" fill="currentColor" opacity="0.55" />
+                  <rect x="20" y="13" width="4" height="4" rx="1.2" fill="currentColor" opacity="0.3" />
+                  <rect x="11" y="19" width="10" height="2.4" rx="1.2" fill="currentColor" opacity="0.7" />
+                </svg>
+              }
+              logoAlt="TypeLex 首页"
+              logoHref="#/"
+              items={NAV.map(item => ({ label: item.label, href: `#${item.to}` }))}
+              activeHref={`#${location.pathname}`}
+              hoverEffect="fill"
+              surface="glass"
+              size="sm"
+              ariaLabel="顶部导航"
+            />
           </div>
 
           <div className="app__actions">
