@@ -268,7 +268,11 @@ export const CursorGrid = ({
     gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
 
     const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
-    const themeInk = () => readVar('--cursor-grid-ink', '#ffffff');
+    /* The grid ink must follow the page theme. `--cursor-grid-ink` is not
+       defined anywhere, so without a theme-aware fallback this resolved to
+       white on both themes — on the dark scene that reads as a white haze. */
+    const themeInk = () =>
+      readVar('--cursor-grid-ink', document.documentElement.dataset.theme === 'light' ? '#565e73' : '#a8b0c2');
     const view = { width: 1, height: 1, ratio: 1, cellSize: 0 };
     const grid = { cols: 0, rows: 0, offX: 0, offY: 0 };
     const pointer = { x: 0, y: 0, inside: false };
@@ -524,6 +528,10 @@ export const CursorGrid = ({
       if (visible) wake();
     });
     intersection.observe(container);
+    /* Follow the page theme: re-resolve the ink uniform when `data-theme`
+       flips, then wake so the next frame already paints the new colour. */
+    const themeObserver = new MutationObserver(() => wake());
+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
     window.addEventListener('pointermove', onPointerMove, { passive: true });
     window.addEventListener('pointerdown', onPointerDown, { passive: true });
     document.documentElement.addEventListener('pointerleave', onPointerLeave);
@@ -538,6 +546,7 @@ export const CursorGrid = ({
       cancelAnimationFrame(raf);
       resizeObserver.disconnect();
       intersection.disconnect();
+      themeObserver.disconnect();
       window.removeEventListener('pointermove', onPointerMove);
       window.removeEventListener('pointerdown', onPointerDown);
       document.documentElement.removeEventListener('pointerleave', onPointerLeave);

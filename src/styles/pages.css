@@ -71,11 +71,11 @@
   display: inline-block;
 }
 
-/* The second line is differentiated by weight and opacity, not by colour —
-   gradient display text is banned in this design. */
+/* The second line is differentiated by weight, not by colour — gradient
+   display text is banned, and large muted-grey copy fails contrast. */
 .hero__title-accent {
-  font-weight: 500;
-  color: var(--ink-muted);
+  font-weight: 400;
+  color: var(--ink);
 }
 
 .hero__actions {

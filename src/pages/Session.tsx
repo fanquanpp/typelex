@@ -21,7 +21,7 @@ import { codeForChar, FINGER_COLOR, FINGER_LABEL, fingerForChar } from '../lib/t
 import { xpForSession } from '../lib/typing/metrics';
 import { MODE_LABEL, buildQueue, type PracticeItem } from '../lib/typing/session';
 import { useTypingSession } from '../lib/typing/useTypingSession';
-import type { KeyboardScene } from '../three/keyboard/KeyboardScene';
+import type { CssKeyboardScene } from '../three/keyboard/CssKeyboardScene';
 import './Session.css';
 
 const SAVE_INTERVAL = 2500;
@@ -52,8 +52,8 @@ const Session = () => {
   const [showKeyboard, setShowKeyboard] = useState(true);
   const [itemHadError, setItemHadError] = useState(false);
 
-  const sceneRef = useRef<KeyboardScene | null>(null);
-  const onReady = useCallback((scene: KeyboardScene | null) => {
+  const sceneRef = useRef<CssKeyboardScene | null>(null);
+  const onReady = useCallback((scene: CssKeyboardScene | null) => {
     sceneRef.current = scene;
   }, []);
 

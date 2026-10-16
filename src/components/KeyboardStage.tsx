@@ -1,14 +1,16 @@
 /**
- * KeyboardStage — mounts the Three.js keyboard and keeps it in sync with props.
+ * KeyboardStage — mounts the CSS-simulated keyboard and keeps it in sync.
  *
- * Key presses are deliberately *not* driven through React state: the typing
- * engine calls `scene.press(code)` directly on the instance handed back by
- * `onReady`, so a keystroke never triggers a re-render.
+ * The 3D WebGL board was replaced by a DOM/CSS scene (same layout data, a
+ * shallow tilt + pointer parallax instead of a full renderer): it renders
+ * sharper, themes correctly, and costs a fraction of the GPU time. Key presses
+ * are still imperative — the typing engine calls `scene.press(code)` directly
+ * on the instance handed back by `onReady`, so a keystroke never re-renders.
  */
 import { useEffect, useRef } from 'react';
 
 import type { Theme } from '../lib/types';
-import { KeyboardScene } from '../three/keyboard/KeyboardScene';
+import { CssKeyboardScene } from '../three/keyboard/CssKeyboardScene';
 import type { RgbStyle } from '../three/keyboard/models';
 import './Keyboard.css';
 
@@ -19,7 +21,7 @@ export interface KeyboardStageProps {
   showNextKey: boolean;
   rgbStyle: RgbStyle;
   interactive: boolean;
-  onReady?: (scene: KeyboardScene | null) => void;
+  onReady?: (scene: CssKeyboardScene | null) => void;
   onKeyClick?: (code: string) => void;
   className?: string;
 }
@@ -36,7 +38,7 @@ export const KeyboardStage = ({
   className = ''
 }: KeyboardStageProps) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const sceneRef = useRef<KeyboardScene | null>(null);
+  const sceneRef = useRef<CssKeyboardScene | null>(null);
   const readyRef = useRef(onReady);
   readyRef.current = onReady;
   const clickRef = useRef(onKeyClick);
@@ -48,9 +50,9 @@ export const KeyboardStage = ({
     const container = containerRef.current;
     if (!container) return undefined;
 
-    let scene: KeyboardScene;
+    let scene: CssKeyboardScene;
     try {
-      scene = new KeyboardScene(container, {
+      scene = new CssKeyboardScene(container, {
         modelId,
         theme,
         fingerHints,

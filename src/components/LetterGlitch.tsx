@@ -156,6 +156,23 @@ export interface LetterGlitchProps {
   style?: CSSProperties;
 }
 
+/* Theme-aware defaults: the glyph field sits on the colour backdrop, so its
+   base ink must follow the page's `data-theme` — a light base on the dark
+   scene lifts the whole page into a white haze (the bug that shipped once). */
+const readThemeName = () =>
+  document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
+
+const THEME_PALETTE: Record<'light' | 'dark', { colors: string[]; base: string }> = {
+  dark: {
+    colors: ['#5f6d85', '#7d8ba3', '#4d5a70', '#8b97ad'],
+    base: '#2a3346'
+  },
+  light: {
+    colors: ['#7ef0dc', '#b7a6ff', '#7fb4ff', '#ffffff'],
+    base: '#c8d2e4'
+  }
+};
+
 export const LetterGlitch = ({
   glitchColors,
   baseColor,
@@ -232,9 +249,11 @@ export const LetterGlitch = ({
     const probe = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
     if (!atlasContext) return undefined;
 
-    const palette = ['#7ef0dc', '#b7a6ff', '#7fb4ff', '#ffffff'].slice(0, MAX_COLORS);
+    const themeName = readThemeName();
+    const fallbackPalette = THEME_PALETTE[themeName];
+    const palette = fallbackPalette.colors.slice(0, MAX_COLORS);
     const colors = glitchColors ?? palette;
-    const base = baseColor ?? '#c8d2e4';
+    const base = baseColor ?? fallbackPalette.base;
 
     const parse = (value: string): [number, number, number] => {
       if (probe) {
@@ -716,6 +735,23 @@ export const LetterGlitch = ({
       if (visible) wake();
     });
     intersection.observe(container);
+    /* Follow the page theme: re-resolve the palette uniforms when `data-theme`
+       flips, then wake so the change is on screen within a frame. */
+    const themeObserver = new MutationObserver(() => {
+      const next = THEME_PALETTE[readThemeName()];
+      const palette = (glitchColors ?? next.colors).slice(0, MAX_COLORS);
+      const paletteFloat = new Float32Array(MAX_COLORS * 3);
+      palette.forEach((color, i) => {
+        const [r, g, b] = parse(color);
+        paletteFloat[i * 3] = r;
+        paletteFloat[i * 3 + 1] = g;
+        paletteFloat[i * 3 + 2] = b;
+      });
+      gl.uniform3fv(u.uBase, parse(baseColor ?? next.base));
+      gl.uniform3fv(u.uColors, paletteFloat);
+      wake();
+    });
+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
     window.addEventListener('pointermove', onPointerMove, { passive: true });
     document.documentElement.addEventListener('pointerleave', onPointerLeave);
     resize();
@@ -726,6 +762,7 @@ export const LetterGlitch = ({
       cancelAnimationFrame(raf);
       resizeObserver.disconnect();
       intersection.disconnect();
+      themeObserver.disconnect();
       window.removeEventListener('pointermove', onPointerMove);
       document.documentElement.removeEventListener('pointerleave', onPointerLeave);
       gl.deleteTexture(atlasTexture);

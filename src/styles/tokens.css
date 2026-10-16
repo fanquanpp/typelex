@@ -164,9 +164,9 @@
   --border-faint: rgba(255, 255, 255, 0.05);
 
   --ink: #f4f6fa;
-  --ink-muted: #a8b0c2;
-  --ink-faint: #6f7789;
-  --ink-ghost: #474e60;
+  --ink-muted: #b3bac9;
+  --ink-faint: #7d8598;
+  --ink-ghost: #5e6678;
 
   --primary: hsl(var(--hue-primary) 34% 68%);
   --primary-soft: hsl(var(--hue-primary) 34% 68% / 0.14);
@@ -244,9 +244,9 @@
   --border-faint: rgba(18, 20, 34, 0.055);
 
   --ink: #12141f;
-  --ink-muted: #565e73;
-  --ink-faint: #848c9f;
-  --ink-ghost: #b6bccb;
+  --ink-muted: #454c5f;
+  --ink-faint: #5d6478;
+  --ink-ghost: #949bad;
 
   --primary: hsl(var(--hue-primary) 34% 30%);
   --primary-soft: hsl(var(--hue-primary) 34% 30% / 0.1);

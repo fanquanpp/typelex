@@ -12,7 +12,8 @@ import { Reveal, SpotlightCard } from '../components/effects';
 import { TypingLine } from '../components/TypingLine';
 import { useApp } from '../lib/store';
 import { FINGER_COLOR, FINGER_LABEL, FINGERS } from '../lib/typing/fingers';
-import type { KeyboardScene, ViewPreset } from '../three/keyboard/KeyboardScene';
+import type { CssKeyboardScene } from '../three/keyboard/CssKeyboardScene';
+import type { ViewPreset } from '../three/keyboard/view';
 import { getLayout } from '../three/keyboard/layouts';
 import { MODELS } from '../three/keyboard/models';
 import type { RgbStyle } from '../three/keyboard/models';
@@ -38,7 +39,7 @@ const KeyboardLab = () => {
   const setSetting = useApp(state => state.setSetting);
   const keyStats = useApp(state => state.keyStats);
 
-  const sceneRef = useRef<KeyboardScene | null>(null);
+  const sceneRef = useRef<CssKeyboardScene | null>(null);
   const [view, setView] = useState<ViewPreset>(settings.keyboardView);
   const [testIndex, setTestIndex] = useState(0);
   const [ready, setReady] = useState(false);

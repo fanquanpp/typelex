@@ -1,0 +1,152 @@
+/* CssKeyboardScene — DOM keycaps on a shallow 3D tilt.
+   Tokens --key-top/--key-side/--key-ink come from the theme; case/cap colours
+   come from the selected model via inline custom properties. */
+
+.csskb {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  perspective: 1400px;
+  perspective-origin: 50% 30%;
+}
+
+/* The app's keyboard models ship dark caps with light legends on both themes
+   (matching the Three.js look). A light theme user still gets dark caps, so
+   legends stay readable; the plate follows the case token either way. */
+.csskb {
+  --kb-legend-ink: color-mix(in srgb, var(--kb-legend) 88%, #ffffff 12%);
+}
+
+.csskb__board {
+  --kb-rx: 24deg;
+  --kb-ry: 0deg;
+  --kb-scale: 1;
+  width: min(92%, 880px);
+  transform: rotateX(var(--kb-rx)) rotateY(var(--kb-ry)) scale(var(--kb-scale));
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* the case: a deck slab with a front lip, shaded by gradients, not colours */
+.csskb__plate {
+  position: relative;
+  width: 100%;
+  aspect-ratio: var(--kb-cols) / var(--kb-rows);
+  border-radius: 10px;
+  padding: 0.6%;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--kb-deck) 92%, #ffffff 8%) 0%, var(--kb-deck) 18%, color-mix(in srgb, var(--kb-deck) 86%, #000000 14%) 100%);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--kb-deck) 70%, #ffffff 30%),
+    inset 0 -2px 6px rgba(0, 0, 0, 0.35),
+    0 22px 34px -18px rgba(0, 0, 0, 0.55),
+    0 6px 12px -8px rgba(0, 0, 0, 0.4);
+  transform-style: preserve-3d;
+}
+
+/* ---- keys ---- */
+
+.csskb__key {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  border: 0;
+  padding: 0;
+  border-radius: 5px;
+  cursor: pointer;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--kb-cap) 90%, #ffffff 10%) 0%,
+    var(--kb-cap) 45%,
+    color-mix(in srgb, var(--kb-cap) 84%, #000000 16%) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--kb-cap) 75%, #ffffff 25%),
+    inset 0 -1px 1px color-mix(in srgb, var(--kb-cap) 80%, #000000 20%),
+    0 calc(var(--kb-cap-h, 4px) * var(--kb-press-shadow, 1)) 0 0 color-mix(in srgb, var(--kb-cap) 62%, #000000 38%),
+    0 calc(var(--kb-cap-h, 4px) * var(--kb-press-shadow, 1) + 2px) 6px -2px rgba(0, 0, 0, 0.4);
+  transform: translateZ(0) translateY(calc(var(--kb-press, 0) * var(--kb-cap-h, 4px)));
+  transition: filter 140ms ease;
+  will-change: transform;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.csskb__key:hover {
+  filter: brightness(1.07);
+}
+
+.csskb__legend {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 650;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  /* keycap legends read against the cap colour; the cap itself flips with the
+     theme (white caps in light, dark caps in dark), so the ink must too. */
+  color: var(--kb-legend-ink, var(--kb-legend));
+  opacity: 0.95;
+  user-select: none;
+  pointer-events: none;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 88%;
+}
+
+/* next-key pulse: a soft ring, theme-coloured, no rainbow */
+.csskb__key--next {
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--kb-cap) 75%, #ffffff 25%),
+    inset 0 -1px 1px color-mix(in srgb, var(--kb-cap) 80%, #000000 20%),
+    0 calc(var(--kb-cap-h, 4px) * var(--kb-press-shadow, 1)) 0 0 color-mix(in srgb, var(--kb-cap) 62%, #000000 38%),
+    0 0 0 2px var(--primary),
+    0 0 14px -2px var(--primary);
+}
+
+/* error flash */
+.csskb__key--flash {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--danger) 55%, var(--kb-cap)) 0%, color-mix(in srgb, var(--danger) 70%, #000000) 100%);
+  color: #ffffff;
+}
+
+/* ---- backlight styles (kept restrained) ---- */
+
+.csskb[data-backlight='rgb'][data-rgb='reactive'] .csskb__key:active {
+  filter: brightness(1.3);
+}
+
+.csskb[data-backlight='rgb'][data-rgb='heatmap'] .csskb__key {
+  background-image: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--danger) calc(var(--kb-heat, 0) * 55%), color-mix(in srgb, var(--kb-cap) 90%, #ffffff 10%)) 0%,
+    color-mix(in srgb, var(--danger) calc(var(--kb-heat, 0) * 70%), var(--kb-cap)) 100%
+  );
+}
+
+/* ---- profile tuning ---- */
+
+.csskb[data-profile='chiclet'] .csskb__key {
+  border-radius: 3px;
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--kb-cap) 80%, #ffffff 20%),
+    0 calc(var(--kb-cap-h, 4px) * 0.6 * var(--kb-press-shadow, 1)) 0 0 color-mix(in srgb, var(--kb-cap) 70%, #000000 30%);
+}
+
+.csskb[data-profile='lowprofile'] .csskb__key {
+  border-radius: 4px;
+}
+
+/* finger hints: colour the legend dot by finger via data attr set at build time */
+.csskb[data-finger='true'] .csskb__key::after {
+  content: '';
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--finger-color, transparent);
+  opacity: 0.8;
+}

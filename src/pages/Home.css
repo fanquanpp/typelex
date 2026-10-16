@@ -79,37 +79,6 @@
   }
 }
 
-/* Compact capability strip — the single-screen replacement for four sections. */
-.home-strip {
-  display: grid;
-  gap: var(--s4);
-  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
-}
-
-.home-strip__item {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: var(--s4) var(--s5);
-  border-radius: var(--r-md);
-  background: var(--glass-tint);
-  border: 1px solid var(--glass-edge-soft);
-  -webkit-backdrop-filter: blur(14px) saturate(1.5);
-  backdrop-filter: blur(14px) saturate(1.5);
-}
-
-.home-strip__item strong {
-  font-family: var(--font-display);
-  font-size: var(--text-sm);
-  font-weight: 600;
-}
-
-.home-strip__item span {
-  font-size: var(--text-xs);
-  color: var(--ink-faint);
-  line-height: 1.5;
-}
-
 .home-cta {
   padding: var(--s4) var(--s5);
   border-radius: var(--r-md);

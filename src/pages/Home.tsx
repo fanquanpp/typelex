@@ -11,12 +11,12 @@ import { Link } from 'react-router-dom';
 
 import KeyboardStage from '../components/KeyboardStage';
 import OrbitCards, { type OrbitItem } from '../components/OrbitCards';
-import { CountUp, Reveal, SplitText, SpotlightCard } from '../components/effects';
+import { CountUp, Reveal, SplitText } from '../components/effects';
 import { useApp } from '../lib/store';
 import { levelProgress } from '../lib/typing/metrics';
 import type { BookMeta } from '../lib/types';
 import { loadBooks } from '../lib/vocab';
-import type { KeyboardScene } from '../three/keyboard/KeyboardScene';
+import type { CssKeyboardScene } from '../three/keyboard/CssKeyboardScene';
 import { MODELS } from '../three/keyboard/models';
 import './Home.css';
 
@@ -26,7 +26,7 @@ const Home = () => {
   const xp = useApp(state => state.xp);
 
   const [books, setBooks] = useState<BookMeta[]>([]);
-  const sceneRef = useRef<KeyboardScene | null>(null);
+  const sceneRef = useRef<CssKeyboardScene | null>(null);
 
   useEffect(() => {
     let alive = true;
@@ -98,7 +98,7 @@ const Home = () => {
       {/* ---------------- hero ---------------- */}
       <section className="hero">
         <div className="hero__copy">
-          <span className="eyebrow hero-eyebrow">拟真 3D 键盘 · 词汇记忆</span>
+          <span className="eyebrow hero-eyebrow">键盘打字 · 词汇记忆</span>
           <h1 className="hero__title">
             <SplitText text="把单词打进" effect="rise" />
             <span className="hero__title-accent">肌肉记忆里</span>
@@ -201,18 +201,6 @@ const Home = () => {
       </Reveal>
 
       <Reveal as="section" className="stack-4">
-        <div className="home-strip">
-          {[
-            { label: '七种练习模式', value: '随机 · 顺序 · 专项 · 句子 · 弱键 · 复习 · 日语' },
-            { label: '四种键盘手感', value: '笔记本 · 办公薄型 · 87键机械 · 60%客制化' },
-            { label: '逐键数据与热力', value: '每个键的用时与错误率都会被记录并用于组词' }
-          ].map(entry => (
-            <SpotlightCard className="home-strip__item" key={entry.label}>
-              <strong>{entry.label}</strong>
-              <span>{entry.value}</span>
-            </SpotlightCard>
-          ))}
-        </div>
         <div className="home-cta row-between wrap">
           <p className="muted" style={{ fontSize: 'var(--text-sm)' }}>
             全部进度保存在本地浏览器，无需注册。
