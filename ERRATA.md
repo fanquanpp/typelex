@@ -110,6 +110,9 @@ TypeLex 的更正记录。分两部分：**已知的数据边角**（上游词�
   与评分卡 / `.btn` 的中性悬停一致。
 - **GlideSelect 清理**：滑移高亮从实心 `--gs-highlight` 块改为 `--gs-surface` + `--gs-accent` 1px 环；
   `highlightColor` 属性与 `--gs-highlight` 变量已无引用，一并删除。
+- **日语 JLPT 级别 chip 选中态**：chip 上已有 `data-selected`，但没有任何对应样式，选中的 N5/N4
+  与未选中看起来完全一样；现在补上反色选中块（`--bg` 底 + `--ink` 字）。同时删除日语词表行前
+  的红色小方块（`book-row__dot`，硬编码 `#c0556f`）。
 
 ### 2026-10-17
 

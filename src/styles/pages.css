@@ -377,11 +377,12 @@
   color: color-mix(in srgb, var(--bg) 86%, transparent);
 }
 
-.book-row__dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 2px;
-  flex: none;
+/* The JLPT level chips carry data-selected; without this rule a selected level
+   looked identical to an unselected one on the inverted row. */
+.book-row[data-active='true'] .chip[data-selected='true'] {
+  background: var(--bg);
+  border-color: transparent;
+  color: var(--ink);
 }
 
 .book-row__body {

@@ -252,7 +252,6 @@ const Practice = () => {
             data-active={config.mode === 'japanese'}
             onClick={() => patch({ mode: 'japanese', jlpt: config.jlpt ?? [5, 4] })}
           >
-            <span className="book-row__dot" style={{ background: '#c0556f' }} />
             <span className="book-row__body">
               <span className="book-row__name">日语 JLPT 词表</span>
               <span className="book-row__desc">
