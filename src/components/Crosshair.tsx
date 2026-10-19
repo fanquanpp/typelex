@@ -100,6 +100,9 @@ export const Crosshair = ({
     let raf = 0;
     let last = 0;
     let alive = true;
+    /* Element the lock is currently parked on. A change means a new target,
+       not a resize of the same one, so the frame snaps instead of trailing. */
+    let lockedEl: Element | null = null;
 
     const resize = () => {
       const rect = canvas.getBoundingClientRect();
@@ -239,6 +242,20 @@ export const Crosshair = ({
       if (state.focusTarget && !state.focusTarget.isConnected) state.focusTarget = null;
       const lock = state.lock;
       const locked = state.target ?? state.focusTarget;
+
+      /* Snap on target change: a new row/card must be framed immediately, not
+         chased from the previous one. Only the alpha still eases in/out. */
+      if (locked !== lockedEl) {
+        lockedEl = locked;
+        if (locked) {
+          const box = locked.getBoundingClientRect();
+          lock.x = box.left - rect.left - 6;
+          lock.y = box.top - rect.top - 6;
+          lock.w = box.width + 12;
+          lock.h = box.height + 12;
+        }
+      }
+
       let goal: { x: number; y: number; w: number; h: number };
       if (locked) {
         const box = locked.getBoundingClientRect();

@@ -74,6 +74,7 @@ Japanese cards show kana, kanji, rōmaji and the Chinese gloss.
 - **Advance mode**: choose "auto" or "Enter" in settings — auto moves straight on, Enter parks on the finished word so you can read it back first
 - **Backlight modes**: off / reactive / weak-key highlighting, previewable in the keyboard lab
 - **English phonetics chart**: 48 phonemes grouped by vowels, voiceless and voiced consonants, each row pairing the symbol, an example word and its common letter patterns, with British/American symbols
+- **Unified interaction frames**: four-corner brackets mark every actionable or selectable surface on hover and keyboard focus; selection surfaces also keep the primary rounded ring
 - **Dark & light themes**, initialised from your system preference
 - **Persistent progress**: reload and you are back where you were, including an unfinished queue
 - **Synthesised key sounds**: Web Audio at runtime — linear / tactile / clicky / laptop voices, no audio files
