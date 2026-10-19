@@ -102,6 +102,16 @@ samp {
   border-radius: var(--r-xs);
 }
 
+/* Functional controls get the four-corner bracket frame drawn by <Crosshair>
+   instead of a full outline. Selection controls (radios, menu options,
+   switches, sliders) and the cards that pick a book / mode / model keep the
+   full rounded ring — that is the other half of the same rule. */
+a[href]:not([role='radio']):not([role='option']):not([role='switch']):not([role='checkbox']):not([role='slider']):not(.orbit-item):not(.pill):focus-visible,
+button:not([role='radio']):not([role='option']):not([role='switch']):not([role='checkbox']):not([role='slider']):not(.mode-card):not(.book-row):not(.model-card):not(.orbit-item):not(.pill):focus-visible,
+[role='button']:not(.mode-card):not(.book-row):not(.model-card):not(.orbit-item):not(.pill):focus-visible {
+  outline: none;
+}
+
 ::selection {
   background: var(--primary-soft);
   color: var(--ink);

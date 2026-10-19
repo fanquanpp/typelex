@@ -73,13 +73,14 @@ Japanese cards show kana, kanji, rōmaji and the Chinese gloss.
 - **Whole word visible as ghosts**: every letter still to come sits in its slot in a faint tone and lights up as you hit it
 - **Advance mode**: choose "auto" or "Enter" in settings — auto moves straight on, Enter parks on the finished word so you can read it back first
 - **Backlight modes**: off / reactive / weak-key highlighting, previewable in the keyboard lab
+- **English phonetics chart**: 48 phonemes grouped by vowels, voiceless and voiced consonants, each row pairing the symbol, an example word and its common letter patterns, with British/American symbols
 - **Dark & light themes**, initialised from your system preference
 - **Persistent progress**: reload and you are back where you were, including an unfinished queue
 - **Synthesised key sounds**: Web Audio at runtime — linear / tactile / clicky / laptop voices, no audio files
 
 ## Pages
 
-Thirteen routes, all inside a single-screen app shell (HashRouter, so any route survives a reload):
+Fourteen routes, all inside a single-screen app shell (HashRouter, so any route survives a reload):
 
 | Route | Page |
 | --- | --- |
@@ -88,6 +89,7 @@ Thirteen routes, all inside a single-screen app shell (HashRouter, so any route 
 | `/practice/session` | The session: typing area, word card, live metrics |
 | `/study` | Spaced-repetition review cards |
 | `/wordbook` | Browse and search the corpus; lanyard badge detail on the right |
+| `/wordbook/phonetics` | English phonetics chart: 48 phonemes paired with example words, British/American switch |
 | `/keyboard` | Keyboard lab: presets, layouts, views, backlight, test typing |
 | `/japanese` | Japanese track: the practice launcher (level picker + live config) over the N5–N1 level directory |
 | `/japanese/kana` | Kana chart generated from the same converter the engine grades against |
@@ -98,7 +100,8 @@ Thirteen routes, all inside a single-screen app shell (HashRouter, so any route 
 | `/settings` | Preferences |
 
 Practice entry points live on the feature pages only: every Japanese session starts from `/japanese`,
-and the word list and kana chart are pure lookups with no "start practising" button attached.
+and the word list and kana chart are pure lookups with no "start practising" button attached; the
+English phonetics chart is a lookup as well.
 
 Every page is the full width of the stage, matching the wordbook; readable line length is handled by
 `ch` caps on the text blocks themselves (`.page-head` 74ch, `.page-sub` 66ch, `.lede` 62ch) rather
@@ -266,7 +269,7 @@ src/
     CssKeyboardScene.ts     CSS/DOM keyboard scene (shallow tilt + pointer parallax)
   components/               PillNav, AnimatedList, OrbitCards, Lanyard,
                             RubberSegment, WakeSlider, ambient effect layers, …
-  pages/                    13 routes (incl. japanese/ and stats/ subpages)
+  pages/                    14 routes (incl. english/, japanese/ and stats/ subpages)
 ```
 
 ## How the typing engine scores

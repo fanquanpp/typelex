@@ -58,7 +58,10 @@ export const Crosshair = ({
   gap = 10,
   smoothing = 0.4,
   showCoordinates = true,
-  targetSelector = 'a, button, [data-crosshair-target], .word-row, .model-card, .mode-card',
+  /* Functional controls only. Selection controls (radios, menu options,
+     switches, sliders) and the cards that pick a book / mode / model use the
+     rounded primary ring instead, so they are excluded here. */
+  targetSelector = 'a[href]:not(.orbit-item):not(.pill), button:not([role="radio"]):not([role="option"]):not([role="switch"]):not([role="checkbox"]):not([role="slider"]):not(.mode-card):not(.book-row):not(.model-card):not(.orbit-item):not(.pill), [role="button"]:not(.mode-card):not(.book-row):not(.model-card):not(.orbit-item):not(.pill), [data-crosshair-target]',
   clickPulse = true,
   blendMode = 'normal',
   className = ''
@@ -86,6 +89,9 @@ export const Crosshair = ({
       seen: false,
       presence: 0,
       target: null as Element | null,
+      /* keyboard focus gets the same brackets as a pointer target, so the
+         four-corner frame is the one language for functional controls */
+      focusTarget: null as Element | null,
       lock: { x: 0, y: 0, w: 0, h: 0, alpha: 0 }
     };
     const pulses: { x: number; y: number; age: number }[] = [];
@@ -230,8 +236,9 @@ export const Crosshair = ({
       state.presence += (wanted - state.presence) * (reduce ? 1 : 1 - Math.exp(-dt / (wanted ? 0.12 : 0.25)));
       if (Math.abs(wanted - state.presence) < 0.002) state.presence = wanted;
 
+      if (state.focusTarget && !state.focusTarget.isConnected) state.focusTarget = null;
       const lock = state.lock;
-      const locked = state.inside ? state.target : null;
+      const locked = state.target ?? state.focusTarget;
       let goal: { x: number; y: number; w: number; h: number };
       if (locked) {
         const box = locked.getBoundingClientRect();
@@ -325,10 +332,28 @@ export const Crosshair = ({
       wake();
     };
 
+    /* Keyboard focus: only the `:focus-visible` path draws brackets, so a
+       mouse click keeps the pointer brackets as the single frame. */
+    const onFocusIn = (event: FocusEvent) => {
+      const found = pick(event.target);
+      if (!found || !found.matches(':focus-visible')) return;
+      state.focusTarget = found;
+      wake();
+    };
+
+    const onFocusOut = (event: FocusEvent) => {
+      const next = event.relatedTarget;
+      if (state.focusTarget && next instanceof Node && state.focusTarget.contains(next)) return;
+      state.focusTarget = null;
+      wake();
+    };
+
     const observer = new ResizeObserver(resize);
     observer.observe(canvas);
     scope.addEventListener('pointermove', onMove);
     scope.addEventListener('pointerdown', onDown);
+    document.addEventListener('focusin', onFocusIn);
+    document.addEventListener('focusout', onFocusOut);
     window.addEventListener('pointerup', onUp);
     window.addEventListener('pointercancel', onUp);
     if (host) host.addEventListener('pointerleave', onLeave);
@@ -341,6 +366,8 @@ export const Crosshair = ({
       observer.disconnect();
       scope.removeEventListener('pointermove', onMove);
       scope.removeEventListener('pointerdown', onDown);
+      document.removeEventListener('focusin', onFocusIn);
+      document.removeEventListener('focusout', onFocusOut);
       window.removeEventListener('pointerup', onUp);
       window.removeEventListener('pointercancel', onUp);
       if (host) host.removeEventListener('pointerleave', onLeave);

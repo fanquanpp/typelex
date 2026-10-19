@@ -36,8 +36,6 @@ export interface GlideSelectProps {
   accentColor?: string;
   /** chip and menu background */
   surfaceColor?: string;
-  /** the gliding pill */
-  highlightColor?: string;
   /** labels; tags and the chevron derive from it */
   textColor?: string;
   size?: 'sm' | 'md' | 'lg';
@@ -99,7 +97,6 @@ export const GlideSelect: React.FC<GlideSelectProps> = ({
   showTags = true,
   accentColor = 'var(--primary)',
   surfaceColor = 'var(--surface-solid)',
-  highlightColor = 'var(--surface-strong)',
   textColor = 'var(--ink)',
   size = 'md',
   radius = 10,
@@ -332,7 +329,6 @@ export const GlideSelect: React.FC<GlideSelectProps> = ({
   const skin = {
     '--gs-accent': accentColor,
     '--gs-surface': surfaceColor,
-    '--gs-highlight': highlightColor,
     '--gs-text': textColor,
     '--gs-radius': `${radius}px`,
     '--gs-inner-radius': `${Math.max(3, radius - 4)}px`,

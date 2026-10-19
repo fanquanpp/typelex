@@ -15,6 +15,7 @@ import Practice from './pages/Practice';
 import Session from './pages/Session';
 import Study from './pages/Study';
 import Wordbook from './pages/Wordbook';
+import PhoneticsChart from './pages/english/PhoneticsChart';
 import KeyboardLab from './pages/KeyboardLab';
 import Japanese from './pages/Japanese';
 import KanaChart from './pages/japanese/KanaChart';
@@ -33,6 +34,7 @@ const App = () => (
         <Route path="practice/session" element={<Session />} />
         <Route path="study" element={<Study />} />
         <Route path="wordbook" element={<Wordbook />} />
+        <Route path="wordbook/phonetics" element={<PhoneticsChart />} />
         <Route path="keyboard" element={<KeyboardLab />} />
         <Route path="japanese" element={<Japanese />} />
         <Route path="japanese/kana" element={<KanaChart />} />

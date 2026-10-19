@@ -122,12 +122,17 @@
   border-radius: var(--r-sm);
   background: var(--surface);
   border: 1px solid var(--border-faint);
-  transition: border-color var(--t-fast) var(--ease-out), transform var(--t-fast) var(--ease-out);
+  transition:
+    border-color var(--t-fast) var(--ease-out),
+    filter var(--t-fast) var(--ease-out);
 }
 
-.kana-cell:hover {
-  border-color: var(--rose);
-  transform: translateY(-2px);
+/* Same state language as the wordbook text list: a --primary ring plus a
+   slight brightness lift, no translation. Empty slots in the gojūon rows are
+   placeholders, not targets, so they never light up. */
+.kana-cell:not(.kana-cell--empty):hover {
+  border-color: var(--primary);
+  filter: brightness(1.06);
 }
 
 .kana-cell--empty {

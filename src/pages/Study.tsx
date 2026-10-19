@@ -322,7 +322,7 @@ const Study = () => {
                       <button
                         type="button"
                         key={entry.grade}
-                        className={`study-grade study-grade--${entry.grade}`}
+                        className="study-grade"
                         onClick={() => grade(entry.grade)}
                       >
                         <span className="study-grade__label">

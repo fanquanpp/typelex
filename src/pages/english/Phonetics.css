@@ -1,0 +1,85 @@
+/* English phonetics chart (/wordbook/phonetics).
+   The kana chart's panel layout, with a three-column reference table inside
+   each panel. The table headers carry the labels (音标 / 例词 / 常见字母组合)
+   that a two-line symbol+word cell could not. */
+
+.phonetics-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--s6);
+  align-items: start;
+}
+
+@media (max-width: 1100px) {
+  .phonetics-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Slightly denser than the word-list table: these are short reference rows,
+   not dictionary entries. */
+.phoneme-table th,
+.phoneme-table td {
+  padding: 8px 10px;
+}
+
+.phoneme-table th:nth-child(1),
+.phoneme-table td:nth-child(1) {
+  width: 76px;
+  white-space: nowrap;
+}
+
+.phoneme-table th:nth-child(2),
+.phoneme-table td:nth-child(2) {
+  width: 36%;
+}
+
+.phoneme-table__ipa {
+  font-family: var(--font-mono);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+.phoneme-table__word {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--ink);
+}
+
+.phoneme-table__cn {
+  margin-left: 6px;
+  font-family: var(--font-cjk);
+  font-size: var(--text-2xs);
+  color: var(--ink-muted);
+}
+
+/* The letters inside the example word that actually produce the sound. */
+.phoneme-table mark {
+  background: var(--primary-soft);
+  color: var(--ink);
+  border-radius: 2px;
+  box-shadow: inset 0 -1px 0 var(--primary);
+}
+
+.phoneme-table__spell {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: 1.55;
+  color: var(--ink-muted);
+}
+
+/* The accent switch and the explanatory line keep the kana chart's header
+   proportions. */
+.phonetics-style {
+  width: fit-content;
+  max-width: 100%;
+}
+
+.phonetics-hint {
+  max-width: 76ch;
+  font-size: var(--text-xs);
+  line-height: 1.8;
+  color: var(--ink-muted);
+}

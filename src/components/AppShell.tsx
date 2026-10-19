@@ -57,7 +57,10 @@ const NAV: NavItem[] = [
   {
     label: '词库浏览',
     to: '/wordbook',
-    subpages: [{ label: '词表检索', to: '/wordbook' }]
+    subpages: [
+      { label: '词表检索', to: '/wordbook' },
+      { label: '音标表', to: '/wordbook/phonetics' }
+    ]
   },
   {
     label: '键盘实验室',

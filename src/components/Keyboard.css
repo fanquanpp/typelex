@@ -352,14 +352,14 @@
   text-align: left;
   transition:
     border-color var(--t-base) var(--ease-out),
-    background var(--t-base) var(--ease-out),
-    transform var(--t-base) var(--ease-out);
+    background var(--t-base) var(--ease-out);
 }
 
+/* A selection card: full rounded primary ring, the same language as the
+   wordbook list and the reference rows. No lift. */
 .model-card:hover {
-  border-color: var(--border-strong);
-  background: var(--surface-strong);
-  transform: translateY(-2px);
+  border-color: var(--primary);
+  background: var(--surface-hover);
 }
 
 .model-card[data-active='true'] {

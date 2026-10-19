@@ -249,13 +249,12 @@
   backdrop-filter: blur(16px) saturate(1.6);
   text-align: left;
   overflow: hidden;
-  transition: border-color var(--t-base) var(--ease-out), background var(--t-base) var(--ease-out),
-    transform var(--t-base) var(--ease-out);
+  transition: border-color var(--t-base) var(--ease-out), background var(--t-base) var(--ease-out);
 }
 
+/* Selection card: the rounded primary ring, no lift. */
 .mode-card:hover {
-  border-color: var(--glass-edge);
-  transform: translateY(-3px);
+  border-color: var(--primary);
 }
 
 .mode-card[data-active='true'] {
@@ -359,7 +358,7 @@
 }
 
 .book-row:hover {
-  border-color: var(--glass-edge);
+  border-color: var(--primary);
 }
 
 .book-row[data-active='true'] {
@@ -469,12 +468,45 @@
   vertical-align: top;
 }
 
-.data-table tbody tr {
-  transition: background var(--t-fast) var(--ease-out);
+/* One hover/selected language for every text table: a --surface fill plus a
+   1px --primary ring, matching the wordbook list's selected row. The ring is
+   drawn per cell because a <tr> cannot carry a rounded outline reliably; the
+   first and last cells round the two ends. */
+.data-table tbody tr:hover {
+  background: transparent;
 }
 
-.data-table tbody tr:hover {
+.data-table tbody tr:hover td {
   background: var(--surface);
+  box-shadow:
+    inset 0 1px 0 var(--primary),
+    inset 0 -1px 0 var(--primary);
+}
+
+.data-table tbody tr:hover td:first-child {
+  border-radius: var(--r-sm) 0 0 var(--r-sm);
+  box-shadow:
+    inset 1px 0 0 var(--primary),
+    inset 0 1px 0 var(--primary),
+    inset 0 -1px 0 var(--primary);
+}
+
+.data-table tbody tr:hover td:last-child {
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+  box-shadow:
+    inset -1px 0 0 var(--primary),
+    inset 0 1px 0 var(--primary),
+    inset 0 -1px 0 var(--primary);
+}
+
+/* A single-cell row (colspan detail rows) needs all four edges at once. */
+.data-table tbody tr:hover td:only-child {
+  border-radius: var(--r-sm);
+  box-shadow:
+    inset 1px 0 0 var(--primary),
+    inset -1px 0 0 var(--primary),
+    inset 0 1px 0 var(--primary),
+    inset 0 -1px 0 var(--primary);
 }
 
 .data-table .mono {

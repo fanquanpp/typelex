@@ -111,13 +111,15 @@
   text-align: left;
   transition:
     border-color var(--t-fast) var(--ease-out),
-    background var(--t-fast) var(--ease-out),
-    transform var(--t-fast) var(--ease-out);
+    background var(--t-fast) var(--ease-out);
 }
 
+/* Same neutral feedback as .btn: one hover language for every control. The
+   four grades used to lift and fill with danger / amber / primary / ok tints,
+   which turned a functional choice into four competing accent colours. */
 .study-grade:hover {
-  transform: translateY(-2px);
   border-color: var(--border-strong);
+  background: var(--surface-hover);
 }
 
 .study-grade__label {
@@ -131,25 +133,5 @@
 .study-grade__hint {
   font-size: var(--text-2xs);
   color: var(--ink-muted);
-}
-
-.study-grade--again:hover {
-  border-color: var(--danger);
-  background: var(--danger-soft);
-}
-
-.study-grade--hard:hover {
-  border-color: var(--warn);
-  background: var(--amber-soft);
-}
-
-.study-grade--good:hover {
-  border-color: var(--primary);
-  background: var(--primary-soft);
-}
-
-.study-grade--easy:hover {
-  border-color: var(--ok);
-  background: var(--ok-soft);
 }
 
