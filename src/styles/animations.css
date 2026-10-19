@@ -73,7 +73,7 @@
   transition: opacity 320ms var(--ease-out);
   pointer-events: none;
 }
-.spotlight[data-active='true']::before {
+.spotlight[data-spotlight='true']::before {
   opacity: 1;
 }
 .spotlight::after {
@@ -96,7 +96,7 @@
   transition: opacity 320ms var(--ease-out);
   pointer-events: none;
 }
-.spotlight[data-active='true']::after {
+.spotlight[data-spotlight='true']::after {
   opacity: 1;
 }
 .spotlight > * {

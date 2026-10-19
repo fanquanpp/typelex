@@ -280,11 +280,14 @@ export const useSpotlight = <T extends HTMLElement>(size = 320) => {
 
     const onMove = (event: PointerEvent) => {
       pending = { x: event.clientX, y: event.clientY };
-      element.dataset.active = 'true';
+      /* A separate attribute: `data-active` belongs to the component's own
+         selected state (mode cards, category cards). Overwriting it here was
+         what made a selected card lose its highlight on the first mouse-leave. */
+      element.dataset.spotlight = 'true';
       if (!raf) raf = requestAnimationFrame(apply);
     };
     const onLeave = () => {
-      element.dataset.active = 'false';
+      element.dataset.spotlight = 'false';
     };
 
     element.style.setProperty('--spot-size', `${size}px`);

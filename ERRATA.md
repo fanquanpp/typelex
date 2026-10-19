@@ -100,12 +100,14 @@ TypeLex 的更正记录。分两部分：**已知的数据边角**（上游词�
 - **参考图表的悬停统一**：五十音图格子原为 `--rose` 描边 + 上移 2px（空格也会亮），音标表
   行悬停只有一层底色；两处现在都改用词库文本列表的选中语言：`--surface` 底 +
   `--primary` 1px 描边 + 轻微提亮，不位移，空格不响应。
-- **交互框选统一**：功能性控件（侧栏、顶部导航、页面跳转、设置动作、评分按钮）由 `Crosshair`
-  统一画四角直角框，指针悬停与键盘焦点共用一套；功能性控件的整圈 `:focus-visible` outline 已关闭。
-  选择性/查阅性元素（GlideSelect 选项、RubberSegment、五十音格、音标/词表行、选书/选模式/选键盘卡）
-  统一用 `--surface` + `--primary` 整圈圆角环。`Crosshair` 的 `targetSelector` 已排除
-  radio/option/switch/checkbox/slider 与 `.mode-card` / `.book-row` / `.model-card` / `.orbit-item` / `.pill`，
-  并删掉不再使用的 `.word-row`。
+- **交互框选统一**：四角直角框是**全局**交互框——按钮、导航、分段、下拉选项、表格行、五十音格、
+  模式卡、词表行、成就卡等所有可交互/可选组件都由 `Crosshair` 画四角直角框，指针悬停与键盘焦点共用一套。
+  选择性/查阅性元素同时保留 `--surface` + `--primary` 整圈圆角环，两套框可以并存；功能性控件的整圈
+  `:focus-visible` outline 仍关闭，选择控件保留圆角 focus outline。
+  `Crosshair` 的 `targetSelector` 已扩为 `a, button, [role=button|radio|option|switch|checkbox|slider],
+  .mode-card, .book-row, .model-card, .orbit-item, .achievement, .stat-tile, .animated-list__item,
+  .kana-cell:not(.kana-cell--empty), .data-table tbody tr, .book-row .chip[data-selected]`，
+  不再使用的 `.word-row` 已删。
 - **成就卡悬停**：去掉 `translateY(-2px)` 上浮，改为 `--surface-hover` + `--border-strong`，
   与评分卡 / `.btn` 的中性悬停一致。
 - **GlideSelect 清理**：滑移高亮从实心 `--gs-highlight` 块改为 `--gs-surface` + `--gs-accent` 1px 环；
@@ -113,6 +115,9 @@ TypeLex 的更正记录。分两部分：**已知的数据边角**（上游词�
 - **日语 JLPT 级别 chip 选中态**：chip 上已有 `data-selected`，但没有任何对应样式，选中的 N5/N4
   与未选中看起来完全一样；现在补上反色选中块（`--bg` 底 + `--ink` 字）。同时删除日语词表行前
   的红色小方块（`book-row__dot`，硬编码 `#c0556f`）。
+- **练习模式卡选中态**：`useSpotlight` 原先把 `data-active` 当作光斑开关，与模式卡的选中属性同名；
+  鼠标移入/移出会把选中值覆盖成 `true / false`，导致选中高亮消失。光斑改用 `data-spotlight`，
+  `data-active` 只表示选中；模式卡与专项分类卡的选中态恢复并在鼠标离开后保持。
 
 ### 2026-10-17
 

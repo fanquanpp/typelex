@@ -58,10 +58,10 @@ export const Crosshair = ({
   gap = 10,
   smoothing = 0.4,
   showCoordinates = true,
-  /* Functional controls only. Selection controls (radios, menu options,
-     switches, sliders) and the cards that pick a book / mode / model use the
-     rounded primary ring instead, so they are excluded here. */
-  targetSelector = 'a[href]:not(.orbit-item):not(.pill), button:not([role="radio"]):not([role="option"]):not([role="switch"]):not([role="checkbox"]):not([role="slider"]):not(.mode-card):not(.book-row):not(.model-card):not(.orbit-item):not(.pill), [role="button"]:not(.mode-card):not(.book-row):not(.model-card):not(.orbit-item):not(.pill), [data-crosshair-target]',
+  /* Global interaction frame: every actionable or selectable surface gets the
+     four-corner brackets. Selection surfaces also keep their rounded primary
+     ring, so the two frames coexist on the same element. */
+  targetSelector = 'a, button, [role="button"], [role="radio"], [role="option"], [role="switch"], [role="checkbox"], [role="slider"], [data-crosshair-target], .mode-card, .book-row, .model-card, .orbit-item, .achievement, .stat-tile, .animated-list__item, .kana-cell:not(.kana-cell--empty), .data-table tbody tr, .book-row .chip[data-selected]',
   clickPulse = true,
   blendMode = 'normal',
   className = ''
